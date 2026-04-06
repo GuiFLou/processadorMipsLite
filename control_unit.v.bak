@@ -1,0 +1,52 @@
+module control_unit(
+    input  wire [5:0] opcode,
+    output reg        regDst,
+    output reg        aluSrc,
+    output reg        memToReg,
+    output reg        regWrite,
+    output reg        memWrite,
+    output reg        branchEq,
+    output reg        branchNe,
+    output reg        jump,
+    output reg  [3:0] aluOp
+);
+    always @* begin
+        // valores padrão
+        regDst   = 0; aluSrc = 0; memToReg = 0; regWrite = 0; memWrite = 0;
+        branchEq = 0; branchNe = 0; jump = 0; aluOp = 4'h0;
+
+        case (opcode)
+            6'h00: begin                     // R‑type
+                regDst   = 1;
+                regWrite = 1;
+                aluOp    = 4'hF;             // função detalhada externamente
+            end
+            6'h08: begin                     // ADDI
+                aluSrc   = 1;
+                regWrite = 1;
+                aluOp    = 4'h0;
+            end
+            6'h23: begin                     // LW
+                aluSrc   = 1;
+                memToReg = 1;
+                regWrite = 1;
+                aluOp    = 4'h0;
+            end
+            6'h2B: begin                     // SW
+                aluSrc   = 1;
+                memWrite = 1;
+                aluOp    = 4'h0;
+            end
+            6'h04: begin                     // BEQ
+                branchEq = 1;
+                aluOp    = 4'h1;             // SUB para comparar
+            end
+            6'h05: begin                     // BNE
+                branchNe = 1;
+                aluOp    = 4'h1;
+            end
+            6'h02: jump = 1;                 // J
+            default: ;                       // demais opcodes – extensão futura
+        endcase
+    end
+endmodule

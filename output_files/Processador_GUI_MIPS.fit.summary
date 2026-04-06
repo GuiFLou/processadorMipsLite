@@ -1,0 +1,16 @@
+Fitter Status : Successful - Mon Jul 28 22:18:05 2025
+Quartus Prime Version : 17.1.0 Build 590 10/25/2017 SJ Lite Edition
+Revision Name : Processador_GUI_MIPS
+Top-level Entity Name : Processador_GUI_MIPS
+Family : Cyclone IV E
+Device : EP4CE115F29C7
+Timing Models : Final
+Total logic elements : 46,277 / 114,480 ( 40 % )
+    Total combinational functions : 26,430 / 114,480 ( 23 % )
+    Dedicated logic registers : 33,792 / 114,480 ( 30 % )
+Total registers : 33792
+Total pins : 83 / 529 ( 16 % )
+Total virtual pins : 0
+Total memory bits : 32,768 / 3,981,312 ( < 1 % )
+Embedded Multiplier 9-bit elements : 6 / 532 ( 1 % )
+Total PLLs : 0 / 4 ( 0 % )

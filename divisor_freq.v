@@ -1,0 +1,16 @@
+module divisor_Freq
+#( parameter DIV = 25_000_000 )   // 50 MHz / 25 M = 1 Hz (toggle)
+(
+    input  wire clk_in,
+    output reg  clk_out = 1'b0
+);
+    reg [31:0] cnt = 32'd0;
+
+    always @(posedge clk_in) begin
+        if (cnt == DIV-1) begin
+            cnt     <= 32'd0;
+            clk_out <= ~clk_out;
+        end else
+            cnt <= cnt + 1'd1;
+    end
+endmodule
