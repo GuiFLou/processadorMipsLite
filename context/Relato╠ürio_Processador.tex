@@ -1,0 +1,911 @@
+%% abtex2-modelo-relatorio-tecnico.tex, v-1.9.6 laurocesar
+%% Copyright 2012-2016 by abnTeX2 group at http://www.abntex.net.br/ 
+%%
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3 or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%%
+%% This work has the LPPL maintenance status `maintained'.
+%% 
+%% The Current Maintainer of this work is the abnTeX2 team, led
+%% by Lauro César Araujo. Further information are available on 
+%% http://www.abntex.net.br/
+%%
+%% This work consists of the files abntex2-modelo-relatorio-tecnico.tex,
+%% abntex2-modelo-include-comandos and abntex2-modelo-references.bib
+%%
+
+% ------------------------------------------------------------------------
+% ------------------------------------------------------------------------
+% abnTeX2: Modelo de Relatório Técnico/Acadêmico em conformidade com 
+% ABNT NBR 10719:2015 Informação e documentação - Relatório técnico e/ou
+% científico - Apresentação
+% ------------------------------------------------------------------------ 
+% ------------------------------------------------------------------------
+
+\documentclass[
+	% -- opções da classe memoir --
+	12pt,				% tamanho da fonte
+	openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
+	%twoside,			% para impressão em recto e verso. Oposto a oneside
+	a4paper,			% tamanho do papel. 
+	% -- opções da classe abntex2 --
+	%chapter=TITLE,		% títulos de capítulos convertidos em letras maiúsculas
+	%section=TITLE,		% títulos de seções convertidos em letras maiúsculas
+	%subsection=TITLE,	% títulos de subseções convertidos em letras maiúsculas
+	%subsubsection=TITLE,% títulos de subsubseções convertidos em letras maiúsculas
+	% -- opções do pacote babel --
+	english,			% idioma adicional para hifenização
+	french,				% idioma adicional para hifenização
+	spanish,			% idioma adicional para hifenização
+	brazil,				% o último idioma é o principal do documento
+	]{abntex2}
+
+
+
+% PACOTES
+
+% ---
+% Pacotes fundamentais 
+\usepackage{lmodern}			% Usa a fonte Latin Modern
+\usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
+\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
+\usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
+\usepackage{color}				% Controle das cores
+\usepackage{graphicx}			% Inclusão de gráficos
+\usepackage{microtype} 			% para melhorias de justificação
+% ---
+
+% Pacotes adicionais, usados no anexo do modelo de folha de identificação
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{csvsimple}
+ \usepackage{booktabs}
+ 
+\usepackage{float} % para utilizar o H de tabelas e figuras e mante-las no lugar
+% ---
+
+%----------------- PARA INSERIR ARQUIVOS DE CODIGOS -----------------%
+\usepackage{xcolor}
+% Definindo novas cores
+\definecolor{verde}{rgb}{0,0.5,0}
+% Configurando layout para mostrar codigos C++
+\usepackage{listings}
+\lstset{
+  language=Verilog, %indicar a linguagem utilizada
+  basicstyle=\ttfamily\tiny, 
+  keywordstyle=\color{blue}, 
+  stringstyle=\color{verde}, 
+  commentstyle=\color{gray}, 
+  extendedchars=true, 
+  showspaces=false, 
+  showstringspaces=false, 
+  numbers=left,
+  numberstyle=\tiny,
+  breaklines=true, 
+  backgroundcolor=\color{green!10},
+  breakautoindent=true, 
+  captionpos=b,
+  xleftmargin=0pt,
+}
+% -----------------% FIM INSERIR ARQUIVOs DE CODIGO -----------------%
+
+% Pacotes de citações
+\usepackage[brazilian,hyperpageref]{backref}	 % Paginas com as citações na bibl
+\usepackage[num]{abntex2cite}	% Citações padrão ABNT
+\citebrackets() %citação numérica entre colchetes
+% --- 
+
+
+% CONFIGURAÇÕES DE PACOTES
+
+% Configurações do pacote backref
+% Usado sem a opção hyperpageref de backref
+\renewcommand{\backrefpagesname}{Citado na(s) página(s):~}
+% Texto padrão antes do número das páginas
+\renewcommand{\backref}{}
+% Define os textos da citação
+\renewcommand*{\backrefalt}[4]{
+	\ifcase #1 %
+		Nenhuma citação no texto.%
+	\or
+		Citado na página #2.%
+	\else
+		Citado #1 vezes nas páginas #2.%
+	\fi}%
+% ---
+
+
+% Informações de dados para CAPA e FOLHA DE ROSTO
+\titulo{Elaboração e Implementação de Processador Computacional baseado na arquitetura MIPS}
+\autor{Guilherme Ferreira Lourenço \\ 143172}
+\local{São José dos Campos - Brasil}
+\data{2024}
+\instituicao{
+  Docente: Prof. Dr. Tiago de Oliveira
+  \par
+  Universidade Federal de São Paulo - UNIFESP
+  \par
+  Instituto de Ciência e Tecnologia - Campus São José dos Campos
+}
+\tipotrabalho{Relatório técnico}
+\preambulo{Relatório apresentado à Universidade Federal de São Paulo como parte dos requisitos para aprovação na disciplina de Laboratório de Sistemas Computacionais: Arquitetura e Organização de Computadores.}
+% ---
+
+% Configurações de aparência do PDF final
+
+% alterando o aspecto da cor azul
+\definecolor{blue}{RGB}{41,5,195}
+
+% informações do PDF
+\makeatletter
+\hypersetup{
+     	%pagebackref=true,
+		pdftitle={\@title}, 
+		pdfauthor={\@author},
+    	pdfsubject={\imprimirpreambulo},
+	    pdfcreator={LaTeX with abnTeX2},
+		pdfkeywords={abnt}{latex}{abntex}{abntex2}{relatório técnico}, 
+		colorlinks=true,       		% false: boxed links; true: colored links
+    	linkcolor=blue,          	% color of internal links
+    	citecolor=blue,        		% color of links to bibliography
+    	filecolor=magenta,      		% color of file links
+		urlcolor=blue,
+		bookmarksdepth=4
+}
+\makeatother
+% --- 
+
+
+% Espaçamentos entre linhas e parágrafos 
+
+% O tamanho do parágrafo é dado por:
+\setlength{\parindent}{1.3cm}
+
+% Controle do espaçamento entre um parágrafo e outro:
+\setlength{\parskip}{0.2cm}  % tente também \onelineskip
+
+% compila o indice
+\makeindex
+% ---
+
+
+
+% ------------------------------------------------
+% Início do documento
+\begin{document}
+
+% Seleciona o idioma do documento (conforme pacotes do babel)
+%\selectlanguage{english}
+\selectlanguage{brazil}
+
+% Retira espaço extra obsoleto entre as frases.
+\frenchspacing 
+
+% ----------------------------------------------------------
+% ELEMENTOS PRÉ-TEXTUAIS
+% ----------------------------------------------------------
+% \pretextual
+
+% ---
+% Capa
+\imprimircapa
+% ---
+
+% ---
+% Folha de rosto
+\imprimirfolhaderosto*
+% ---
+
+% ---
+% RESUMO
+% resumo na língua vernácula (obrigatório)
+\setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
+\begin{resumo}
+ Este relatório tem por objetivo apresentar detalhes do desenvolvimento de um processador monociclo simples baseado na arquitetura MIPS, descrevendo sobre o formato e conjunto das instruções, modos de endereçamento, o uso de registradores e outros detalhes a mais. Toda a organização do processador descrita neste trabalho, é implementada em uma linguagem de descrição de \emph{Hardware} denominada Verilog, por meio do Software Quartus Prime 19.1 Lite Edition. Após o planejamento e implementação da arquitetura e organização do sistema, o processador é simulado em uma placa Intel FPGA (\emph{Field Programmable Gate Array}) para teste e validação do desenvolvimento do projeto.
+ A partir deste desenvolvimento, é possível compreender o funcionamento detalhado de um sistema computacional semelhante àqueles sistemas utilizados no dia a dia (celulares, notebooks, tablets, desktop, video-games, etc.).
+ 
+
+ \noindent
+ \textbf{Palavras-chave}: processador. arquitetura. organização. FPGA. Verilog. Quartus. sistemas computacionais. MIPS.
+\end{resumo}
+
+%------LISTAS SÃO OPCIONAIS---------
+% inserir lista de ilustrações
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\clearpage
+
+% inserir lista de tabelas
+\pdfbookmark[0]{\listtablename}{lot}
+\listoftables*
+\clearpage
+% ---
+
+%SUMÁRIO É OBRIGATÓRIO
+% inserir o sumario
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+% ---
+
+
+% ----------------------------------------------------------
+% ELEMENTOS TEXTUAIS
+\textual
+
+% ----------------------------------------------------------
+\chapter{Introdução}
+O avanço do desenvolvimento tecnológico, sendo este desencadeado por diferentes eventos que ocorreram durante a história, criou a necessidade de mais cientistas com capacidade e propriedade de conhecimento em diferentes áreas, destacando uma delas, a computação, que vem crescendo e tornando-se parte da rotina de quase todos.
+
+Devido a esta evolução tecnológica, um gigantesco volume de dados e processos nasceram e, para processá-los de maneira viável, criou-se a necessidade de estudar os sistemas computacionais, para que sua capacidade esteja constantemente se superando. Dessa forma, computadores e dispositivos mais ágeis e eficientes podem ser criados e utilizados na modernidade para os mais variáveis fins.
+
+Para entender melhor como um sistema computacional funciona, precisa-se compreender como um computador interpreta o mundo real. Segundo \cite{patterson2007}, a linguagem que o computador consegue compreender é binária, ou apenas “ligado” e “desligado”, por se tratar de um equipamento eletrônico. Então, para possibilitar a comunicação entre humano e computador, as ações e linguagens humanas devem ser escritas em formato de código de alto nível, que será traduzido em uma linguagem de "montagem" por um compilador, sendo esta a linguagem de um código de baixo nível e, por fim, será traduzida para binário por um montador.
+
+Logo, este trabalho traz conceitos fundamentais de Organização e Arquitetura de computadores aplicados no desenvolvimento de um processador capaz de realizar diferentes instruções que lidam com os diferentes dados fornecidos a ele. No caso, o sistema será implementado numa placa \emph{Intel} FPGA para simulações e averiguar sua funcionalidade por meio de testes.
+
+\chapter[Objetivos]{Objetivos}
+\section{Geral}
+Este trabalho visa explicar o desenvolvimento do projeto de implementação e design de um processador computacional baseado na arquitetura MIPS, aplicando os conceitos adquiridos na Unidade Curricular Arquitetura e Organização de Computadores. Após isso, o projeto será testado em uma placa Intel FPGA, simulando o funcionamento de instruções de um processador real de computador.
+
+\section{Específico}
+Os objetivos específicos para conclusão do projeto serão:
+\begin{itemize}
+    \item Definir formato das instruções.
+    \item Listar as instruções que serão implementadas.
+    \item Definir os modos de endereçamento para cada instrução.
+    \item Esquematizar o Datapath contempleando o conjunto de instruções definido anteriormente.
+    \item Implementar em Verilog e testar individualmente os seguintes módulos: ULA (Unidade Lógica Aritmética), Memória de Dados, Banco de Registradores e Multiplexadores.
+    \item Implementar as conexões dos módulos e testar a Unidade de Processamento.
+\end{itemize}
+
+\chapter{Fundamentação Teórica}
+\section{Arquiteturas RISC e CISC}
+Um processador é um circuito integrado que pode executar operações lógicas, aritméticas e receber informações de entrada e saída. No entanto, a maneira como ele é organizado e arquitetado pode impactar sua eficiência e desempenho  \cite{stallings2017}. Uma forma de definir a organização do processador é através da escolha da arquitetura, sendo as arquiteturas RISC (Reduced Instruction Set Computing) e CISC (Complex Instruction Set Computer) duas das mais importantes.
+
+A arquitetura RISC busca simplificar o conjunto de instruções, mantendo-as em sua maioria com tamanho fixo. Isso pode resultar em um circuito de processador, ou DataPath, menos complexo. No entanto, o compilador pode ter mais trabalho para traduzir instruções de alto nível em instruções de baixo nível \cite{tanenbaum2015}.
+
+Por outro lado, a arquitetura CISC permite instruções mais complexas e de tamanho variável, o que pode reduzir a quantidade de instruções necessárias para realizar uma tarefa. No entanto, isso pode resultar em um circuito de processador mais complexo, com maior número de etapas de processamento.
+
+Antes de iniciar a construção do processador, é importante analisar os benefícios e desvantagens de cada arquitetura para determinar qual delas é mais adequada para o cenário em questão.
+
+\section{Arquiteturas Von Neumann e Harvard}
+A arquitetura Von Neumann, criada por John Von Neumann, possui a principal característica de possuir apenas um único módulo de memória, em que nela serão armazenados os dados e as instruções do programa \cite{patterson2018}. Dessa forma, temos um mesmo cabo que irá transferir esses dois tipos de dados. Com isso, para a construção desse tipo de arquitetura, temos um custo bem menor, já que podemos evitar a implementação de uma unidade adicional de memória \cite{patterson2018}. Porém, existe um problema fundamental nesse método de aplicação já que, por termos o mesmo fio conectando a unidade de processamento, para conseguir transmitir instruções e dados sem interferência é preciso de, no mínimo, dois ciclos de clock \cite{stallings2017}.
+
+Já a arquitetura de Harvard surgiu para evitar esse problema e aumentar a eficiência. Sua principal característica é a implementação de uma memória extra, utilizada apenas para armazenar as instruções do processador. Com essa separação, temos cabos diferentes para cada uma das memórias, permitindo a leitura das duas memórias em um mesmo ciclo. Consequentemente, as instruções de um processador com implementação de Harvard conseguem ser efetuadas em apenas um único ciclo de clock \cite{stallings2017}.
+
+\section{Processador MIPS}
+O processador MIPS (Microprocessador Sem Estágios Intertravados de Pipeline) é uma arquitetura que foi criada em 1985 pela empresa MIPS Computer System. A família de processadores MIPS é bastante popular e é comumente utilizada como modelo de estudo em arquitetura e organização de computadores. O MIPS é uma arquitetura RISC (Reduced Instruction Set Computing), ou seja, possui um conjunto reduzido de instruções, o que o torna um modelo mais simples em comparação a outras arquiteturas. Além disso, a arquitetura MIPS utiliza um pipeline de cinco estágios, o que permite uma execução mais rápida das instruções. Essa combinação de simplicidade e eficiência faz do MIPS uma arquitetura bastante utilizada em sistemas embarcados e dispositivos móveis \cite{stallings2017}.
+
+No entanto, apesar de sua simplicidade, a arquitetura MIPS pode apresentar algumas limitações em relação a outras arquiteturas, como a arquitetura CISC (Complex Instruction Set Computer). Isso ocorre porque a redução do conjunto de instruções do MIPS pode aumentar a complexidade do compilador, que precisará fazer uma tradução mais detalhada das instruções de alto nível para as instruções de baixo nível. Além disso, a arquitetura MIPS não é muito adequada para aplicações que requerem grande capacidade de processamento de ponto flutuante, como aplicações científicas \cite{goodman2015}.
+
+Por fim, vale destacar que a arquitetura MIPS tem sido utilizada em diversos projetos acadêmicos e de pesquisa, contribuindo para o avanço da área de arquitetura de computadores. Atualmente, a arquitetura MIPS é mantida pela empresa Imagination Technologies, que continua desenvolvendo e aprimorando essa arquitetura para atender às demandas do mercado \cite{patterson2018}.
+
+\subsection{Instruções}
+Para transmitir uma instrução para o processador, é necessário possuir uma série de sinais eletrônicos que são representados em binário com os números 1 e 0. Cada valor unitário do sistema binário é chamado de bit. As instruções, que serão interpretadas pelo processador, são formadas pelo conjunto desses números. As instruções do MIPS são divididas em três tipos: as de registradores (R), as de imediatos (I) e as de jump (J) \cite{stallings2017}. 
+
+As instruções do tipo R possuem 6 bits para o opcode e 5 bits para cada registrador, uma vez que o processador MIPS utiliza 32 registradores, 5 bits é o suficiente para representar o endereço \cite{stallings2017}. Este tipo de instrução do MIPS é responsável pela maioria das operações aritméticas e lógicas entre dois valores obtidos em registradores, cujos endereços foram especificados na instrução \cite{britton2003}. Alguns exemplos de instruções do tipo R incluem add, sub, and, or e slt. 
+
+As instruções do tipo I do MIPS são usadas para operações aritméticas e de acesso à memória que requerem um valor imediato. O formato dessas instruções inclui um campo de 6 bits para o opcode, 5 bits para o registrador de destino e 16 bits para o valor imediato \cite{mips32}. O campo de valor imediato é usado para especificar o valor que será utilizado na operação, enquanto o campo de registrador de destino indica o registrador que armazenará o resultado da operação. Algumas das instruções do tipo I comuns no MIPS incluem addi, lw, sw, beq e bne.
+
+Já as instruções do tipo J do MIPS são usadas para operações de salto incondicional. O formato dessas instruções inclui um campo de 6 bits para o opcode e 26 bits para o endereço de destino. O campo de endereço de destino é usado para especificar o local para onde o fluxo do programa será direcionado após a execução da instrução de salto, ou seja, será o novo endereço apontado pelo registrador de contador de programa. Algumas das instruções do tipo J comuns no MIPS incluem j e jal.
+
+\subsection{Modos de Endereçamento}
+Os modos de endereçamento são mecanismos utilizados para acessar operandos na memória de um processador, permitindo que as instruções executem operações em dados armazenados em diferentes tipos de memória, como a memória principal, a memória de instruções e o banco de registradores \cite{patterson2007}. Em arquiteturas MIPS, existem cinco modos de endereçamento: o endereçamento imediato, o endereçamento de registrador, o endereçamento base-deslocamento, o endereçamento PC-relativo e o endereçamento de pseudo-direto \cite{patterson2006}. Cada um desses modos apresenta vantagens e limitações, e a escolha do modo de endereçamento correto pode influenciar diretamente na eficiência e no desempenho do processador.
+
+\subsubsection{Imediato}
+Esse modo de endereçamento é utilizado para operações que envolvem dados constantes ou valores imediatos que não precisam ser armazenados na memória principal ou em registradores, uma vez que o formato da instrução utilizado permite colocar o valor diretamente na instrução. O valor imediato é representado por um campo de 16 bits na instrução, permitindo que valores inteiros positivos e negativos sejam armazenados \cite{patterson2007}. 
+
+\subsubsection{À Registrador}
+Esse modo de endereçamento é comumente utilizado em operações aritméticas e lógicas, que envolvem a manipulação de valores armazenados em registradores, pois o identificador do registrador é especificado na instrução, permitindo a realização de operações entre registradores ou entre um registrador e um valor imediato.
+
+\subsubsection{base-deslocamento}
+Nesse modo, a operação de acesso a um dado é realizada por meio de um deslocamento a partir de um endereço base, que é armazenado em um registrador específico. Esse modo de endereçamento é comumente utilizado para acesso a elementos de vetores e matrizes em linguagens de programação, porém, em baixo nível, é utilizado em operações como lw e sw, no MIPS.
+
+\subsubsection{Relativo ao PC}
+O endereçamento relativo ao PC é um modo de endereçamento utilizado em arquiteturas de processadores para acessar operandos por meio de um deslocamento a partir do contador de programa (PC). Este contador se trata de um registrador específico para esta função de contagem de programa. Esse modo de endereçamento é comumente utilizado em instruções de salto condicional e incondicional, como beq e j, em que o deslocamento é utilizado para especificar o endereço de destino da próxima instrução ou do salto.
+
+\subsubsection{Absoluto}
+O endereçamento absoluto é um modo de endereçamento em que o operando é especificado diretamente pelo seu endereço na memória. É utilizado em instruções que precisam acessar uma localização de memória específica, como a instrução lw (load word), que carrega uma palavra da memória para um registrador. Nesse modo de endereçamento, o valor a ser acessado é especificado diretamente na instrução, sem necessidade de cálculos adicionais.
+
+\subsection{Datapath}
+O datapath é o caminho de dados que conecta as diversas unidades funcionais de uma arquitetura de computador, permitindo a execução de instruções.Ou seja, esta estrutura é fundamental para a realização de operações de processamento de dados e controle de fluxo de instruções. Como o MIPS é uma arquitetura de processadores RISC, ele é conhecido por sua simplicidade e alta eficiência. Nesse contexto, a apresentação do datapath MIPS é essencial para entender o funcionamento dessa arquitetura e as suas vantagens em relação a outras arquiteturas.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{Imagens/Datapath_MIPS.png}
+    \legend{Exemplo do esquemático do Datapath da arquitetura MIPS}
+    \caption{Fonte: \cite{patterson2007}}
+    \label{fig:rotulo_da_imagem}
+\end{figure}
+
+\chapter{Desenvolvimento}
+O projeto consistirá no desenvolvimento de um processador baseado na arquitetura MIPS com algumas modificações em relação à arquitetura original. 
+
+Abaixo será apresentado o design do datapath, bem como as principais modificações realizadas em relação à arquitetura original. Além disso, serão listadas as instruções que serão utilizadas pelo processador para calcular e manipular os dados de acordo com a necessidade do programa.
+
+\section{Características Gerais}
+O processador terá as seguintes características de sua implementação:
+
+\begin{itemize}
+    \item O processador baseado em MIPS possuirá um conjunto de instruções muito parecido com o original, ou seja, será implementada a arquitetura do tipo RISC;
+    \item As instruções terão tamanho fixo de 32 bits com 3 formatos diferentes;
+    \item A arquitetura será baseada na Harvard, porém com adições à tratativa do input na memória de dados;
+    \item O processador possuirá 64 registradores, sendo 2 para uso específico.
+\end{itemize}
+
+\section{Arquitetura}
+O projeto terá como base a arquitetura de Harvard, onde a memória de instruções é separada da memória de dados. Porém, há uma pequena diferença na tratativa da memória de dados, onde existirá um registrador que irá separar uma parte da memória para armazenar diretamente os valores de input do sistema. Esse registrador utilizará um modo de endereçamento à pilha para efetuar o controle do armazenamento dos dados de input que chegam à memória. 
+
+Dessa forma, o programa de baixo nível poderá ter duas opções ao receber um input: armazená-lo em um registrador ou diretamente na memória.
+
+\section{Instruções}
+Assim como mecionado na seção de Características Gerais, o conjunto das instruções será bem parecido com o da arquitetura MIPS, ou seja, além de de ser um conjunto de instruções RISC, os modos de endereçamento também se assemelham muito, além do fotrmato das instruções também.
+
+Para a definição das instruções, primeiro foi pensado no formato da instruções, que se assemelha ao da arquitetura MIPS, uma vez que suas características seguem uma lógica semelhante.
+O Formato 1, ou F1, é semelhante ao formato do tipo R, este tipo leva em consideração 3 endereços de registradores e um shift amount para as operações.
+Já o Formato 2 (F2) se assemelha ao formato I, que carrega informação de um valor Imediato para as operações, ao invés do endereço de um registrador que possui o valor a ser utilizado.
+Parecido com o Formato 3 (F3), o MIPS possui o formato J, mais usado para instruções de Jump. Neste formato, o processador irá utilizar em instruções de controle também como halt e nop.
+
+Nas Tabela 1, 2 e 3, apresentam os bits usados para cada campo nos formatos citados anteriormente. 
+
+\begin{table}
+\centering
+\caption{Formato das Instruções (Formato 1)}
+    \begin{tabular}{|c|c|c|c|c|}
+     \hline
+        31-26 & 25-20 & 19-14 & 13-8 & 7-0 \\
+        \hline \hline
+        Opcode & RD & RS & RT & Shamt \\
+     \hline
+    \end{tabular}
+\legend{Fonte: O Autor}
+\end{table}
+
+\begin{table}
+    \centering
+    \caption{Formato das Instruções (Formato 2)}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        31-26 & 25-20 & 19-14 & 13-0 \\
+        \hline \hline
+        Opcode & RD & RS & Imediado / - \\
+        \hline
+    \end{tabular}
+    \legend{Fonte: O Autor }    \label{tab:exemplo}
+\end{table}
+
+\begin{table}
+\centering
+\caption{Formato das Instruções (Formato 3)}
+    \begin{tabular}{|c|c|}
+     \hline
+        31-26 & 25-0 \\
+        \hline \hline
+        Opcode & Endereço / - \\
+     \hline
+    \end{tabular}
+\legend{Fonte: O Autor}
+\end{table}
+
+Depois, na Tabela 5, tem-se todas as instruções listadas com seus respectivos formatos de maneira resumida para entender todo o conjunto de instruções.
+
+\begin{table}
+\centering
+\caption{Conjunto de Instruções do Projeto}
+    \begin{tabular}{|c|c|c|c|c|}
+     \hline
+        Instruções & Tipo & Formato & OP & Significado \\
+        \hline \hline
+        ADD & Aritmética & F1 & 000000 & R[3] <- R[2] + R[1] \\
+        AddI & Aritmética & F2 & 000001	& R[3] <- R[2] + IM14 \\
+        Sub & Aritmética & F1 & 000010 & R[3] <- R[2] - R[1] \\
+        SubI & Aritmética & F2 & 000011 & R[3] <- R[2] - IM14 \\
+        Mult & Aritmética & F1 & 000100 & R[High], R[Low] <- R[2] * R[1] \\
+        Multi & Aritmética & F2 & 000101 & R[High], R[Low] <- R[2] * IM14 \\
+        Div & Aritmética & F1 & 000110 & R[High]<-Resto, R[Low]<-Quociente \\
+        Divi & Aritmética & F2 & 000111 & R[3] <- R[2] - IM18 \\
+        And & Lógica & F1 & 001000 & R[3] <- R[2] and R[1] \\
+        AndI & Lógica & F2 & 001001 & R[3] <- R[2] and IM14 \\
+        Or & Lógica & F1 & 001010 & R[3] <- R[2] or R[1] \\
+        OrI & Lógica & F2 & 001011 & R[3] <- R[2] or IM14 \\
+        Not & Lógica & F2 & 001100 & R[3] <- \~ R[2]\\
+        Sr & Deslocamento & F1 & 001101 & R[3] <- >>shamt \\
+        Sl & Deslocamento & F1 & 001110 & R[3] <- shamt<< \\
+        Load & Acessa Memória & F2 & 001111 & R[3] <- M[R[2] + IM14] \\
+        Store & Acessa Memória & F2 & 010000 & Md[R[2] + IM14] <- R[2] \\
+        Jump & Salto & F3 & 010001 & vai para Label \\
+        JumpR & Salto & F1 & 010010 & vai para R[1] \\
+        Jal & Salto & F3 & 010011 & R[Proc] = PC + 1; Vai para Label \\
+        beq & Salto Cond & F2 & 010100 & se R[3]=R[2], vai para Label\\
+        bne & Salto Cond & F2 & 010101 & se R[3] <> R[2], vai para Label\\
+        move & Transf. & F2 & 010110 & R[3] <- R[2] \\
+        nop & Controle & F3 & 010111 & Nenhuma operação \\
+        hlt & Controle & F3 & 011000 & Parar processamento \\
+        slt & Lógica & F1 & 011001 & se R[3]<R[2], R[1]<-1. Se não, R[1]<-0\\
+        In & I/O & F3& 011010 & R[3] <- Switches \\
+        Out & I/O & F3& 011011 & Saída dados(PORTA) <- R[3] \\
+     \hline
+    \end{tabular}
+\legend{Fonte: O Autor}
+\end{table}
+
+\section{Caminho dos Dados}
+Com todas as informações relacionadas as instruções em mãos, é possível projetar o caminho dos dados com todos os dispositivos de componentes do processador, possibilitando a implementação do projeto posteriormente. O esquemático do processador projetado neste relatório pode ser verificado na \autoref{fig:MyDevice}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{Imagens/Datapath.png}
+    \legend{Esquemático do Datapath do processador do projeto}
+    \caption{Fonte: Autor}
+    \label{fig:MyDevice}
+\end{figure}
+
+\section{Implementação dos Componentes}
+Assim como falado anteriormente, todos os dispositivos que compõem o processador foram implementados em linguagem de descrição de \emph{Hardware} Verilog. Cada componente tem um papel importante para o bom funcionamento de todas as instruções executadas pelo processador, seguindo uma arquitetura simples RISC, capaz de atender todas as necessidades do sistema,
+
+\subsection{Memória de Dados}
+O módulo implementado na \autoref{fig:MemDados} se trata da Memória de Dados, que é responsável por armazenar os dados utilizados durante a execução das instruções de um processador, podendo ser resultados a serem usados depois. Este módulo permite leitura e escrita de dados no endereço que é providenciado, fornecendo ao processador os valores necessários para operações aritméticas, lógicas e controle de fluxo, além de armazenar os resultados dessas operações.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Imagens/MemDados.png}
+    \legend{Implementação da Memória de Dados de 1024 palavras de 32 bits}
+    \caption{Fonte: Autor}
+    \label{fig:MemDados}
+\end{figure}
+
+\subsection{Memória de Instruções}
+A Memória de Instruções, implementada de acordo com a \autoref{fig:MemInstr} é um componente fundamental para o funcionamento do processador, pois é responsável por armazenar o conjunto de instruções que o processador deve executar. Este módulo mantém as instruções em uma sequência específica, permitindo que o processador as leia, por meio do Program Counter, e execute de forma ordenada.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Imagens/MemInstr.png}
+    \legend{Implementação da Memória de Instruções de 1024 palavras de 32 bits}
+    \caption{Fonte: Autor}
+    \label{fig:MemInstr}
+\end{figure}
+
+\subsection{Adder, Extensor de Bits e Debouncer}
+As operações feitas pelo processador necessitam de ferramentas que ajudem a lidar com os bits pelo datapath e, por isso, foi preciso implementar dois módulos que ajudariam com este ponto. Os módulos são: Adder, disposto na \autoref{fig:Adder}, e o Extensor de Bits, disposto na \autoref{fig:ExtBits}.
+O Adder, ou Somador, é um componente aritmético que realiza a soma de dois valores binários. Ele é utilizado em diversas operações dentro do processador, como o cálculo do próximo endereço de instrução (PC) ou o ajuste de endereços em instruções de salto, sendo fundamental para a correta navegação do fluxo de execução.
+Quanto ao Extensor de Bits, este módulo que expande a largura de um valor binário, preservando seu sinal ou preenchendo com zeros, conforme necessário. Sua função é ajustar operandos menores para o tamanho padrão exigido pelas operações do processador, garantindo a coerência dos cálculos e a correta interpretação dos valores.
+Por fim, o Debouncer, ilustrado na \autoref{fig:Debounce} foi implementado como uma ferramenta deste projeto que ajuda a garantir a estabilidade e qualidade da leitura do botão reset e enter da placa FPGA para o bom funcionamento do projeto também. Dessa forma, impede comportamentos não previstos no sistema.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Imagens/Adder.png}
+    \legend{Implementação do módulo de soma}
+    \caption{Fonte: Autor}
+    \label{fig:Adder}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Imagens/ExtBits.png}
+    \legend{Implementação da Memória de Instruções de 1024 palavras de 32 bits}
+    \caption{Fonte: Autor}
+    \label{fig:ExtBits}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Imagens/Debounce.png}
+    \legend{Implementação do Debounce para as entradas por botões}
+    \caption{Fonte: Autor}
+    \label{fig:Debounce}
+\end{figure}
+
+\subsection{Unidade Lógica e Aritmética (ULA)}
+A ULA, implementada na \autoref{fig:ULA_24}, é extremamente importante para o funcionamento do processador, pois é responsável por realizar operações lógicas e aritméticas nos dados, atendendo diretamente a maioria das instruções necessárias. Dentre as operações que ele implementa, tem-se alguns exemplos como adição, subtração, operações lógicas (AND e OR) e deslocamentos (shifts), que são selecionadas a partir de um código de seleção proveniente da Unidade de Controle.
+
+As operações são realizadas em operandos recebidos pelas duas entradas, sendo que suas origens podem ser de um registrador ou de um imediato, direto da instrução. Após a execução da operação, o resultado produzido é emitido para ser registrado e, além disso, produz um sinal indicativo "Zero", que é ativado quando o resultado da operação é igual a zero. Isto se trata de uma sinalização usada para outras operações.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Imagens/ULA_24.png}
+    \legend{Implementação da ULA em Verilog}
+    \caption{Fonte: Autor}
+    \label{fig:ULA_24}
+\end{figure}
+
+\subsection{Banco de Registradores}
+Este dispositivo é uma parte crucial do processador, uma vez que é responsável por armazenar dados durante a execução das instruções. O banco consiste em um conjunto de registradores, que oferecem acesso rápido aos dados devido à sua localização direta no processador, por isso desempenha um papel fundamental ao armazenar valores temporários, resultados intermediários e endereços de memória, reduzindo a dependência da memória principal, que é mais lenta. No caso deste projeto, o banco de registradores irá conter 64 registradores e isso pode ser observado na implementação na \autoref{fig:BancoRegistradores}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Imagens/bncReg24.png}
+    \legend{Implementação  em Verilog do Banco de Registradores com 64 unidades de registradores de 32 bits cada}
+    \caption{Fonte: Autor}
+    \label{fig:BancoRegistradores}
+\end{figure}
+
+\subsection{Program Counter}
+Este módulo é responsável por registrar o endereço da instrução atual da memória de instruções, indicando assim qual a instrução deve ser executada. É este módulo que recebe o endereço da próxima instrução para apontar na memória, que pode ser calculado somando mais 1 no endereço atual, ou somando um imediato por instruções do tipo jump. A implementação foi feita seguindo a instrução \autoref{PC}.
+
+\begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagens/PC.png}
+        \legend{Implementação em Verilog do módulo de Program Counter}
+        \caption{Fonte: Autor}
+        \label{fig:PC}
+    \end{figure}
+
+\subsection{Multiplexadores}
+Para que o DataPath seja o mais eficiente possível, algumas conexões são reutilizadas para vários tipos de instruções. Porém, para que isso seja viável, os multiplexadores serão a chave de controle para o funcionamento correto do circuito.
+
+Basicamente, a saída deste dispositivo depende de um sinal de controle emitido pela Unidade de Controle do processador, assim moderando o caminho dos sinais por entre os módulos. Com isso, é possível otimizar o uso de várias entradas do circuito e garantir que os dados sigam o caminho correto entre os componentes do esquemático.
+
+Na \autoref{fig:MyDevice}, é possível notar que existem nove multiplexadores, estes recebendo os seguintes sinais da Unidade de Controle:
+
+\begin{itemize}
+    \item RegDst: Esse sinal seleciona qual será o endereço de "Registrador Destino", o qual armazenará o resultado da operação. As opções seriam duas, que se encontram na instrução. O endereço pode ser de um registrador que também será lido para buscar um dado que será utilizado na mesma instrução operação, ou um terceiro endereço referindo a outro registrador que não será lido.
+    A implementação em Verilog deste multiplexador pode ser observado na \autoref{fig:MuxRDst}.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagens/MuxRDst.png}
+        \legend{Implementação em Verilog do Multiplexador do sinal de controle do endereço de registrador destino}
+        \caption{Fonte: Autor}
+        \label{fig:MuxRDst}
+    \end{figure}
+    
+    \item JAL: Este sinal já é responsável por selecionar o último  endereço do banco de registradores, o qual foi definido especificamente para armazenar o endereço de instrução atual para a instrução de Jump and Link. A implementação desta etapa pode ser verificada na \autoref{fig:MuxJal}. Contudo, a implementação dessa instrução requer também uma forma de arquivar o valor do endereço atual neste registrador selecionado. Essa outra etapa, é controlada por outro multiplexador, que pode ter sua implementação verificada na \autoref{fig:MuxJalWrite}.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagens/MuxJal.png}
+        \legend{Implementação em Verilog do Multiplexador do sinal de controle da instrução Jump and Link}
+        \caption{Fonte: Autor}
+        \label{fig:MuxJal}
+    \end{figure}
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagens/MuxJalWrite.png}
+        \legend{Implementação em Verilog do Multiplexador do sinal de controle da instrução Jump and Link para armazenamento do endereço atual}
+        \caption{Fonte: Autor}
+        \label{fig:MuxJalWrite}
+    \end{figure}
+    
+    \item ALUsrc: Este sinal se refere a fonte dos dados que serão utilizados pela ULA no processamento lógico/aritmético, assim como é possível ver na \autoref{fig:MuxAlu}. A fonte pode ser um valor imediato vindo da instrução ou de um registrador lido anteriormente.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagens/MuxAluSrc.png}
+        \legend{Implementação  em Verilog do Multiplexador do sinal de controle do dado de entrada da ULA}
+        \caption{Fonte: Autor}
+        \label{fig:MuxAlu}
+    \end{figure}
+    
+    \item Jump: Quando uma instrução do tipo jump altera o endereço da próxima instrução, esse sinal é responsável por alterar o caminho do endereço certo para o PC apontar para a instrução certa.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagens/MuxJump.png}
+        \legend{Implementação  em Verilog do Multiplexador do sinal de controle Jump}
+        \caption{Fonte: Autor}
+        \label{fig:MuxJ}
+    \end{figure}
+        
+    \item Branch (BNE e BEQ): O sinal Branch é bem semelhante ao Jump, porém ele altera o endereço apenas em um resultado condicional da ULA, nas instruções de Branch-Equal ou Branch-not-equal. Estes sendo definidos na implementação da ULA na \autoref{fig:ULA_24}. O multiplexador altera a seleção entre as opções de endereço a partir de um sinal chamado "Zero" vindo da ULA.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagens/MuxBranch.png}
+        \legend{Implementação  em Verilog do Multiplexador do sinal de controle Zero para a instrução BEQ e BNE}
+        \caption{Fonte: Autor}
+        \label{fig:MuxBranch}
+    \end{figure}
+    
+    \item MemToReg: O sinal MemToReg deste multiplexador, o qual tem sua implementação na \autoref{fig:MuxMTR} altera a fonte dos dados que serão escritos em um registrador, sendo fundamental para a instrução Load.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagens/MuxMTR.png}
+        \legend{Implementação  em Verilog do Multiplexador do sinal de controle MemToReg}
+        \caption{Fonte: Autor}
+        \label{fig:MuxMTR}
+    \end{figure}
+    
+    \item JReg: Ao utilizar a instrução Jump Register, o sinal JReg é necessário para selecionar qual endereço de instrução deve retornar ao PC, seguindo a forma da implementação da \autoref{fig:MuxJReg}.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagens/MuxJReg.png}
+        \legend{Implementação  em Verilog do Multiplexador do Jump Register}
+        \caption{Fonte: Autor}
+        \label{fig:MuxJReg}
+    \end{figure}
+    
+\end{itemize}
+
+\subsection{Unidade de Controle}
+A Unidade de Controle é um componente essencial do processador, pois é responsável por interpretar os bits relacionados ao OPCODE das instruções da memória e gerar os sinais de controle que coordenam os multiplexadores e chaves que habilitar ou desabilitam certas funções dos outros módulos. Dessa forma, este módulo define como o processador executará cada operação, garantindo a passagem correta dos dados pelo datapath e, por consequência, a execução correta do programa.
+
+\subsection{Interconexões do Processo}
+Por fim, a última implementação foi a interconexão de todos os módulos, garantindo a construção do datapath em Verilog para o correto caminho dos dados de cada instrução. A implementação segue abaixo:
+
+
+module MIPS_Monociclo(
+    input wire clk,              	  // Clock
+    input wire rst,                   // Reset
+	 input wire enter,					  // Enter
+    input wire [17:0] entrada,        // Entrada de dados
+    output wire [6:0] segmentos1, segmentos2, segmentos3, segmentos4, segmentos5, segmentos6, segmentos7      // Saída para displays de 7 segmentos (5 displays)
+);
+
+    // Declaração de sinais internos
+    wire [31:0] instrucao;            // Instrução da Memória de Instruções
+    wire [31:0] PC, NextPC, SumPC;    // Program Counter e NextPC
+    wire [31:0] readData1, readData2; // Dados lidos do Banco de Registradores para input da ULA
+	 wire [31:0] jJreg;					  // Conexão entre muxes de Jump e JReg
+	 wire [31:0] bJump;					  // Conexão entre Muxes Branch e Jump
+	 wire [31:0] inBULA;					  // Dados lidos do Banco ou imediato para input da ULA
+    wire [31:0] resultULA;            // Resultado da ULA
+    wire [31:0] readDataMem;          // Dados lidos da Memória de Dados
+    wire [31:0] extImm;               // Imediato estendido
+    wire [31:0] nextBranchAddr;       // Próximo endereço para Branch
+	 wire [31:0] mtrJal;					  // Conexão entre muxes MemtoReg e JALWrite
+    wire [5:0] writeReg;              // Registrador de destino
+	 wire [5:0] rdJal;					  // Conexão entre muxes RegDst e JAL
+    wire [31:0] writeData;            // Dados a serem escritos no registrador
+	 wire [31:0] dataJalIn;				  // Dados entre o mux Jal e o módulo de inputs
+    wire [3:0] AluOP;                 // Operação a ser executada pela ULA
+    wire zero;                        // Sinal zero da ULA
+	 wire halt;								  // Sinal de halt vindo da UC
+	 wire enter_filtered;				  // Sinal de enter depois do tratamento de debounce
+    wire memWrite;        			     // Sinais de controle para Memória de Dados
+    wire regWrite, aluSrc, regDst, memToReg, jump, jumpReg, jal, beq, bne, enableOut, enableIn, regRead;
+
+    // Unidade de Controle
+    ControlUnit UC(
+        .opcode(instrucao[31:26]),
+        .RegDst(regDst),              
+        .ALUSrc(aluSrc),              
+        .MemtoReg(memToReg),
+        .RegRead(regRead),                   
+        .RegWrite(regWrite),                      
+        .MemWrite(memWrite),          
+        .BeqMux(beq),                 
+        .BneMux(bne),                 
+        .JumpMux(jump),               
+        .JReg(jumpReg),               
+        .JalMux(jal),
+		  .halt(halt),
+		  .EnableIn(enableIn),
+		  .EnableOut(enableOut),
+        .ALUOp(AluOP)                 
+    );
+	 
+	 Debounce debounce_enter(
+		  .clk(clk),
+		  .btn_in(enter_btn),
+		  .btn_out(enter_filtered)
+	 );
+	 
+	 // Controle do estado do processador: ativo ou halt
+    reg halted;
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            halted <= 1'b0; // Reseta o estado de halt
+        end else if (halt && !enter_filtered) begin
+            halted <= 1'b1; // Entra no estado de halt
+        end else if (enter_filtered) begin
+            halted <= 1'b0; // Sai do halt quando o botão é pressionado
+        end
+    end
+
+    // Program Counter (PC)
+    PC pc(
+        .clk(clk),
+        .rst_btn(rst),
+		  .halt(halt),
+        .NextPC(NextPC),
+        .PC(PC)
+    );
+
+    // Cálculo do próximo endereço do PC com adição
+    Adder adderPC(
+        .a(PC),
+        .b(32'b1),               // Incrementa de 1 para o próximo endereço
+        .sum(SumPC)
+    );
+
+    // Memória de Instruções / ROM
+	 single_port_rom rom(
+		  .addr(PC[9:0]),
+		  .clk(clk),
+		  .q(instrucao)
+	 );
+    
+
+    // Extensão de sinal para imediato
+    ExtensorBits extensor(
+        .In_Imm(instrucao[13:0]),   // Campo imediato da instrução
+        .Out_Imm(extImm)
+    );
+
+    // MUX para selecionar o registrador de destino (RD ou RT)
+    muxRegDst muxRegDst(
+        .RtSrc(instrucao[19:14]),   // RT
+        .RdSrc(instrucao[13:8]),   // RD
+        .RegDst(regDst),
+        .out(rdJal)
+    );
+	 
+	 //MUX para selecionar o registrador de JAL
+	 muxJal muxJal(
+		  .DataDest(rdJal),
+		  .Jal(jal),
+		  .out(writeReg)
+	 );
+	 
+	 // MUX para selecionar o dado a ser escrito para instrução JAL
+	 muxJalWrite(
+		  .ULAsrc(mtrJal),
+		  .ENDsrc(bJump),
+		  .JalWrite(jal),
+		  .out(dataJalIn)
+	 );
+
+    // MUX para selecionar o segundo operando da ULA (registrador ou imediato)
+    muxALUsrc muxALUsrc(
+        .regData(readData2),
+        .imediate(extImm),
+        .Alusrc(aluSrc),
+        .out(inBULA)
+    );
+
+    // Unidade Lógica Aritmética (ULA)
+    ULA ula(
+        .AluOP(AluOP),
+        .bne(bne),
+        .beq(beq),
+        .inA(readData1),
+        .inB(inBULA),
+        .result(resultULA),
+        .zero(zero)
+    );
+
+    // MUX para selecionar o valor a ser escrito no registrador (resultado da ULA ou memória de dados)
+    muxMEMtoReg muxMemToReg(
+        .ulaSrc(resultULA),
+        .memSrc(readDataMem),
+        .MtR(memToReg),
+        .out(mtrJal)
+    );
+
+    // Memória de Dados / RAM
+	 single_port_ram(
+		  .data(readData2),
+		  .addr(resultULA),
+		  .we(memWrite), 
+		  .clk(clk),
+		  .q(readDataMem)
+	 );
+	 
+    // Banco de Registradores
+    BancoRegistradores bancoRegs(
+        .clk(clk),
+        .readEnable(regRead),              // Habilitação de leitura sempre ativa
+        .writeEnable(regWrite),
+        .readRegister1(instrucao[25:20]), // RS
+        .readRegister2(instrucao[19:14]), // RT
+        .writeRegister(writeReg),
+        .writeData(writeData),
+        .readData1(readData1),
+        .readData2(readData2)
+    );
+
+    // Adder para calcular o endereço de Branch (PC + Offset)
+    Adder adderBranch(
+        .a(SumPC),
+        .b(extImm << 2),  // Desloca imediato para o endereço de palavra
+        .sum(nextBranchAddr)
+    );
+
+    // MUX para salto de Branch (escolhe próximo endereço com base no zero da ULA)
+    muxBranch muxBranch(
+        .branch(nextBranchAddr),
+        .nextInstr(SumPC),
+        .Zero(zero),
+        .out(bJump)  
+    );
+	 
+	 // MUX para Instruções JUMP com imediato
+	 muxJump muxJump(
+		.jumpAddress(bJump),
+		.nextInst({SumPC[31:28], instrucao[25:0] << 2}), 
+		.Jump(jump),    
+		.out(jJreg)
+	 );
+	 
+	 // MUX para instruções JumpRegister
+	 muxJReg muxJReg(
+		.RegAddress(readData1),
+		.nextInstr(jJreg),
+		.JReg(jumpReg), 
+		.out(NextPC)
+	 );
+
+    // Módulo de Entrada (para usar dados dos switches da placa FPGA)
+    DataInput dataInput(
+        .switches(entrada),      	// Entrada dos 18 switches
+		  .resultWrite(dataJalIn),    // Entrada alternativa de 32 bits
+		  .EnableIn(enableIn),      	// Sinal de controle da Unidade de Controle
+		  .dataOut(writeData)        	// Saída de 32 bits
+    );
+
+    // Módulo de Saída (exibindo resultados em 5 displays de 7 segmentos)
+    DataOutput dataOutput(
+        .valores(resultULA[31:0]),
+		  .EnableOut(EnableOut),
+		  .clk(clk),
+        .valorDisplay1(segmentos1),
+		  .valorDisplay2(segmentos2),
+		  .valorDisplay3(segmentos3),
+		  .valorDisplay4(segmentos4),
+		  .valorDisplay5(segmentos5), 
+		  .valorDisplay6(segmentos6), 
+		  .valorDisplay7(segmentos7)
+    );
+
+endmodule
+
+
+
+\chapter{Considerações Finais}
+
+O projeto em questão proporciona uma oportunidade de compreender melhor a construção de um processador a partir da definição da arquitetura, formato e conjunto de instruções, bem como o Datapath do processador projetado. Dessa forma, é possível entender os conceitos da Unidade Curricular de Arquitetura e Organização de Computadores por meio da aplicação prática.
+Após a implementação dos módulos em Verilog, foi possível entender de fato o funcionamento de cada parte para a efetividade do processador como um todo, assim melhorando a compreensão do processador e a função individual de cada componente.
+Para os próximos passos, o projeto será testado e implementado na placa FPGA da Intel, para experimentação e conclusão do trabalho ao executar um conjunto de instruções com sucesso.
+
+% ---
+% Finaliza a parte no bookmark do PDF
+% para que se inicie o bookmark na raiz
+% e adiciona espaço de parte no Sumário
+% ---
+\phantompart
+
+
+% ----------------------------------------------------------
+% ELEMENTOS PÓS-TEXTUAIS
+% ----------------------------------------------------------
+\postextual
+
+% ----------------------------------------------------------
+% Referências bibliográficas
+% ----------------------------------------------------------
+\bibliography{referencias}
+
+
+% ----------------------------------------------------------
+% Apêndices
+% ----------------------------------------------------------
+
+% ---
+% Inicia os apêndices
+% ---
+\begin{apendicesenv}
+
+% Imprime uma página indicando o início dos apêndices
+%\partapendices
+
+
+\end{apendicesenv}
+% ---
+
+%---------------------------------------------------------------------
+% INDICE REMISSIVO
+%---------------------------------------------------------------------
+
+\phantompart
+
+\printindex
+
+
+\end{document}
