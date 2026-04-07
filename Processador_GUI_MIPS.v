@@ -31,12 +31,13 @@ module Processador_GUI_MIPS (
     );
 
     /* ======== CAMPOS DA INSTRUÇÃO (MIPS‑Lite) ================= */
-    wire [5:0]  opcode   = instr[31:26];
-    wire [5:0]  fld_hi6  = instr[25:20];  // F1: RS; F2: RD; FI: Reg
-    wire [5:0]  fld_lo6  = instr[19:14];  // F1: RT; F2: RS
-    wire [5:0]  f1_rd    = instr[13:8];   // F1: RD (em F2 estes bits pertencem a Imm)
-    wire [13:0] imm14    = instr[13:0];   // F2: Imm 14b; F1: Imm[13:8]=RD, Imm[7:0]=Shamt
-    wire [25:0] jaddr    = instr[25:0];   // F3: endereço absoluto (word)
+	wire [5:0] opcode = instr[31:26];
+	wire [5:0] rs     = instr[25:20];
+	wire [5:0] rt     = instr[19:14];
+	wire [5:0] rd     = instr[13:8];
+	wire [13:0] imm14 = instr[13:0];
+	wire [25:0] jaddr = instr[25:0];
+	wire [7:0]  shamt = instr[7:0];
 
     /* ========================= UNIDADE DE CONTROLE ======================= */
     wire regDst, aluSrc, memToReg, regWrite, memWrite;
