@@ -1,4 +1,4 @@
 # Quartus generated files
-processadorMipsLite/db/
-processadorMipsLite/output_files/
-processadorMipsLite/incremental_db/
+db/
+output_files/
+incremental_db/
