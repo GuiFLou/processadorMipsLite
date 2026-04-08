@@ -1,5 +1,5 @@
 Analysis & Synthesis report for Processador_GUI_MIPS
-Mon Jul 28 21:15:07 2025
+Tue Apr 07 20:19:54 2026
 Quartus Prime Version 17.1.0 Build 590 10/25/2017 SJ Lite Edition
 
 
@@ -13,27 +13,21 @@ Quartus Prime Version 17.1.0 Build 590 10/25/2017 SJ Lite Edition
   5. Analysis & Synthesis Source Files Read
   6. Analysis & Synthesis Resource Usage Summary
   7. Analysis & Synthesis Resource Utilization by Entity
-  8. Analysis & Synthesis RAM Summary
-  9. Analysis & Synthesis DSP Block Usage Summary
- 10. Registers Removed During Synthesis
- 11. General Register Statistics
- 12. Registers Packed Into Inferred Megafunctions
- 13. Multiplexer Restructuring Statistics (Restructuring Performed)
- 14. Source assignments for single_port_rom:ROM|altsyncram:rom_rtl_0|altsyncram_ec91:auto_generated
- 15. Parameter Settings for User Entity Instance: single_port_rom:ROM
- 16. Parameter Settings for User Entity Instance: sign_extend:SE
- 17. Parameter Settings for User Entity Instance: regfile64:RF
- 18. Parameter Settings for User Entity Instance: data_ram:DRAM
- 19. Parameter Settings for Inferred Entity Instance: single_port_rom:ROM|altsyncram:rom_rtl_0
- 20. Parameter Settings for Inferred Entity Instance: alu:ALU|lpm_mult:Mult0
- 21. Parameter Settings for Inferred Entity Instance: alu:ALU|lpm_divide:Div0
- 22. altsyncram Parameter Settings by Entity Instance
- 23. lpm_mult Parameter Settings by Entity Instance
- 24. Port Connectivity Checks: "data_ram:DRAM"
- 25. Port Connectivity Checks: "regfile64:RF"
- 26. Post-Synthesis Netlist Statistics for Top Partition
- 27. Elapsed Time Per Partition
- 28. Analysis & Synthesis Messages
+  8. Analysis & Synthesis DSP Block Usage Summary
+  9. Registers Removed During Synthesis
+ 10. General Register Statistics
+ 11. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 12. Parameter Settings for User Entity Instance: single_port_rom:ROM
+ 13. Parameter Settings for User Entity Instance: sign_extend:SE
+ 14. Parameter Settings for User Entity Instance: regfile64:RF
+ 15. Parameter Settings for User Entity Instance: data_ram:DRAM
+ 16. Parameter Settings for Inferred Entity Instance: alu:ALU|lpm_mult:Mult0
+ 17. Parameter Settings for Inferred Entity Instance: alu:ALU|lpm_divide:Div0
+ 18. lpm_mult Parameter Settings by Entity Instance
+ 19. Port Connectivity Checks: "data_ram:DRAM"
+ 20. Post-Synthesis Netlist Statistics for Top Partition
+ 21. Elapsed Time Per Partition
+ 22. Analysis & Synthesis Messages
 
 
 
@@ -59,18 +53,18 @@ refer to the applicable agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Mon Jul 28 21:15:06 2025       ;
+; Analysis & Synthesis Status        ; Successful - Tue Apr 07 20:19:54 2026       ;
 ; Quartus Prime Version              ; 17.1.0 Build 590 10/25/2017 SJ Lite Edition ;
 ; Revision Name                      ; Processador_GUI_MIPS                        ;
 ; Top-level Entity Name              ; Processador_GUI_MIPS                        ;
 ; Family                             ; Cyclone IV E                                ;
-; Total logic elements               ; 60,126                                      ;
-;     Total combinational functions  ; 26,430                                      ;
-;     Dedicated logic registers      ; 33,792                                      ;
-; Total registers                    ; 33792                                       ;
+; Total logic elements               ; 62,810                                      ;
+;     Total combinational functions  ; 28,100                                      ;
+;     Dedicated logic registers      ; 34,816                                      ;
+; Total registers                    ; 34816                                       ;
 ; Total pins                         ; 83                                          ;
 ; Total virtual pins                 ; 0                                           ;
-; Total memory bits                  ; 32,768                                      ;
+; Total memory bits                  ; 0                                           ;
 ; Embedded Multiplier 9-bit elements ; 6                                           ;
 ; Total PLLs                         ; 0                                           ;
 +------------------------------------+---------------------------------------------+
@@ -167,61 +161,54 @@ refer to the applicable agreement for further details.
 +----------------------------+-------------+
 ; Processors                 ; Number      ;
 +----------------------------+-------------+
-; Number detected on machine ; 12          ;
-; Maximum allowed            ; 6           ;
+; Number detected on machine ; 16          ;
+; Maximum allowed            ; 16          ;
 ;                            ;             ;
 ; Average used               ; 1.01        ;
-; Maximum used               ; 6           ;
+; Maximum used               ; 16          ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;   0.2%      ;
-;     Processor 3            ;   0.2%      ;
-;     Processor 4            ;   0.2%      ;
-;     Processor 5            ;   0.2%      ;
+;     Processor 2            ;   0.1%      ;
+;     Processor 3            ;   0.1%      ;
+;     Processor 4            ;   0.1%      ;
+;     Processor 5            ;   0.1%      ;
 ;     Processor 6            ;   0.1%      ;
+;     Processor 7            ;   0.1%      ;
+;     Processor 8            ;   0.1%      ;
+;     Processors 9-16        ;   0.1%      ;
 +----------------------------+-------------+
 
 
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Source Files Read                                                                                                                                                                                                                              ;
-+---------------------------------------------------------------+-----------------+-------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------+---------+
-; File Name with User-Entered Path                              ; Used in Netlist ; File Type                                             ; File Name with Absolute Path                                                                                    ; Library ;
-+---------------------------------------------------------------+-----------------+-------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------+---------+
-; hex7seg.v                                                     ; yes             ; User Verilog HDL File                                 ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/hex7seg.v                                                     ;         ;
-; single_port_rom.v                                             ; yes             ; User Verilog HDL File                                 ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/single_port_rom.v                                             ;         ;
-; Processador_GUI_MIPS.v                                        ; yes             ; User Verilog HDL File                                 ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v                                        ;         ;
-; regfile64.v                                                   ; yes             ; User Verilog HDL File                                 ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/regfile64.v                                                   ;         ;
-; data_ram.v                                                    ; yes             ; User Verilog HDL File                                 ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/data_ram.v                                                    ;         ;
-; sign_extend.v                                                 ; yes             ; User Verilog HDL File                                 ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/sign_extend.v                                                 ;         ;
-; alu.v                                                         ; yes             ; User Verilog HDL File                                 ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/alu.v                                                         ;         ;
-; control_unit.v                                                ; yes             ; User Verilog HDL File                                 ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/control_unit.v                                                ;         ;
-; altsyncram.tdf                                                ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/altsyncram.tdf                                 ;         ;
-; stratix_ram_block.inc                                         ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/stratix_ram_block.inc                          ;         ;
-; lpm_mux.inc                                                   ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/lpm_mux.inc                                    ;         ;
-; lpm_decode.inc                                                ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/lpm_decode.inc                                 ;         ;
-; aglobal171.inc                                                ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/aglobal171.inc                                 ;         ;
-; a_rdenreg.inc                                                 ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/a_rdenreg.inc                                  ;         ;
-; altrom.inc                                                    ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/altrom.inc                                     ;         ;
-; altram.inc                                                    ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/altram.inc                                     ;         ;
-; altdpram.inc                                                  ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/altdpram.inc                                   ;         ;
-; db/altsyncram_ec91.tdf                                        ; yes             ; Auto-Generated Megafunction                           ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/altsyncram_ec91.tdf                                        ;         ;
-; db/Processador_GUI_MIPS.ram0_single_port_rom_8cb1eed8.hdl.mif ; yes             ; Auto-Generated Auto-Found Memory Initialization File  ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/Processador_GUI_MIPS.ram0_single_port_rom_8cb1eed8.hdl.mif ;         ;
-; lpm_mult.tdf                                                  ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/lpm_mult.tdf                                   ;         ;
-; lpm_add_sub.inc                                               ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/lpm_add_sub.inc                                ;         ;
-; multcore.inc                                                  ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/multcore.inc                                   ;         ;
-; bypassff.inc                                                  ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/bypassff.inc                                   ;         ;
-; altshift.inc                                                  ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/altshift.inc                                   ;         ;
-; db/mult_7dt.tdf                                               ; yes             ; Auto-Generated Megafunction                           ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/mult_7dt.tdf                                               ;         ;
-; lpm_divide.tdf                                                ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/lpm_divide.tdf                                 ;         ;
-; abs_divider.inc                                               ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/abs_divider.inc                                ;         ;
-; sign_div_unsign.inc                                           ; yes             ; Megafunction                                          ; d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/sign_div_unsign.inc                            ;         ;
-; db/lpm_divide_hkm.tdf                                         ; yes             ; Auto-Generated Megafunction                           ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/lpm_divide_hkm.tdf                                         ;         ;
-; db/sign_div_unsign_9nh.tdf                                    ; yes             ; Auto-Generated Megafunction                           ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/sign_div_unsign_9nh.tdf                                    ;         ;
-; db/alt_u_div_6af.tdf                                          ; yes             ; Auto-Generated Megafunction                           ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/alt_u_div_6af.tdf                                          ;         ;
-; db/add_sub_7pc.tdf                                            ; yes             ; Auto-Generated Megafunction                           ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/add_sub_7pc.tdf                                            ;         ;
-; db/add_sub_8pc.tdf                                            ; yes             ; Auto-Generated Megafunction                           ; C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/add_sub_8pc.tdf                                            ;         ;
-+---------------------------------------------------------------+-----------------+-------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------+---------+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                                                    ;
++----------------------------------+-----------------+------------------------------+-------------------------------------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                                                                ; Library ;
++----------------------------------+-----------------+------------------------------+-------------------------------------------------------------------------------------------------------------+---------+
+; hex7seg.v                        ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/hex7seg.v                  ;         ;
+; single_port_rom.v                ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v          ;         ;
+; Processador_GUI_MIPS.v           ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v     ;         ;
+; regfile64.v                      ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/regfile64.v                ;         ;
+; data_ram.v                       ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/data_ram.v                 ;         ;
+; sign_extend.v                    ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/sign_extend.v              ;         ;
+; alu.v                            ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v                      ;         ;
+; control_unit.v                   ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/control_unit.v             ;         ;
+; lpm_mult.tdf                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/lpm_mult.tdf                                         ;         ;
+; aglobal171.inc                   ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/aglobal171.inc                                       ;         ;
+; lpm_add_sub.inc                  ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/lpm_add_sub.inc                                      ;         ;
+; multcore.inc                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/multcore.inc                                         ;         ;
+; bypassff.inc                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/bypassff.inc                                         ;         ;
+; altshift.inc                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/altshift.inc                                         ;         ;
+; db/mult_7dt.tdf                  ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/mult_7dt.tdf            ;         ;
+; lpm_divide.tdf                   ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/lpm_divide.tdf                                       ;         ;
+; abs_divider.inc                  ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/abs_divider.inc                                      ;         ;
+; sign_div_unsign.inc              ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/sign_div_unsign.inc                                  ;         ;
+; db/lpm_divide_hkm.tdf            ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/lpm_divide_hkm.tdf      ;         ;
+; db/sign_div_unsign_9nh.tdf       ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/sign_div_unsign_9nh.tdf ;         ;
+; db/alt_u_div_6af.tdf             ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/alt_u_div_6af.tdf       ;         ;
+; db/add_sub_7pc.tdf               ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/add_sub_7pc.tdf         ;         ;
+; db/add_sub_8pc.tdf               ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/add_sub_8pc.tdf         ;         ;
++----------------------------------+-----------------+------------------------------+-------------------------------------------------------------------------------------------------------------+---------+
 
 
 +--------------------------------------------------------------+
@@ -229,31 +216,30 @@ refer to the applicable agreement for further details.
 +---------------------------------------------+----------------+
 ; Resource                                    ; Usage          ;
 +---------------------------------------------+----------------+
-; Estimated Total logic elements              ; 60,126         ;
+; Estimated Total logic elements              ; 62,810         ;
 ;                                             ;                ;
-; Total combinational functions               ; 26430          ;
+; Total combinational functions               ; 28100          ;
 ; Logic element usage by number of LUT inputs ;                ;
-;     -- 4 input functions                    ; 24655          ;
-;     -- 3 input functions                    ; 1057           ;
-;     -- <=2 input functions                  ; 718            ;
+;     -- 4 input functions                    ; 26233          ;
+;     -- 3 input functions                    ; 1730           ;
+;     -- <=2 input functions                  ; 137            ;
 ;                                             ;                ;
 ; Logic elements by mode                      ;                ;
-;     -- normal mode                          ; 25756          ;
-;     -- arithmetic mode                      ; 674            ;
+;     -- normal mode                          ; 27424          ;
+;     -- arithmetic mode                      ; 676            ;
 ;                                             ;                ;
-; Total registers                             ; 33792          ;
-;     -- Dedicated logic registers            ; 33792          ;
+; Total registers                             ; 34816          ;
+;     -- Dedicated logic registers            ; 34816          ;
 ;     -- I/O registers                        ; 0              ;
 ;                                             ;                ;
 ; I/O pins                                    ; 83             ;
-; Total memory bits                           ; 32768          ;
 ;                                             ;                ;
 ; Embedded Multiplier 9-bit elements          ; 6              ;
 ;                                             ;                ;
 ; Maximum fan-out node                        ; CLOCK_50~input ;
-; Maximum fan-out                             ; 33824          ;
-; Total fan-out                               ; 205172         ;
-; Average fan-out                             ; 3.40           ;
+; Maximum fan-out                             ; 34816          ;
+; Total fan-out                               ; 215073         ;
+; Average fan-out                             ; 3.41           ;
 +---------------------------------------------+----------------+
 
 
@@ -262,8 +248,8 @@ refer to the applicable agreement for further details.
 +-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+--------------+
 ; Compilation Hierarchy Node                ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                                                                 ; Entity Name          ; Library Name ;
 +-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+--------------+
-; |Processador_GUI_MIPS                     ; 26430 (21995)       ; 33792 (32)                ; 32768       ; 6            ; 0       ; 3         ; 83   ; 0            ; |Processador_GUI_MIPS                                                                                                                               ; Processador_GUI_MIPS ; work         ;
-;    |alu:ALU|                              ; 1782 (687)          ; 0 (0)                     ; 0           ; 6            ; 0       ; 3         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU                                                                                                                       ; alu                  ; work         ;
+; |Processador_GUI_MIPS                     ; 28100 (22034)       ; 34816 (32)                ; 0           ; 6            ; 0       ; 3         ; 83   ; 0            ; |Processador_GUI_MIPS                                                                                                                               ; Processador_GUI_MIPS ; work         ;
+;    |alu:ALU|                              ; 1800 (705)          ; 0 (0)                     ; 0           ; 6            ; 0       ; 3         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU                                                                                                                       ; alu                  ; work         ;
 ;       |lpm_divide:Div0|                   ; 1067 (0)            ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0                                                                                                       ; lpm_divide           ; work         ;
 ;          |lpm_divide_hkm:auto_generated|  ; 1067 (0)            ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_hkm:auto_generated                                                                         ; lpm_divide_hkm       ; work         ;
 ;             |sign_div_unsign_9nh:divider| ; 1067 (0)            ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_hkm:auto_generated|sign_div_unsign_9nh:divider                                             ; sign_div_unsign_9nh  ; work         ;
@@ -271,29 +257,18 @@ refer to the applicable agreement for further details.
 ;                   |add_sub_8pc:add_sub_1| ; 1 (1)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_hkm:auto_generated|sign_div_unsign_9nh:divider|alt_u_div_6af:divider|add_sub_8pc:add_sub_1 ; add_sub_8pc          ; work         ;
 ;       |lpm_mult:Mult0|                    ; 28 (0)              ; 0 (0)                     ; 0           ; 6            ; 0       ; 3         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_mult:Mult0                                                                                                        ; lpm_mult             ; work         ;
 ;          |mult_7dt:auto_generated|        ; 28 (28)             ; 0 (0)                     ; 0           ; 6            ; 0       ; 3         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_mult:Mult0|mult_7dt:auto_generated                                                                                ; mult_7dt             ; work         ;
-;    |control_unit:CU|                      ; 27 (27)             ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|control_unit:CU                                                                                                               ; control_unit         ; work         ;
-;    |data_ram:DRAM|                        ; 1111 (1111)         ; 32768 (32768)             ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|data_ram:DRAM                                                                                                                 ; data_ram             ; work         ;
+;    |control_unit:CU|                      ; 22 (22)             ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|control_unit:CU                                                                                                               ; control_unit         ; work         ;
+;    |data_ram:DRAM|                        ; 1090 (1090)         ; 32768 (32768)             ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|data_ram:DRAM                                                                                                                 ; data_ram             ; work         ;
 ;    |hex7seg:h0|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h0                                                                                                                    ; hex7seg              ; work         ;
 ;    |hex7seg:h1|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h1                                                                                                                    ; hex7seg              ; work         ;
 ;    |hex7seg:h2|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h2                                                                                                                    ; hex7seg              ; work         ;
 ;    |hex7seg:h3|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h3                                                                                                                    ; hex7seg              ; work         ;
 ;    |hex7seg:h4|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h4                                                                                                                    ; hex7seg              ; work         ;
 ;    |hex7seg:h5|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h5                                                                                                                    ; hex7seg              ; work         ;
-;    |regfile64:RF|                         ; 1473 (1473)         ; 992 (992)                 ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|regfile64:RF                                                                                                                  ; regfile64            ; work         ;
-;    |single_port_rom:ROM|                  ; 0 (0)               ; 0 (0)                     ; 32768       ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|single_port_rom:ROM                                                                                                           ; single_port_rom      ; work         ;
-;       |altsyncram:rom_rtl_0|              ; 0 (0)               ; 0 (0)                     ; 32768       ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|single_port_rom:ROM|altsyncram:rom_rtl_0                                                                                      ; altsyncram           ; work         ;
-;          |altsyncram_ec91:auto_generated| ; 0 (0)               ; 0 (0)                     ; 32768       ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|single_port_rom:ROM|altsyncram:rom_rtl_0|altsyncram_ec91:auto_generated                                                       ; altsyncram_ec91      ; work         ;
+;    |regfile64:RF|                         ; 2916 (2916)         ; 2016 (2016)               ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|regfile64:RF                                                                                                                  ; regfile64            ; work         ;
+;    |single_port_rom:ROM|                  ; 196 (196)           ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|single_port_rom:ROM                                                                                                           ; single_port_rom      ; work         ;
 +-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
-
-
-+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis RAM Summary                                                                                                                                                                                                     ;
-+------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+-------+---------------------------------------------------------------+
-; Name                                                                               ; Type ; Mode ; Port A Depth ; Port A Width ; Port B Depth ; Port B Width ; Size  ; MIF                                                           ;
-+------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+-------+---------------------------------------------------------------+
-; single_port_rom:ROM|altsyncram:rom_rtl_0|altsyncram_ec91:auto_generated|ALTSYNCRAM ; AUTO ; ROM  ; 1024         ; 32           ; --           ; --           ; 32768 ; db/Processador_GUI_MIPS.ram0_single_port_rom_8cb1eed8.hdl.mif ;
-+------------------------------------------------------------------------------------+------+------+--------------+--------------+--------------+--------------+-------+---------------------------------------------------------------+
 
 
 +-----------------------------------------------------+
@@ -314,1069 +289,45 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 Note: number of Embedded Multiplier Blocks used is only available after a successful fit.
 
 
-+-----------------------------------------------------------------------------------+
-; Registers Removed During Synthesis                                                ;
-+------------------------------------------+----------------------------------------+
-; Register name                            ; Reason for Removal                     ;
-+------------------------------------------+----------------------------------------+
-; regfile64:RF|rf[63][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[63][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[63][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[63][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[63][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[63][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[63][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[63][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[63][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[63][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[63][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[63][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[62][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[62][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[62][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[62][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[62][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[62][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[62][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[62][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[62][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[62][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[62][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[61][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[61][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[61][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[61][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[61][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[61][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[61][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[61][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[61][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[61][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[61][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[60][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[60][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[60][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[60][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[60][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[60][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[60][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[60][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[60][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[60][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[60][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[59][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[59][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[59][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[59][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[59][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[59][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[59][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[59][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[59][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[59][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[59][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[58][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[58][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[58][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[58][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[58][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[58][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[58][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[58][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[58][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[58][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[58][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[57][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[57][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[57][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[57][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[57][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[57][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[57][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[57][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[57][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[57][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[57][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[56][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[56][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[56][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[56][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[56][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[56][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[56][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[56][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[56][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[56][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[56][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[55][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[55][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[55][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[55][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[55][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[55][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[55][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[55][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[55][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[55][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[55][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[54][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[54][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[54][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[54][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[54][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[54][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[54][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[54][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[54][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[54][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[54][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[53][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[53][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[53][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[53][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[53][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[53][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[53][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[53][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[53][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[53][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[53][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[52][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[52][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[52][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[52][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[52][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[52][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[52][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[52][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[52][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[52][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[52][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[51][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[51][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[51][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[51][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[51][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[51][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[51][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[51][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[51][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[51][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[51][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[50][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[50][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[50][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[50][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[50][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[50][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[50][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[50][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[50][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[50][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[50][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[49][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[49][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[49][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[49][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[49][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[49][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[49][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[49][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[49][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[49][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[49][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[48][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[48][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[48][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[48][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[48][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[48][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[48][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[48][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[48][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[48][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[48][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[47][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[47][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[47][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[47][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[47][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[47][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[47][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[47][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[47][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[47][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[47][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[46][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[46][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[46][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[46][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[46][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[46][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[46][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[46][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[46][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[46][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[46][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[45][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[45][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[45][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[45][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[45][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[45][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[45][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[45][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[45][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[45][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[45][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[44][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[44][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[44][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[44][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[44][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[44][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[44][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[44][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[44][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[44][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[44][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[43][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[43][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[43][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[43][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[43][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[43][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[43][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[43][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[43][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[43][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[43][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[42][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[42][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[42][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[42][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[42][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[42][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[42][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[42][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[42][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[42][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[42][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[41][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[41][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[41][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[41][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[41][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[41][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[41][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[41][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[41][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[41][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[41][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[40][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[40][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[40][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[40][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[40][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[40][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[40][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[40][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[40][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[40][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[40][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[39][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[39][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[39][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[39][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[39][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[39][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[39][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[39][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[39][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[39][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[39][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[38][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[38][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[38][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[38][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[38][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[38][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[38][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[38][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[38][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[38][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[38][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[37][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[37][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[37][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[37][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[37][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[37][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[37][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[37][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[37][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[37][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[37][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[36][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[36][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[36][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[36][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[36][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[36][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[36][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[36][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[36][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[36][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[36][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[35][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[35][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[35][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[35][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[35][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[35][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[35][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[35][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[35][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[35][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[35][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[34][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[34][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[34][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[34][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[34][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[34][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[34][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[34][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[34][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[34][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[34][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[33][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[33][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[33][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[33][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[33][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[33][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[33][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[33][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[33][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[33][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[33][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][0]                   ; Lost fanout                            ;
-; regfile64:RF|rf[32][1]                   ; Lost fanout                            ;
-; regfile64:RF|rf[32][2]                   ; Lost fanout                            ;
-; regfile64:RF|rf[32][3]                   ; Lost fanout                            ;
-; regfile64:RF|rf[32][4]                   ; Lost fanout                            ;
-; regfile64:RF|rf[32][5]                   ; Lost fanout                            ;
-; regfile64:RF|rf[32][6]                   ; Lost fanout                            ;
-; regfile64:RF|rf[32][7]                   ; Lost fanout                            ;
-; regfile64:RF|rf[32][8]                   ; Lost fanout                            ;
-; regfile64:RF|rf[32][9]                   ; Lost fanout                            ;
-; regfile64:RF|rf[32][10]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][11]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][12]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][13]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][14]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][15]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][16]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][17]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][18]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][19]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][20]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][21]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][22]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][23]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][24]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][25]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][26]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][27]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][28]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][29]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][30]                  ; Lost fanout                            ;
-; regfile64:RF|rf[32][31]                  ; Lost fanout                            ;
-; regfile64:RF|rf[0][0]                    ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][1]                    ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][2]                    ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][3]                    ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][4]                    ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][5]                    ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][6]                    ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][7]                    ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][8]                    ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][9]                    ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][10]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][11]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][12]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][13]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][14]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][15]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][16]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][17]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][18]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][19]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][20]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][21]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][22]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][23]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][24]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][25]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][26]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][27]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][28]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][29]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][30]                   ; Stuck at GND due to stuck port data_in ;
-; regfile64:RF|rf[0][31]                   ; Stuck at GND due to stuck port data_in ;
-; Total Number of Removed Registers = 1056 ;                                        ;
-+------------------------------------------+----------------------------------------+
++---------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                              ;
++----------------------------------------+----------------------------------------+
+; Register name                          ; Reason for Removal                     ;
++----------------------------------------+----------------------------------------+
+; regfile64:RF|rf[0][0]                  ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][1]                  ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][2]                  ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][3]                  ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][4]                  ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][5]                  ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][6]                  ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][7]                  ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][8]                  ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][9]                  ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][10]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][11]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][12]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][13]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][14]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][15]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][16]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][17]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][18]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][19]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][20]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][21]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][22]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][23]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][24]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][25]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][26]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][27]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][28]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][29]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][30]                 ; Stuck at GND due to stuck port data_in ;
+; regfile64:RF|rf[0][31]                 ; Stuck at GND due to stuck port data_in ;
+; Total Number of Removed Registers = 32 ;                                        ;
++----------------------------------------+----------------------------------------+
 
 
 +------------------------------------------------------+
@@ -1384,23 +335,14 @@ Note: number of Embedded Multiplier Blocks used is only available after a succes
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 33792 ;
+; Total registers                              ; 34816 ;
 ; Number of registers using Synchronous Clear  ; 32    ;
-; Number of registers using Synchronous Load   ; 0     ;
+; Number of registers using Synchronous Load   ; 6     ;
 ; Number of registers using Asynchronous Clear ; 0     ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 33792 ;
+; Number of registers using Clock Enable       ; 34816 ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
-
-
-+------------------------------------------------------------------------+
-; Registers Packed Into Inferred Megafunctions                           ;
-+---------------------------------+-------------------------------+------+
-; Register Name                   ; Megafunction                  ; Type ;
-+---------------------------------+-------------------------------+------+
-; single_port_rom:ROM|data[0..31] ; single_port_rom:ROM|rom_rtl_0 ; RAM  ;
-+---------------------------------+-------------------------------+------+
 
 
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -1408,61 +350,83 @@ Note: number of Embedded Multiplier Blocks used is only available after a succes
 +--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------+
 ; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                    ;
 +--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------+
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[1][26]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[2][29]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[3][4]   ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[4][15]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[5][12]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[6][6]   ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[7][2]   ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[8][6]   ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[9][22]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[10][22] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[11][22] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[12][10] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[13][0]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[14][23] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[32][21] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[16][31] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[48][6]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[8][17]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[40][17] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[24][10] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[56][28] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[4][5]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[36][2]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[20][27] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[52][18] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[12][2]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[44][3]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[28][10] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[60][28] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[2][24]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[34][14] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[18][28] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[50][1]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[10][19] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[42][26] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[26][10] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[58][4]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[6][23]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[38][19] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[22][0]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[54][21] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[14][16] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[46][12] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[30][26] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[62][30] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[1][16]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[33][11] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[17][20] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[49][14] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[9][0]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[41][0]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[25][9]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[57][22] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[5][8]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[37][20] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[21][6]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[53][28] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[13][13] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[45][15] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[29][7]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[61][16] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[3][2]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[35][29] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[19][14] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[51][26] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[11][9]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[43][4]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[27][14] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[59][19] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[7][7]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[39][22] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[23][30] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[55][12] ;
 ; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[15][27] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[16][17] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[17][13] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[18][16] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[19][15] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[20][22] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[21][19] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[22][20] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[23][24] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[24][3]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[25][28] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[26][8]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[27][13] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[28][24] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[29][24] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[30][8]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[31][0]  ;
-; 5:1                ; 4 bits    ; 12 LEs        ; 8 LEs                ; 4 LEs                  ; Yes        ; |Processador_GUI_MIPS|pc[31]                  ;
-; 5:1                ; 2 bits    ; 6 LEs         ; 4 LEs                ; 2 LEs                  ; Yes        ; |Processador_GUI_MIPS|pc[0]                   ;
-; 6:1                ; 26 bits   ; 104 LEs       ; 78 LEs               ; 26 LEs                 ; Yes        ; |Processador_GUI_MIPS|pc[12]                  ;
-; 3:1                ; 5 bits    ; 10 LEs        ; 10 LEs               ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|writeReg[3]             ;
-; 33:1               ; 32 bits   ; 704 LEs       ; 672 LEs              ; 32 LEs                 ; No         ; |Processador_GUI_MIPS|regfile64:RF|rd2[3]     ;
-; 33:1               ; 32 bits   ; 704 LEs       ; 672 LEs              ; 32 LEs                 ; No         ; |Processador_GUI_MIPS|regfile64:RF|rd1[25]    ;
-; 1026:1             ; 32 bits   ; 21888 LEs     ; 21888 LEs            ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|rf_wd[17]               ;
-; 18:1               ; 8 bits    ; 96 LEs        ; 80 LEs               ; 16 LEs                 ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux16           ;
-; 18:1               ; 8 bits    ; 96 LEs        ; 80 LEs               ; 16 LEs                 ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux15           ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[47][10] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[31][17] ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[63][7]  ;
+; 6:1                ; 6 bits    ; 24 LEs        ; 12 LEs               ; 12 LEs                 ; Yes        ; |Processador_GUI_MIPS|pc[29]                  ;
+; 6:1                ; 26 bits   ; 104 LEs       ; 78 LEs               ; 26 LEs                 ; Yes        ; |Processador_GUI_MIPS|pc[15]                  ;
+; 3:1                ; 6 bits    ; 12 LEs        ; 12 LEs               ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|writeReg[2]             ;
+; 65:1               ; 32 bits   ; 1376 LEs      ; 1344 LEs             ; 32 LEs                 ; No         ; |Processador_GUI_MIPS|regfile64:RF|rd2[0]     ;
+; 65:1               ; 32 bits   ; 1376 LEs      ; 1344 LEs             ; 32 LEs                 ; No         ; |Processador_GUI_MIPS|regfile64:RF|rd1[20]    ;
+; 1026:1             ; 32 bits   ; 21888 LEs     ; 21888 LEs            ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|rf_wd[24]               ;
+; 18:1               ; 8 bits    ; 96 LEs        ; 80 LEs               ; 16 LEs                 ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux22           ;
+; 18:1               ; 8 bits    ; 96 LEs        ; 80 LEs               ; 16 LEs                 ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux10           ;
 ; 19:1               ; 4 bits    ; 48 LEs        ; 40 LEs               ; 8 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux24           ;
-; 19:1               ; 4 bits    ; 48 LEs        ; 40 LEs               ; 8 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux4            ;
+; 19:1               ; 4 bits    ; 48 LEs        ; 40 LEs               ; 8 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux6            ;
 ; 20:1               ; 2 bits    ; 26 LEs        ; 16 LEs               ; 10 LEs                 ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux28           ;
 ; 20:1               ; 2 bits    ; 26 LEs        ; 20 LEs               ; 6 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux3            ;
 ; 21:1               ; 2 bits    ; 28 LEs        ; 20 LEs               ; 8 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux1            ;
 +--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------+
-
-
-+------------------------------------------------------------------------------------------------+
-; Source assignments for single_port_rom:ROM|altsyncram:rom_rtl_0|altsyncram_ec91:auto_generated ;
-+---------------------------------+--------------------+------+----------------------------------+
-; Assignment                      ; Value              ; From ; To                               ;
-+---------------------------------+--------------------+------+----------------------------------+
-; OPTIMIZE_POWER_DURING_SYNTHESIS ; NORMAL_COMPILATION ; -    ; -                                ;
-+---------------------------------+--------------------+------+----------------------------------+
 
 
 +------------------------------------------------------------------+
@@ -1482,7 +446,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+-------+------------------------------------+
 ; Parameter Name ; Value ; Type                               ;
 +----------------+-------+------------------------------------+
-; IN_W           ; 16    ; Signed Integer                     ;
+; IN_W           ; 14    ; Signed Integer                     ;
 +----------------+-------+------------------------------------+
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
@@ -1506,67 +470,6 @@ Note: In order to hide this table in the UI and the text report file, please set
 ; DATA_W         ; 32    ; Signed Integer                    ;
 ; ADDR_W         ; 10    ; Signed Integer                    ;
 +----------------+-------+-----------------------------------+
-Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
-
-
-+---------------------------------------------------------------------------------------------------------------------+
-; Parameter Settings for Inferred Entity Instance: single_port_rom:ROM|altsyncram:rom_rtl_0                           ;
-+------------------------------------+---------------------------------------------------------------+----------------+
-; Parameter Name                     ; Value                                                         ; Type           ;
-+------------------------------------+---------------------------------------------------------------+----------------+
-; BYTE_SIZE_BLOCK                    ; 8                                                             ; Untyped        ;
-; AUTO_CARRY_CHAINS                  ; ON                                                            ; AUTO_CARRY     ;
-; IGNORE_CARRY_BUFFERS               ; OFF                                                           ; IGNORE_CARRY   ;
-; AUTO_CASCADE_CHAINS                ; ON                                                            ; AUTO_CASCADE   ;
-; IGNORE_CASCADE_BUFFERS             ; OFF                                                           ; IGNORE_CASCADE ;
-; WIDTH_BYTEENA                      ; 1                                                             ; Untyped        ;
-; OPERATION_MODE                     ; ROM                                                           ; Untyped        ;
-; WIDTH_A                            ; 32                                                            ; Untyped        ;
-; WIDTHAD_A                          ; 10                                                            ; Untyped        ;
-; NUMWORDS_A                         ; 1024                                                          ; Untyped        ;
-; OUTDATA_REG_A                      ; UNREGISTERED                                                  ; Untyped        ;
-; ADDRESS_ACLR_A                     ; NONE                                                          ; Untyped        ;
-; OUTDATA_ACLR_A                     ; NONE                                                          ; Untyped        ;
-; WRCONTROL_ACLR_A                   ; NONE                                                          ; Untyped        ;
-; INDATA_ACLR_A                      ; NONE                                                          ; Untyped        ;
-; BYTEENA_ACLR_A                     ; NONE                                                          ; Untyped        ;
-; WIDTH_B                            ; 1                                                             ; Untyped        ;
-; WIDTHAD_B                          ; 1                                                             ; Untyped        ;
-; NUMWORDS_B                         ; 1                                                             ; Untyped        ;
-; INDATA_REG_B                       ; CLOCK1                                                        ; Untyped        ;
-; WRCONTROL_WRADDRESS_REG_B          ; CLOCK1                                                        ; Untyped        ;
-; RDCONTROL_REG_B                    ; CLOCK1                                                        ; Untyped        ;
-; ADDRESS_REG_B                      ; CLOCK1                                                        ; Untyped        ;
-; OUTDATA_REG_B                      ; UNREGISTERED                                                  ; Untyped        ;
-; BYTEENA_REG_B                      ; CLOCK1                                                        ; Untyped        ;
-; INDATA_ACLR_B                      ; NONE                                                          ; Untyped        ;
-; WRCONTROL_ACLR_B                   ; NONE                                                          ; Untyped        ;
-; ADDRESS_ACLR_B                     ; NONE                                                          ; Untyped        ;
-; OUTDATA_ACLR_B                     ; NONE                                                          ; Untyped        ;
-; RDCONTROL_ACLR_B                   ; NONE                                                          ; Untyped        ;
-; BYTEENA_ACLR_B                     ; NONE                                                          ; Untyped        ;
-; WIDTH_BYTEENA_A                    ; 1                                                             ; Untyped        ;
-; WIDTH_BYTEENA_B                    ; 1                                                             ; Untyped        ;
-; RAM_BLOCK_TYPE                     ; AUTO                                                          ; Untyped        ;
-; BYTE_SIZE                          ; 8                                                             ; Untyped        ;
-; READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                                                     ; Untyped        ;
-; READ_DURING_WRITE_MODE_PORT_A      ; NEW_DATA_NO_NBE_READ                                          ; Untyped        ;
-; READ_DURING_WRITE_MODE_PORT_B      ; NEW_DATA_NO_NBE_READ                                          ; Untyped        ;
-; INIT_FILE                          ; db/Processador_GUI_MIPS.ram0_single_port_rom_8cb1eed8.hdl.mif ; Untyped        ;
-; INIT_FILE_LAYOUT                   ; PORT_A                                                        ; Untyped        ;
-; MAXIMUM_DEPTH                      ; 0                                                             ; Untyped        ;
-; CLOCK_ENABLE_INPUT_A               ; NORMAL                                                        ; Untyped        ;
-; CLOCK_ENABLE_INPUT_B               ; NORMAL                                                        ; Untyped        ;
-; CLOCK_ENABLE_OUTPUT_A              ; NORMAL                                                        ; Untyped        ;
-; CLOCK_ENABLE_OUTPUT_B              ; NORMAL                                                        ; Untyped        ;
-; CLOCK_ENABLE_CORE_A                ; USE_INPUT_CLKEN                                               ; Untyped        ;
-; CLOCK_ENABLE_CORE_B                ; USE_INPUT_CLKEN                                               ; Untyped        ;
-; ENABLE_ECC                         ; FALSE                                                         ; Untyped        ;
-; ECC_PIPELINE_STAGE_ENABLED         ; FALSE                                                         ; Untyped        ;
-; WIDTH_ECCSTATUS                    ; 3                                                             ; Untyped        ;
-; DEVICE_FAMILY                      ; Cyclone IV E                                                  ; Untyped        ;
-; CBXI_PARAMETER                     ; altsyncram_ec91                                               ; Untyped        ;
-+------------------------------------+---------------------------------------------------------------+----------------+
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
@@ -1628,26 +531,6 @@ Note: In order to hide this table in the UI and the text report file, please set
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
-+--------------------------------------------------------------------------------------+
-; altsyncram Parameter Settings by Entity Instance                                     ;
-+-------------------------------------------+------------------------------------------+
-; Name                                      ; Value                                    ;
-+-------------------------------------------+------------------------------------------+
-; Number of entity instances                ; 1                                        ;
-; Entity Instance                           ; single_port_rom:ROM|altsyncram:rom_rtl_0 ;
-;     -- OPERATION_MODE                     ; ROM                                      ;
-;     -- WIDTH_A                            ; 32                                       ;
-;     -- NUMWORDS_A                         ; 1024                                     ;
-;     -- OUTDATA_REG_A                      ; UNREGISTERED                             ;
-;     -- WIDTH_B                            ; 1                                        ;
-;     -- NUMWORDS_B                         ; 1                                        ;
-;     -- ADDRESS_REG_B                      ; CLOCK1                                   ;
-;     -- OUTDATA_REG_B                      ; UNREGISTERED                             ;
-;     -- RAM_BLOCK_TYPE                     ; AUTO                                     ;
-;     -- READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                                ;
-+-------------------------------------------+------------------------------------------+
-
-
 +----------------------------------------------------------------+
 ; lpm_mult Parameter Settings by Entity Instance                 ;
 +---------------------------------------+------------------------+
@@ -1679,42 +562,31 @@ Note: In order to hide this table in the UI and the text report file, please set
 +---------+-------+----------+--------------+
 
 
-+------------------------------------------+
-; Port Connectivity Checks: "regfile64:RF" ;
-+--------+-------+----------+--------------+
-; Port   ; Type  ; Severity ; Details      ;
-+--------+-------+----------+--------------+
-; rs1[5] ; Input ; Info     ; Stuck at GND ;
-; rs2[5] ; Input ; Info     ; Stuck at GND ;
-; rd[5]  ; Input ; Info     ; Stuck at GND ;
-+--------+-------+----------+--------------+
-
-
 +-----------------------------------------------------+
 ; Post-Synthesis Netlist Statistics for Top Partition ;
 +-----------------------+-----------------------------+
 ; Type                  ; Count                       ;
 +-----------------------+-----------------------------+
 ; boundary_port         ; 83                          ;
-; cycloneiii_ff         ; 33792                       ;
-;     ENA               ; 33760                       ;
-;     ENA SCLR          ; 32                          ;
-; cycloneiii_lcell_comb ; 26436                       ;
-;     arith             ; 674                         ;
-;         2 data inputs ; 31                          ;
-;         3 data inputs ; 643                         ;
-;     normal            ; 25762                       ;
+; cycloneiii_ff         ; 34816                       ;
+;     ENA               ; 34784                       ;
+;     ENA SCLR          ; 26                          ;
+;     ENA SCLR SLD      ; 6                           ;
+; cycloneiii_lcell_comb ; 28106                       ;
+;     arith             ; 676                         ;
+;         2 data inputs ; 32                          ;
+;         3 data inputs ; 644                         ;
+;     normal            ; 27430                       ;
 ;         0 data inputs ; 30                          ;
 ;         1 data inputs ; 7                           ;
-;         2 data inputs ; 656                         ;
-;         3 data inputs ; 414                         ;
-;         4 data inputs ; 24655                       ;
+;         2 data inputs ; 74                          ;
+;         3 data inputs ; 1086                        ;
+;         4 data inputs ; 26233                       ;
 ; cycloneiii_mac_mult   ; 3                           ;
 ; cycloneiii_mac_out    ; 3                           ;
-; cycloneiii_ram_block  ; 32                          ;
 ;                       ;                             ;
-; Max LUT depth         ; 133.50                      ;
-; Average LUT depth     ; 60.22                       ;
+; Max LUT depth         ; 149.50                      ;
+; Average LUT depth     ; 69.50                       ;
 +-----------------------+-----------------------------+
 
 
@@ -1723,7 +595,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:04:14     ;
+; Top            ; 00:02:28     ;
 +----------------+--------------+
 
 
@@ -1733,84 +605,58 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 17.1.0 Build 590 10/25/2017 SJ Lite Edition
-    Info: Processing started: Mon Jul 28 21:10:13 2025
+    Info: Processing started: Tue Apr 07 20:17:12 2026
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off Processador_GUI_MIPS -c Processador_GUI_MIPS
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
-Info (20030): Parallel compilation is enabled and will use 6 of the 6 processors detected
+Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
 Info (12021): Found 1 design units, including 1 entities, in source file divisor_freq.v
-    Info (12023): Found entity 1: divisor_Freq File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/divisor_freq.v Line: 1
+    Info (12023): Found entity 1: divisor_Freq File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/divisor_freq.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file debounce.v
-    Info (12023): Found entity 1: Debounce File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/debounce.v Line: 1
+    Info (12023): Found entity 1: Debounce File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/debounce.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file hex7seg.v
-    Info (12023): Found entity 1: hex7seg File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/hex7seg.v Line: 2
+    Info (12023): Found entity 1: hex7seg File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/hex7seg.v Line: 2
 Info (12021): Found 1 design units, including 1 entities, in source file dataoutput.v
-    Info (12023): Found entity 1: DataOutput File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/DataOutput.v Line: 1
+    Info (12023): Found entity 1: DataOutput File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/DataOutput.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file single_port_rom.v
-    Info (12023): Found entity 1: single_port_rom File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/single_port_rom.v Line: 1
+    Info (12023): Found entity 1: single_port_rom File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file processador_gui_mips.v
-    Info (12023): Found entity 1: Processador_GUI_MIPS File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 6
+    Info (12023): Found entity 1: Processador_GUI_MIPS File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 6
 Info (12021): Found 1 design units, including 1 entities, in source file regfile64.v
-    Info (12023): Found entity 1: regfile64 File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/regfile64.v Line: 1
+    Info (12023): Found entity 1: regfile64 File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/regfile64.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file data_ram.v
-    Info (12023): Found entity 1: data_ram File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/data_ram.v Line: 1
+    Info (12023): Found entity 1: data_ram File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/data_ram.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file sign_extend.v
-    Info (12023): Found entity 1: sign_extend File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/sign_extend.v Line: 1
+    Info (12023): Found entity 1: sign_extend File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/sign_extend.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file adder32.v
-    Info (12023): Found entity 1: adder32 File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/adder32.v Line: 1
+    Info (12023): Found entity 1: adder32 File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/adder32.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file alu.v
-    Info (12023): Found entity 1: alu File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/alu.v Line: 2
+    Info (12023): Found entity 1: alu File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 2
 Info (12021): Found 1 design units, including 1 entities, in source file control_unit.v
-    Info (12023): Found entity 1: control_unit File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/control_unit.v Line: 2
+    Info (12023): Found entity 1: control_unit File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/control_unit.v Line: 2
 Info (12021): Found 1 design units, including 1 entities, in source file mux2.v
-    Info (12023): Found entity 1: mux2 File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/mux2.v Line: 1
+    Info (12023): Found entity 1: mux2 File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/mux2.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file tb_control_loadstore.v
-    Info (12023): Found entity 1: tb_control_loadstore File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/tb_control_loadstore.v Line: 2
+    Info (12023): Found entity 1: tb_control_loadstore File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/tb_control_loadstore.v Line: 2
 Info (12127): Elaborating entity "Processador_GUI_MIPS" for the top level hierarchy
-Info (12128): Elaborating entity "single_port_rom" for hierarchy "single_port_rom:ROM" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 31
-Warning (10850): Verilog HDL warning at single_port_rom.v(12): number of words (78) in memory file does not match the number of elements in the address range [0:1023] File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/single_port_rom.v Line: 12
-Warning (10030): Net "rom.data_a" at single_port_rom.v(10) has no driver or initial value, using a default initial value '0' File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/single_port_rom.v Line: 10
-Warning (10030): Net "rom.waddr_a" at single_port_rom.v(10) has no driver or initial value, using a default initial value '0' File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/single_port_rom.v Line: 10
-Warning (10030): Net "rom.we_a" at single_port_rom.v(10) has no driver or initial value, using a default initial value '0' File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/single_port_rom.v Line: 10
-Info (12128): Elaborating entity "control_unit" for hierarchy "control_unit:CU" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 53
-Warning (10270): Verilog HDL Case Statement warning at control_unit.v(23): incomplete case statement has no default case item File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/control_unit.v Line: 23
-Info (12128): Elaborating entity "sign_extend" for hierarchy "sign_extend:SE" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 58
-Info (12128): Elaborating entity "regfile64" for hierarchy "regfile64:RF" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 75
-Info (12128): Elaborating entity "alu" for hierarchy "alu:ALU" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 81
-Info (12128): Elaborating entity "data_ram" for hierarchy "data_ram:DRAM" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 92
-Info (12128): Elaborating entity "hex7seg" for hierarchy "hex7seg:h0" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 120
-Info (19000): Inferred 1 megafunctions from design logic
-    Info (276029): Inferred altsyncram megafunction from the following design logic: "single_port_rom:ROM|rom_rtl_0" 
-        Info (286033): Parameter OPERATION_MODE set to ROM
-        Info (286033): Parameter WIDTH_A set to 32
-        Info (286033): Parameter WIDTHAD_A set to 10
-        Info (286033): Parameter NUMWORDS_A set to 1024
-        Info (286033): Parameter OUTDATA_REG_A set to UNREGISTERED
-        Info (286033): Parameter ADDRESS_ACLR_A set to NONE
-        Info (286033): Parameter OUTDATA_ACLR_A set to NONE
-        Info (286033): Parameter INDATA_ACLR_A set to NONE
-        Info (286033): Parameter WRCONTROL_ACLR_A set to NONE
-        Info (286033): Parameter INIT_FILE set to db/Processador_GUI_MIPS.ram0_single_port_rom_8cb1eed8.hdl.mif
+Warning (10036): Verilog HDL or VHDL warning at Processador_GUI_MIPS.v(40): object "shamt" assigned a value but never read File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 40
+Info (12128): Elaborating entity "single_port_rom" for hierarchy "single_port_rom:ROM" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 31
+Warning (10850): Verilog HDL warning at single_port_rom.v(12): number of words (78) in memory file does not match the number of elements in the address range [0:1023] File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v Line: 12
+Warning (10030): Net "rom.data_a" at single_port_rom.v(10) has no driver or initial value, using a default initial value '0' File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v Line: 10
+Warning (10030): Net "rom.waddr_a" at single_port_rom.v(10) has no driver or initial value, using a default initial value '0' File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v Line: 10
+Warning (10030): Net "rom.we_a" at single_port_rom.v(10) has no driver or initial value, using a default initial value '0' File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v Line: 10
+Info (12128): Elaborating entity "control_unit" for hierarchy "control_unit:CU" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 54
+Warning (10270): Verilog HDL Case Statement warning at control_unit.v(23): incomplete case statement has no default case item File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/control_unit.v Line: 23
+Info (12128): Elaborating entity "sign_extend" for hierarchy "sign_extend:SE" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 59
+Info (12128): Elaborating entity "regfile64" for hierarchy "regfile64:RF" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 77
+Info (12128): Elaborating entity "alu" for hierarchy "alu:ALU" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 83
+Info (12128): Elaborating entity "data_ram" for hierarchy "data_ram:DRAM" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 94
+Info (12128): Elaborating entity "hex7seg" for hierarchy "hex7seg:h0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 122
+Warning (127007): Memory Initialization File or Hexadecimal (Intel-Format) File "C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/Processador_GUI_MIPS.ram0_single_port_rom_8cb1eed8.hdl.mif" contains "don't care" values -- overwriting them with 0s
 Info (278001): Inferred 2 megafunctions from design logic
-    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "alu:ALU|Mult0" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/alu.v Line: 19
-    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "alu:ALU|Div0" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/alu.v Line: 20
-Info (12130): Elaborated megafunction instantiation "single_port_rom:ROM|altsyncram:rom_rtl_0"
-Info (12133): Instantiated megafunction "single_port_rom:ROM|altsyncram:rom_rtl_0" with the following parameter:
-    Info (12134): Parameter "OPERATION_MODE" = "ROM"
-    Info (12134): Parameter "WIDTH_A" = "32"
-    Info (12134): Parameter "WIDTHAD_A" = "10"
-    Info (12134): Parameter "NUMWORDS_A" = "1024"
-    Info (12134): Parameter "OUTDATA_REG_A" = "UNREGISTERED"
-    Info (12134): Parameter "ADDRESS_ACLR_A" = "NONE"
-    Info (12134): Parameter "OUTDATA_ACLR_A" = "NONE"
-    Info (12134): Parameter "INDATA_ACLR_A" = "NONE"
-    Info (12134): Parameter "WRCONTROL_ACLR_A" = "NONE"
-    Info (12134): Parameter "INIT_FILE" = "db/Processador_GUI_MIPS.ram0_single_port_rom_8cb1eed8.hdl.mif"
-Info (12021): Found 1 design units, including 1 entities, in source file db/altsyncram_ec91.tdf
-    Info (12023): Found entity 1: altsyncram_ec91 File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/altsyncram_ec91.tdf Line: 27
-Warning (127007): Memory Initialization File or Hexadecimal (Intel-Format) File "C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/Processador_GUI_MIPS.ram0_single_port_rom_8cb1eed8.hdl.mif" contains "don't care" values -- overwriting them with 0s File: d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/altsyncram.tdf Line: 791
-Warning (127007): Memory Initialization File or Hexadecimal (Intel-Format) File "C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/Processador_GUI_MIPS.ram0_single_port_rom_8cb1eed8.hdl.mif" contains "don't care" values -- overwriting them with 0s File: d:/programs/intelfpga/nova pasta/quartus/libraries/megafunctions/altsyncram.tdf Line: 791
-Info (12130): Elaborated megafunction instantiation "alu:ALU|lpm_mult:Mult0" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/alu.v Line: 19
-Info (12133): Instantiated megafunction "alu:ALU|lpm_mult:Mult0" with the following parameter: File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/alu.v Line: 19
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "alu:ALU|Mult0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 19
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "alu:ALU|Div0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 20
+Info (12130): Elaborated megafunction instantiation "alu:ALU|lpm_mult:Mult0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 19
+Info (12133): Instantiated megafunction "alu:ALU|lpm_mult:Mult0" with the following parameter: File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 19
     Info (12134): Parameter "LPM_WIDTHA" = "32"
     Info (12134): Parameter "LPM_WIDTHB" = "32"
     Info (12134): Parameter "LPM_WIDTHP" = "64"
@@ -1821,65 +667,63 @@ Info (12133): Instantiated megafunction "alu:ALU|lpm_mult:Mult0" with the follow
     Info (12134): Parameter "INPUT_B_IS_CONSTANT" = "NO"
     Info (12134): Parameter "MAXIMIZE_SPEED" = "5"
 Info (12021): Found 1 design units, including 1 entities, in source file db/mult_7dt.tdf
-    Info (12023): Found entity 1: mult_7dt File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/mult_7dt.tdf Line: 30
-Info (12130): Elaborated megafunction instantiation "alu:ALU|lpm_divide:Div0" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/alu.v Line: 20
-Info (12133): Instantiated megafunction "alu:ALU|lpm_divide:Div0" with the following parameter: File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/alu.v Line: 20
+    Info (12023): Found entity 1: mult_7dt File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/mult_7dt.tdf Line: 30
+Info (12130): Elaborated megafunction instantiation "alu:ALU|lpm_divide:Div0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 20
+Info (12133): Instantiated megafunction "alu:ALU|lpm_divide:Div0" with the following parameter: File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 20
     Info (12134): Parameter "LPM_WIDTHN" = "32"
     Info (12134): Parameter "LPM_WIDTHD" = "32"
     Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
     Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
 Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_hkm.tdf
-    Info (12023): Found entity 1: lpm_divide_hkm File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/lpm_divide_hkm.tdf Line: 24
+    Info (12023): Found entity 1: lpm_divide_hkm File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/lpm_divide_hkm.tdf Line: 24
 Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_9nh.tdf
-    Info (12023): Found entity 1: sign_div_unsign_9nh File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/sign_div_unsign_9nh.tdf Line: 24
+    Info (12023): Found entity 1: sign_div_unsign_9nh File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/sign_div_unsign_9nh.tdf Line: 24
 Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_6af.tdf
-    Info (12023): Found entity 1: alt_u_div_6af File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/alt_u_div_6af.tdf Line: 26
+    Info (12023): Found entity 1: alt_u_div_6af File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/alt_u_div_6af.tdf Line: 26
 Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_7pc.tdf
-    Info (12023): Found entity 1: add_sub_7pc File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/add_sub_7pc.tdf Line: 22
+    Info (12023): Found entity 1: add_sub_7pc File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/add_sub_7pc.tdf Line: 22
 Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_8pc.tdf
-    Info (12023): Found entity 1: add_sub_8pc File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/add_sub_8pc.tdf Line: 22
+    Info (12023): Found entity 1: add_sub_8pc File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/add_sub_8pc.tdf Line: 22
 Warning (14284): Synthesized away the following node(s):
     Warning (14285): Synthesized away the following DSP element node(s):
-        Warning (14320): Synthesized away node "alu:ALU|lpm_mult:Mult0|mult_7dt:auto_generated|mac_mult7" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/mult_7dt.tdf Line: 66
-        Warning (14320): Synthesized away node "alu:ALU|lpm_mult:Mult0|mult_7dt:auto_generated|mac_out8" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/db/mult_7dt.tdf Line: 90
+        Warning (14320): Synthesized away node "alu:ALU|lpm_mult:Mult0|mult_7dt:auto_generated|mac_mult7" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/mult_7dt.tdf Line: 66
+        Warning (14320): Synthesized away node "alu:ALU|lpm_mult:Mult0|mult_7dt:auto_generated|mac_out8" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/mult_7dt.tdf Line: 90
 Info (13014): Ignored 84 buffer(s)
     Info (13019): Ignored 84 SOFT buffer(s)
 Info (286030): Timing-Driven Synthesis is running
-Info (17049): 1024 registers lost all their fanouts during netlist optimizations.
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
 Warning (21074): Design contains 21 input pin(s) that do not drive logic
-    Warning (15610): No output dependent on input pin "SW[0]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[1]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[2]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[3]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[4]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[5]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[6]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[7]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[8]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[9]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[10]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[11]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[12]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[13]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[14]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[15]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[16]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[17]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "KEY[1]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 9
-    Warning (15610): No output dependent on input pin "KEY[2]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 9
-    Warning (15610): No output dependent on input pin "KEY[3]" File: C:/Users/usuario/Desktop/Projeto Final/Nova pasta/Processador_GUI_MIPS.v Line: 9
-Info (21057): Implemented 60311 device resources after synthesis - the final resource count might be different
+    Warning (15610): No output dependent on input pin "SW[0]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[1]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[2]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[3]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[4]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[5]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[6]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[7]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[8]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[9]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[10]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[11]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[12]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[13]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[14]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[15]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[16]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "SW[17]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
+    Warning (15610): No output dependent on input pin "KEY[1]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 9
+    Warning (15610): No output dependent on input pin "KEY[2]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 9
+    Warning (15610): No output dependent on input pin "KEY[3]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 9
+Info (21057): Implemented 62963 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 23 input pins
     Info (21059): Implemented 60 output pins
-    Info (21061): Implemented 60190 logic cells
-    Info (21064): Implemented 32 RAM segments
+    Info (21061): Implemented 62874 logic cells
     Info (21062): Implemented 6 DSP elements
 Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 34 warnings
-    Info: Peak virtual memory: 5081 megabytes
-    Info: Processing ended: Mon Jul 28 21:15:07 2025
-    Info: Elapsed time: 00:04:54
-    Info: Total CPU time (on all processors): 00:04:15
+    Info: Peak virtual memory: 5225 megabytes
+    Info: Processing ended: Tue Apr 07 20:19:54 2026
+    Info: Elapsed time: 00:02:42
+    Info: Total CPU time (on all processors): 00:02:49
 
 
