@@ -1,5 +1,5 @@
 Flow report for Processador_GUI_MIPS
-Tue Apr 07 20:19:54 2026
+Tue Apr 07 21:12:44 2026
 Quartus Prime Version 17.1.0 Build 590 10/25/2017 SJ Lite Edition
 
 
@@ -40,7 +40,7 @@ refer to the applicable agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Flow Summary                                                                     ;
 +------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Tue Apr 07 20:19:54 2026       ;
+; Flow Status                        ; Successful - Tue Apr 07 21:12:44 2026       ;
 ; Quartus Prime Version              ; 17.1.0 Build 590 10/25/2017 SJ Lite Edition ;
 ; Revision Name                      ; Processador_GUI_MIPS                        ;
 ; Top-level Entity Name              ; Processador_GUI_MIPS                        ;
@@ -64,7 +64,7 @@ refer to the applicable agreement for further details.
 +-------------------+----------------------+
 ; Option            ; Setting              ;
 +-------------------+----------------------+
-; Start date & time ; 04/07/2026 20:17:12  ;
+; Start date & time ; 04/07/2026 21:09:02  ;
 ; Main task         ; Compilation          ;
 ; Revision Name     ; Processador_GUI_MIPS ;
 +-------------------+----------------------+
@@ -75,7 +75,7 @@ refer to the applicable agreement for further details.
 +-------------------------------------+----------------------------------------+---------------+-------------+-----------------------------------+
 ; Assignment Name                     ; Value                                  ; Default Value ; Entity Name ; Section Id                        ;
 +-------------------------------------+----------------------------------------+---------------+-------------+-----------------------------------+
-; COMPILER_SIGNATURE_ID               ; 2543494083387.177560383202984          ; --            ; --          ; --                                ;
+; COMPILER_SIGNATURE_ID               ; 2543494083387.177560694123496          ; --            ; --          ; --                                ;
 ; EDA_GENERATE_FUNCTIONAL_NETLIST     ; Off                                    ; --            ; --          ; eda_board_design_timing           ;
 ; EDA_GENERATE_FUNCTIONAL_NETLIST     ; Off                                    ; --            ; --          ; eda_board_design_boundary_scan    ;
 ; EDA_GENERATE_FUNCTIONAL_NETLIST     ; Off                                    ; --            ; --          ; eda_board_design_signal_integrity ;
@@ -96,8 +96,8 @@ refer to the applicable agreement for further details.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:02:38     ; 1.0                     ; 5225 MB             ; 00:02:45                           ;
-; Total                ; 00:02:38     ; --                      ; --                  ; 00:02:45                           ;
+; Analysis & Synthesis ; 00:03:37     ; 1.0                     ; 5219 MB             ; 00:03:35                           ;
+; Total                ; 00:03:37     ; --                      ; --                  ; 00:03:35                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
