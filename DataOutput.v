@@ -9,11 +9,11 @@ module DataOutput
     always @(posedge clk)
         v_reg <= value;     // sem EnableOut
 
-    Hex7Seg h0 (.nibble(v_reg[ 3: 0]), .seg(HEX0));
-    Hex7Seg h1 (.nibble(v_reg[ 7: 4]), .seg(HEX1));
-    Hex7Seg h2 (.nibble(v_reg[11: 8]), .seg(HEX2));
-    Hex7Seg h3 (.nibble(v_reg[15:12]), .seg(HEX3));
-    Hex7Seg h4 (.nibble(v_reg[19:16]), .seg(HEX4));
-    Hex7Seg h5 (.nibble(v_reg[23:20]), .seg(HEX5));
-    Hex7Seg h6 (.nibble(v_reg[27:24]), .seg(HEX6));
+    hex7seg h0 (.hex(v_reg[ 3: 0]), .seg(HEX0));
+    hex7seg h1 (.hex(v_reg[ 7: 4]), .seg(HEX1));
+    hex7seg h2 (.hex(v_reg[11: 8]), .seg(HEX2));
+    hex7seg h3 (.hex(v_reg[15:12]), .seg(HEX3));
+    hex7seg h4 (.hex(v_reg[19:16]), .seg(HEX4));
+    hex7seg h5 (.hex(v_reg[23:20]), .seg(HEX5));
+    hex7seg h6 (.hex(v_reg[27:24]), .seg(HEX6));
 endmodule

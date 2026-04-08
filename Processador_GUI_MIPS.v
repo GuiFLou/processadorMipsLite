@@ -58,16 +58,12 @@ module Processador_GUI_MIPS (
     wire [31:0] immExt;
     sign_extend #(.IN_W(14)) SE (.in(imm14), .out(immExt));
 
-    // Leituras do banco: F1 → RS=[25:20], RT=[19:14]
-    //   F2 → base/comparação: BEQ/BNE lê RD=[25:20] e RS=[19:14]; demais RS=[19:14]
-    //   SW → endereço em RS, dado em RD | JR → RS em [25:20]
-    wire [5:0] rf_rs1 = regDst                    ? fld_hi6 :
-                        (jr | branchEq | branchNe) ? fld_hi6 :
-                                                     fld_lo6;
-    wire [5:0] rf_rs2 = regDst ? fld_lo6 : (memWrite ? fld_hi6 : fld_lo6);
+    // Leituras do banco: F1 usa RS/RT; F2 usa RS em rt e, em SW/BEQ/BNE, lê também o campo [25:20].
+    wire [5:0] rf_rs1 = (regDst | jr | branchEq | branchNe) ? rs : rt;
+    wire [5:0] rf_rs2 = regDst ? rt : (memWrite ? rs : rt);
 
-    // Destino de escrita: JAL → $ra (31); F1 → RD[13:8]; F2 → RD[25:20]
-    wire [5:0] writeReg = jal ? 6'd31 : (regDst ? f1_rd : fld_hi6);
+    // Destino de escrita: JAL → $ra (31); F1 → RD[13:8]; F2/FI → campo [25:20].
+    wire [5:0] writeReg = jal ? 6'd31 : (regDst ? rd : rs);
 
     regfile64 RF (
         .clk (CLOCK_50), .rst(rst),
@@ -90,7 +86,7 @@ module Processador_GUI_MIPS (
     wire [31:0] data_rd;
     data_ram DRAM (
         .clk     (CLOCK_50),
-        .addr_a  (alu_y[11:2]),
+        .addr_a  (alu_y[9:0]),
         .wdata_a (rf_b),
         .rdata_a (data_rd),
         .we_a    (memWrite),
@@ -104,9 +100,9 @@ module Processador_GUI_MIPS (
     /* ========================= LÓGICA DE DESVIO ========================== */
     wire        branch_taken = (branchEq &&  alu_zero) ||
                                (branchNe && ~alu_zero);
-    wire [31:0] branch_target = pc_plus4 + immExt;   // PC+1 + signext(Imm); word addr (§6.2)
+    wire [31:0] branch_target = pc_plus4 + immExt;  // PC+1 + signext(Imm); word addr (§6.2)
     wire [31:0] jump_target   = {6'b0, jaddr};      // salto absoluto 26 bits (§6.1)
-    wire [31:0] jr_target     = rf_a;      // RS já lido
+    wire [31:0] jr_target     = rf_a;               // RS já lido
 
     wire [31:0] pc_next = halt          ? pc :               // HLT congela
                           jr            ? jr_target  :

@@ -24,8 +24,8 @@ module control_unit (
             /* -------- F1 (R‑type) -------- */
             6'b000000: begin regDst=1; regWrite=1; aluOp=4'd0; end   // ADD
             6'b000010: begin regDst=1; regWrite=1; aluOp=4'd1; end   // SUB
-            6'b000100: begin regDst=1; regWrite=1; aluOp=4'd8; end   // MULT
-            6'b000110: begin regDst=1; regWrite=1; aluOp=4'd9; end   // DIV
+            6'b000100: begin regDst=1; aluOp=4'd8; end               // MULT
+            6'b000110: begin regDst=1; aluOp=4'd9; end               // DIV
             6'b001000: begin regDst=1; regWrite=1; aluOp=4'd2; end   // AND
             6'b001010: begin regDst=1; regWrite=1; aluOp=4'd3; end   // OR
             6'b001101: begin regDst=1; regWrite=1; aluOp=4'd7; end   // SR
@@ -40,12 +40,12 @@ module control_unit (
             6'b000111: begin aluSrc=1; regWrite=1; aluOp=4'd9; end   // DIVI
             6'b001001: begin aluSrc=1; regWrite=1; aluOp=4'd2; end   // ANDI
             6'b001011: begin aluSrc=1; regWrite=1; aluOp=4'd3; end   // ORI
-            6'b001100: begin aluSrc=1; regWrite=1; aluOp=4'd10;end   // NOT
+            6'b001100: begin aluSrc=1; regWrite=1; aluOp=4'd4; end   // NOT
             6'b001111: begin aluSrc=1; memToReg=1; regWrite=1;      end // LOAD
             6'b010000: begin aluSrc=1; memWrite=1;                 end // STORE
             6'b010100: begin branchEq=1; aluOp=4'd1;               end // BEQ
             6'b010101: begin branchNe=1; aluOp=4'd1;               end // BNE
-            6'b010110: begin regWrite=1; aluOp=4'd0;               end // MOVE
+            6'b010110: begin regWrite=1; aluOp=4'd10;              end // MOVE
 
             /* -------- F3 (J‑type) -------- */
             6'b010001:            jump = 1;                          // JUMP

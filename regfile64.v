@@ -19,6 +19,7 @@ module regfile64 #(
     always @(posedge clk) begin
         if (rst) begin
             for (i = 0; i < (1<<ADDR_W); i = i + 1) rf[i] <= {DATA_W{1'b0}};
+            rf[29] <= 32'd1023;  // $sp inicia no topo da RAM
         end else if (we && rd != 0) begin       // $0 permanece zero
             rf[rd] <= wd;
         end

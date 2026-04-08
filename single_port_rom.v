@@ -5,11 +5,11 @@ module single_port_rom #(
 )(
     input  wire               clk,
     input  wire [ADDR_W-1:0]  addr,
-    output reg  [DATA_W-1:0]  data
+    output wire [DATA_W-1:0]  data
 );
     reg [DATA_W-1:0] rom [0:(1<<ADDR_W)-1];
     initial begin
         $readmemb(FILENAME, rom);          // carrega programa
     end
-    always @(posedge clk) data <= rom[addr];
+    assign data = rom[addr];
 endmodule
