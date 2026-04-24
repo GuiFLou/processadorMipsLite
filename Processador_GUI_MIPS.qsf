@@ -57,6 +57,7 @@ set_global_assignment -name VERILOG_FILE hex7seg.v
 set_global_assignment -name VERILOG_FILE DataOutput.v
 set_global_assignment -name VERILOG_FILE single_port_rom.v
 set_global_assignment -name VERILOG_FILE Processador_GUI_MIPS.v
+set_global_assignment -name SDC_FILE Processador_GUI_MIPS.sdc
 
 #######################################################################
 #  DE2‑115 | pin‑map básico                             (v1 – 2025‑07)
