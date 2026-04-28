@@ -36,6 +36,7 @@ module Processador_GUI_MIPS (
     output wire [6:0]  HEX3,
     output wire [6:0]  HEX4,
     output wire [6:0]  HEX5,
+    output wire [6:0]  HEX6,
     output wire [17:0] LEDR
 );
     /* ========================= GERAÇÃO DO clk_cpu ======================== */
@@ -89,6 +90,7 @@ module Processador_GUI_MIPS (
     /* ========================= UNIDADE DE CONTROLE ======================= */
     wire regDst, aluSrc, memToReg, regWrite, memWrite;
     wire branchEq, branchNe, jump, jal, jr, halt;
+    wire isIn, isOut, isMultDiv;
     wire [3:0] aluOp;
     control_unit CU (
         .opcode(opcode),
@@ -96,17 +98,24 @@ module Processador_GUI_MIPS (
         .regWrite(regWrite), .memWrite(memWrite),
         .branchEq(branchEq), .branchNe(branchNe),
         .jump(jump), .jal(jal), .jr(jr),
-        .halt(halt),
+        .halt(halt), .isIn(isIn), .isOut(isOut), .isMultDiv(isMultDiv),
         .aluOp(aluOp)
     );
 
     /* ========================= REGFILE E SIGN-EXT ======================== */
-    wire [31:0] rf_a, rf_b, rf_wd;
-    wire [31:0] immExt;
-    sign_extend #(.IN_W(14)) SE (.in(imm14), .out(immExt));
+    localparam [5:0] LO_REG = 6'd61;
+    localparam [5:0] HI_REG = 6'd62;
 
-    // Leituras do banco: F1 usa RS/RT; F2 usa RS em rt e, em SW/BEQ/BNE, lê também o campo [25:20].
-    wire [5:0] rf_rs1 = (regDst | jr | branchEq | branchNe) ? rs : rt;
+    wire [31:0] rf_a_raw, rf_b_raw, rf_wd;
+    wire [31:0] rf_a, rf_b;
+    wire [31:0] immSignExt, immZeroExt, immExt;
+    wire        useZeroExt = (opcode == 6'b001001) || (opcode == 6'b001011);
+    sign_extend #(.IN_W(14)) SE (.in(imm14), .out(immSignExt));
+    assign immZeroExt = {18'b0, imm14};
+    assign immExt = useZeroExt ? immZeroExt : immSignExt;
+
+    // Leituras do banco: F1 usa RS/RT; F2 usa RS em rt e, em SW/BEQ/BNE/OUT, lê também o campo [25:20].
+    wire [5:0] rf_rs1 = (regDst | jr | branchEq | branchNe | isOut) ? rs : rt;
     wire [5:0] rf_rs2 = regDst ? rt : (memWrite ? rs : rt);
 
     // Destino de escrita: JAL → $ra (31); F1 → RD[13:8]; F2/FI → campo [25:20].
@@ -119,15 +128,37 @@ module Processador_GUI_MIPS (
         .rs2 (rf_rs2),
         .rd  (writeReg),
         .wd  (rf_wd),
-        .rd1 (rf_a),
-        .rd2 (rf_b)
+        .rd1 (rf_a_raw),
+        .rd2 (rf_b_raw)
     );
+
+    reg [31:0] hi_reg, lo_reg;
+    assign rf_a = (rf_rs1 == LO_REG) ? lo_reg :
+                  (rf_rs1 == HI_REG) ? hi_reg :
+                                        rf_a_raw;
+    assign rf_b = (rf_rs2 == LO_REG) ? lo_reg :
+                  (rf_rs2 == HI_REG) ? hi_reg :
+                                        rf_b_raw;
 
     /* ========================= ALU ======================================= */
     wire [31:0] alu_in_b = aluSrc ? immExt : rf_b;
     wire [31:0] alu_y;
+    wire [31:0] alu_hi, alu_lo;
     wire        alu_zero;
-    alu ALU (.a(rf_a), .b(alu_in_b), .op(aluOp), .y(alu_y), .zero(alu_zero));
+    alu ALU (
+        .a(rf_a), .b(alu_in_b), .op(aluOp), .shamt(shamt),
+        .y(alu_y), .hi_out(alu_hi), .lo_out(alu_lo), .zero(alu_zero)
+    );
+
+    always @(posedge clk_cpu) begin
+        if (rst) begin
+            hi_reg <= 32'd0;
+            lo_reg <= 32'd0;
+        end else if (isMultDiv) begin
+            hi_reg <= alu_hi;
+            lo_reg <= alu_lo;
+        end
+    end
 
     /* ========================= DATA MEMORY =============================== */
     wire [31:0] data_rd;
@@ -141,8 +172,11 @@ module Processador_GUI_MIPS (
     );
 
     /* ========================= WRITE-BACK MUX ============================ */
+    wire [31:0] input_value = {14'b0, SW[17:0]};
     wire [31:0] wb_core = memToReg ? data_rd : alu_y;
-    assign rf_wd = jal ? pc_plus4 : wb_core;
+    assign rf_wd = jal ? pc_plus4 :
+                   isIn ? input_value :
+                          wb_core;
 
     /* ========================= LÓGICA DE DESVIO ========================== */
     wire        branch_taken  = (branchEq &&  alu_zero) ||
@@ -166,10 +200,17 @@ module Processador_GUI_MIPS (
     /* ========================= I/O VISUAL =============================== */
     assign LEDR = alu_y[17:0];
 
-    hex7seg h0 (.hex(pc[ 3: 0]), .seg(HEX0));
-    hex7seg h1 (.hex(pc[ 7: 4]), .seg(HEX1));
-    hex7seg h2 (.hex(pc[11: 8]), .seg(HEX2));
-    hex7seg h3 (.hex(pc[15:12]), .seg(HEX3));
-    hex7seg h4 (.hex(pc[19:16]), .seg(HEX4));
-    hex7seg h5 (.hex(pc[23:20]), .seg(HEX5));
+    reg [31:0] out_reg;
+    always @(posedge clk_cpu) begin
+        if (rst)       out_reg <= 32'd0;
+        else if (isOut) out_reg <= rf_a;
+    end
+
+    hex7seg h0 (.hex(out_reg[ 3: 0]), .seg(HEX0));
+    hex7seg h1 (.hex(out_reg[ 7: 4]), .seg(HEX1));
+    hex7seg h2 (.hex(out_reg[11: 8]), .seg(HEX2));
+    hex7seg h3 (.hex(out_reg[15:12]), .seg(HEX3));
+    hex7seg h4 (.hex(out_reg[19:16]), .seg(HEX4));
+    hex7seg h5 (.hex(out_reg[23:20]), .seg(HEX5));
+    hex7seg h6 (.hex(out_reg[27:24]), .seg(HEX6));
 endmodule

@@ -1,14 +1,14 @@
-Analysis & Synthesis Status : Successful - Thu Apr 09 19:09:56 2026
+Analysis & Synthesis Status : Successful - Mon Apr 27 20:12:33 2026
 Quartus Prime Version : 17.1.0 Build 590 10/25/2017 SJ Lite Edition
 Revision Name : Processador_GUI_MIPS
 Top-level Entity Name : Processador_GUI_MIPS
 Family : Cyclone IV E
-Total logic elements : 62,810
-    Total combinational functions : 28,100
-    Dedicated logic registers : 34,816
-Total registers : 34816
-Total pins : 83
+Total logic elements : 64,392
+    Total combinational functions : 29,679
+    Dedicated logic registers : 34,966
+Total registers : 34966
+Total pins : 90
 Total virtual pins : 0
 Total memory bits : 0
-Embedded Multiplier 9-bit elements : 6
+Embedded Multiplier 9-bit elements : 8
 Total PLLs : 0

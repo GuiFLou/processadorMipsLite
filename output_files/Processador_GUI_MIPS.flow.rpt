@@ -1,5 +1,5 @@
 Flow report for Processador_GUI_MIPS
-Thu Apr 09 19:49:59 2026
+Mon Apr 27 20:17:16 2026
 Quartus Prime Version 17.1.0 Build 590 10/25/2017 SJ Lite Edition
 
 
@@ -40,21 +40,21 @@ refer to the applicable agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Flow Summary                                                                     ;
 +------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Thu Apr 09 19:45:27 2026       ;
+; Flow Status                        ; Successful - Mon Apr 27 20:17:02 2026       ;
 ; Quartus Prime Version              ; 17.1.0 Build 590 10/25/2017 SJ Lite Edition ;
 ; Revision Name                      ; Processador_GUI_MIPS                        ;
 ; Top-level Entity Name              ; Processador_GUI_MIPS                        ;
 ; Family                             ; Cyclone IV E                                ;
 ; Device                             ; EP4CE115F29C7                               ;
 ; Timing Models                      ; Final                                       ;
-; Total logic elements               ; 48,572 / 114,480 ( 42 % )                   ;
-;     Total combinational functions  ; 28,100 / 114,480 ( 25 % )                   ;
-;     Dedicated logic registers      ; 34,816 / 114,480 ( 30 % )                   ;
-; Total registers                    ; 34816                                       ;
-; Total pins                         ; 83 / 529 ( 16 % )                           ;
+; Total logic elements               ; 46,073 / 114,480 ( 40 % )                   ;
+;     Total combinational functions  ; 29,679 / 114,480 ( 26 % )                   ;
+;     Dedicated logic registers      ; 34,966 / 114,480 ( 31 % )                   ;
+; Total registers                    ; 34966                                       ;
+; Total pins                         ; 90 / 529 ( 17 % )                           ;
 ; Total virtual pins                 ; 0                                           ;
 ; Total memory bits                  ; 0 / 3,981,312 ( 0 % )                       ;
-; Embedded Multiplier 9-bit elements ; 6 / 532 ( 1 % )                             ;
+; Embedded Multiplier 9-bit elements ; 8 / 532 ( 2 % )                             ;
 ; Total PLLs                         ; 0 / 4 ( 0 % )                               ;
 +------------------------------------+---------------------------------------------+
 
@@ -64,7 +64,7 @@ refer to the applicable agreement for further details.
 +-------------------+----------------------+
 ; Option            ; Setting              ;
 +-------------------+----------------------+
-; Start date & time ; 04/09/2026 19:07:20  ;
+; Start date & time ; 04/27/2026 20:09:32  ;
 ; Main task         ; Compilation          ;
 ; Revision Name     ; Processador_GUI_MIPS ;
 +-------------------+----------------------+
@@ -75,7 +75,7 @@ refer to the applicable agreement for further details.
 +-------------------------------------+----------------------------------------+---------------+-------------+-----------------------------------+
 ; Assignment Name                     ; Value                                  ; Default Value ; Entity Name ; Section Id                        ;
 +-------------------------------------+----------------------------------------+---------------+-------------+-----------------------------------+
-; COMPILER_SIGNATURE_ID               ; 2543494083387.177577244027024          ; --            ; --          ; --                                ;
+; COMPILER_SIGNATURE_ID               ; 2543494083387.177733137225212          ; --            ; --          ; --                                ;
 ; EDA_GENERATE_FUNCTIONAL_NETLIST     ; Off                                    ; --            ; --          ; eda_board_design_timing           ;
 ; EDA_GENERATE_FUNCTIONAL_NETLIST     ; Off                                    ; --            ; --          ; eda_board_design_boundary_scan    ;
 ; EDA_GENERATE_FUNCTIONAL_NETLIST     ; Off                                    ; --            ; --          ; eda_board_design_signal_integrity ;
@@ -96,11 +96,11 @@ refer to the applicable agreement for further details.
 +---------------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name               ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +---------------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis      ; 00:02:34     ; 1.0                     ; 5236 MB             ; 00:02:41                           ;
-; Fitter                    ; 00:35:18     ; 1.1                     ; 7727 MB             ; 01:22:15                           ;
-; Assembler                 ; 00:00:05     ; 1.0                     ; 4847 MB             ; 00:00:05                           ;
-; TimeQuest Timing Analyzer ; 00:04:30     ; 2.5                     ; 8919 MB             ; 00:04:42                           ;
-; Total                     ; 00:42:27     ; --                      ; --                  ; 01:29:43                           ;
+; Analysis & Synthesis      ; 00:02:58     ; 1.0                     ; 5201 MB             ; 00:03:04                           ;
+; Fitter                    ; 00:04:15     ; 1.1                     ; 7220 MB             ; 00:07:59                           ;
+; Assembler                 ; 00:00:05     ; 1.0                     ; 4834 MB             ; 00:00:05                           ;
+; TimeQuest Timing Analyzer ; 00:00:13     ; 1.9                     ; 5356 MB             ; 00:00:20                           ;
+; Total                     ; 00:07:31     ; --                      ; --                  ; 00:11:28                           ;
 +---------------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
