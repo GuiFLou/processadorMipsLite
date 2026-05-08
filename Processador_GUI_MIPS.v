@@ -65,6 +65,25 @@ module Processador_GUI_MIPS (
     end
     wire rst = rst_sync_1;
 
+    /* ========================= BOTÃO "ENTER" (KEY[1]) =================== */
+    // O IN pausa o PC até o usuário apertar KEY[1]. O fluxo é:
+    //   1) debounce no domínio rápido (CLOCK_50)
+    //   2) sincronização de 2 FFs no domínio clk_cpu
+    //   3) detector de borda → pulso de EXATAMENTE 1 ciclo de clk_cpu
+    // Assim, dois IN consecutivos exigem dois apertos distintos.
+    wire enter_raw = ~KEY[1];               // KEY ativo-baixo
+    wire enter_db;
+    Debounce #(.STABLE_CNT(1_000_000)) u_enter_db (
+        .clk(CLOCK_50), .btn_in(enter_raw), .btn_out(enter_db)
+    );
+    reg enter_s0, enter_s1, enter_s2;
+    always @(posedge clk_cpu) begin
+        enter_s0 <= enter_db;
+        enter_s1 <= enter_s0;
+        enter_s2 <= enter_s1;
+    end
+    wire enter_pulse = enter_s1 & ~enter_s2;
+
     /* ========================= PROGRAM COUNTER =========================== */
     reg  [31:0] pc;
     wire [31:0] pc_plus4 = pc + 32'd1;
@@ -89,6 +108,7 @@ module Processador_GUI_MIPS (
     /* ========================= UNIDADE DE CONTROLE ======================= */
     wire regDst, aluSrc, memToReg, regWrite, memWrite;
     wire branchEq, branchNe, jump, jal, jr, halt;
+    wire is_in, is_out;
     wire [3:0] aluOp;
     control_unit CU (
         .opcode(opcode),
@@ -97,8 +117,17 @@ module Processador_GUI_MIPS (
         .branchEq(branchEq), .branchNe(branchNe),
         .jump(jump), .jal(jal), .jr(jr),
         .halt(halt),
+        .is_in(is_in), .is_out(is_out),
         .aluOp(aluOp)
     );
+
+    /* ========================= STALL DO IN =============================== */
+    // Enquanto o opcode for IN e o usuário não tiver pulsado KEY[1],
+    // o PC fica congelado e o regfile não escreve. No ciclo do pulso,
+    // grava {22'b0, SW[9:0]} no registrador apontado pelo campo Reg (FI[25:20]).
+    wire        stall_in   = is_in & ~enter_pulse;
+    wire [31:0] in_data    = {22'b0, SW[9:0]};
+    wire        in_writeEn = is_in & enter_pulse;
 
     /* ========================= REGFILE E SIGN-EXT ======================== */
     wire [31:0] rf_a, rf_b, rf_wd;
@@ -106,7 +135,8 @@ module Processador_GUI_MIPS (
     sign_extend #(.IN_W(14)) SE (.in(imm14), .out(immExt));
 
     // Leituras do banco: F1 usa RS/RT; F2 usa RS em rt e, em SW/BEQ/BNE, lê também o campo [25:20].
-    wire [5:0] rf_rs1 = (regDst | jr | branchEq | branchNe) ? rs : rt;
+    // OUT (FI) precisa ler o registrador no campo [25:20] (= 'rs') por rd1.
+    wire [5:0] rf_rs1 = (regDst | jr | branchEq | branchNe | is_out) ? rs : rt;
     wire [5:0] rf_rs2 = regDst ? rt : (memWrite ? rs : rt);
 
     // Destino de escrita: JAL → $ra (31); F1 → RD[13:8]; F2/FI → campo [25:20].
@@ -114,7 +144,7 @@ module Processador_GUI_MIPS (
 
     regfile64 RF (
         .clk (clk_cpu), .rst(rst),
-        .we  (regWrite),
+        .we  (regWrite | in_writeEn),
         .rs1 (rf_rs1),
         .rs2 (rf_rs2),
         .rd  (writeReg),
@@ -142,7 +172,9 @@ module Processador_GUI_MIPS (
 
     /* ========================= WRITE-BACK MUX ============================ */
     wire [31:0] wb_core = memToReg ? data_rd : alu_y;
-    assign rf_wd = jal ? pc_plus4 : wb_core;
+    assign rf_wd = is_in ? in_data    :
+                   jal   ? pc_plus4   :
+                                       wb_core;
 
     /* ========================= LÓGICA DE DESVIO ========================== */
     wire        branch_taken  = (branchEq &&  alu_zero) ||
@@ -151,7 +183,7 @@ module Processador_GUI_MIPS (
     wire [31:0] jump_target   = {6'b0, jaddr};
     wire [31:0] jr_target     = rf_a;
 
-    wire [31:0] pc_next = halt          ? pc :
+    wire [31:0] pc_next = (halt | stall_in) ? pc :
                           jr            ? jr_target  :
                           jump          ? jump_target :
                           branch_taken  ? branch_target :
@@ -163,13 +195,31 @@ module Processador_GUI_MIPS (
         else     pc <= pc_next;
     end
 
-    /* ========================= I/O VISUAL =============================== */
-    assign LEDR = alu_y[17:0];
+    /* ========================= REGISTRADOR DE OUT ======================= */
+    // Captura o operando do OUT (FI – campo Reg = bits 25:20 → rf_a) no
+    // mesmo ciclo em que a instrução é decodificada. Mantém o último valor
+    // entre OUTs sucessivos para que o display não pisque.
+    reg [31:0] out_reg;
+    always @(posedge clk_cpu) begin
+        if (rst)         out_reg <= 32'd0;
+        else if (is_out) out_reg <= rf_a;
+    end
 
-    hex7seg h0 (.hex(pc[ 3: 0]), .seg(HEX0));
-    hex7seg h1 (.hex(pc[ 7: 4]), .seg(HEX1));
-    hex7seg h2 (.hex(pc[11: 8]), .seg(HEX2));
-    hex7seg h3 (.hex(pc[15:12]), .seg(HEX3));
-    hex7seg h4 (.hex(pc[19:16]), .seg(HEX4));
-    hex7seg h5 (.hex(pc[23:20]), .seg(HEX5));
+    /* ========================= I/O VISUAL =============================== */
+    // LEDR fornece feedback visual do estado da máquina:
+    //   [9:0]  – eco dos switches (o que será lido pelo próximo IN)
+    //   [16]   – HALT  (programa terminou)
+    //   [17]   – WAIT  (executando IN, aguardando KEY[1])
+    assign LEDR[9:0]  = SW[9:0];
+    assign LEDR[15:10] = 6'b0;
+    assign LEDR[16]   = halt;
+    assign LEDR[17]   = stall_in;
+
+    // HEX0..HEX5 mostram em hexadecimal os 24 bits baixos do último OUT.
+    hex7seg h0 (.hex(out_reg[ 3: 0]), .seg(HEX0));
+    hex7seg h1 (.hex(out_reg[ 7: 4]), .seg(HEX1));
+    hex7seg h2 (.hex(out_reg[11: 8]), .seg(HEX2));
+    hex7seg h3 (.hex(out_reg[15:12]), .seg(HEX3));
+    hex7seg h4 (.hex(out_reg[19:16]), .seg(HEX4));
+    hex7seg h5 (.hex(out_reg[23:20]), .seg(HEX5));
 endmodule

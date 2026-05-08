@@ -12,12 +12,14 @@ module control_unit (
     output reg        jal,
     output reg        jr,      // <‑‑ NOVO
     output reg        halt,    // <‑‑ NOVO (para HLT)
+    output reg        is_in,   // <‑‑ NOVO (FI – IN  : escrita do regfile e PC tratados no top-level)
+    output reg        is_out,  // <‑‑ NOVO (FI – OUT : captura do valor para os displays no top-level)
     output reg  [3:0] aluOp
 );
     always @* begin
         /* defaults = NOP */
         {regDst, aluSrc, memToReg, regWrite, memWrite,
-         branchEq, branchNe, jump, jal, jr, halt} = 11'b0;
+         branchEq, branchNe, jump, jal, jr, halt, is_in, is_out} = 13'b0;
         aluOp = 4'd0;
 
         case (opcode)
@@ -51,7 +53,11 @@ module control_unit (
             6'b010001:            jump = 1;                          // JUMP
             6'b010011: begin jump=1; jal=1; regWrite=1; end          // JAL
             6'b011000:            halt = 1;                          // HLT
-            /* 010111 = NOP, 011010 = IN, 011011 = OUT – manter defaults */
+
+            /* -------- FI (I/O) -------- */
+            6'b011010:            is_in  = 1;                        // IN  (pausa PC + escreve switches – top-level)
+            6'b011011:            is_out = 1;                        // OUT (captura rf_a no display – top-level)
+            /* 010111 = NOP – manter defaults */
         endcase
     end
 endmodule
