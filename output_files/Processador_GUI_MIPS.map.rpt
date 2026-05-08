@@ -1,5 +1,5 @@
 Analysis & Synthesis report for Processador_GUI_MIPS
-Thu Apr 09 19:09:57 2026
+Mon Apr 27 20:12:34 2026
 Quartus Prime Version 17.1.0 Build 590 10/25/2017 SJ Lite Edition
 
 
@@ -15,19 +15,24 @@ Quartus Prime Version 17.1.0 Build 590 10/25/2017 SJ Lite Edition
   7. Analysis & Synthesis Resource Utilization by Entity
   8. Analysis & Synthesis DSP Block Usage Summary
   9. Registers Removed During Synthesis
- 10. General Register Statistics
- 11. Multiplexer Restructuring Statistics (Restructuring Performed)
- 12. Parameter Settings for User Entity Instance: single_port_rom:ROM
- 13. Parameter Settings for User Entity Instance: sign_extend:SE
- 14. Parameter Settings for User Entity Instance: regfile64:RF
- 15. Parameter Settings for User Entity Instance: data_ram:DRAM
- 16. Parameter Settings for Inferred Entity Instance: alu:ALU|lpm_mult:Mult0
- 17. Parameter Settings for Inferred Entity Instance: alu:ALU|lpm_divide:Div0
- 18. lpm_mult Parameter Settings by Entity Instance
- 19. Port Connectivity Checks: "data_ram:DRAM"
- 20. Post-Synthesis Netlist Statistics for Top Partition
- 21. Elapsed Time Per Partition
- 22. Analysis & Synthesis Messages
+ 10. Removed Registers Triggering Further Register Optimizations
+ 11. General Register Statistics
+ 12. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 13. Parameter Settings for User Entity Instance: divisor_Freq:u_div
+ 14. Parameter Settings for User Entity Instance: Debounce:u_rst_db
+ 15. Parameter Settings for User Entity Instance: single_port_rom:ROM
+ 16. Parameter Settings for User Entity Instance: sign_extend:SE
+ 17. Parameter Settings for User Entity Instance: regfile64:RF
+ 18. Parameter Settings for User Entity Instance: data_ram:DRAM
+ 19. Parameter Settings for Inferred Entity Instance: alu:ALU|lpm_mult:Mult0
+ 20. Parameter Settings for Inferred Entity Instance: alu:ALU|lpm_divide:Div0
+ 21. Parameter Settings for Inferred Entity Instance: alu:ALU|lpm_divide:Mod0
+ 22. lpm_mult Parameter Settings by Entity Instance
+ 23. Port Connectivity Checks: "data_ram:DRAM"
+ 24. Post-Synthesis Netlist Statistics for Top Partition
+ 25. Elapsed Time Per Partition
+ 26. Analysis & Synthesis Messages
+ 27. Analysis & Synthesis Suppressed Messages
 
 
 
@@ -53,19 +58,19 @@ refer to the applicable agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Thu Apr 09 19:09:56 2026       ;
+; Analysis & Synthesis Status        ; Successful - Mon Apr 27 20:12:33 2026       ;
 ; Quartus Prime Version              ; 17.1.0 Build 590 10/25/2017 SJ Lite Edition ;
 ; Revision Name                      ; Processador_GUI_MIPS                        ;
 ; Top-level Entity Name              ; Processador_GUI_MIPS                        ;
 ; Family                             ; Cyclone IV E                                ;
-; Total logic elements               ; 62,810                                      ;
-;     Total combinational functions  ; 28,100                                      ;
-;     Dedicated logic registers      ; 34,816                                      ;
-; Total registers                    ; 34816                                       ;
-; Total pins                         ; 83                                          ;
+; Total logic elements               ; 64,392                                      ;
+;     Total combinational functions  ; 29,679                                      ;
+;     Dedicated logic registers      ; 34,966                                      ;
+; Total registers                    ; 34966                                       ;
+; Total pins                         ; 90                                          ;
 ; Total virtual pins                 ; 0                                           ;
 ; Total memory bits                  ; 0                                           ;
-; Embedded Multiplier 9-bit elements ; 6                                           ;
+; Embedded Multiplier 9-bit elements ; 8                                           ;
 ; Total PLLs                         ; 0                                           ;
 +------------------------------------+---------------------------------------------+
 
@@ -164,110 +169,125 @@ refer to the applicable agreement for further details.
 ; Number detected on machine ; 16          ;
 ; Maximum allowed            ; 16          ;
 ;                            ;             ;
-; Average used               ; 1.01        ;
+; Average used               ; 1.00        ;
 ; Maximum used               ; 16          ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processor 2            ;   0.1%      ;
-;     Processor 3            ;   0.1%      ;
-;     Processor 4            ;   0.1%      ;
-;     Processor 5            ;   0.1%      ;
-;     Processor 6            ;   0.1%      ;
-;     Processor 7            ;   0.1%      ;
-;     Processor 8            ;   0.1%      ;
-;     Processors 9-16        ;   0.1%      ;
+;     Processor 2            ;   0.0%      ;
+;     Processor 3            ;   0.0%      ;
+;     Processor 4            ;   0.0%      ;
+;     Processor 5            ;   0.0%      ;
+;     Processor 6            ;   0.0%      ;
+;     Processor 7            ;   0.0%      ;
+;     Processor 8            ;   0.0%      ;
+;     Processors 9-16        ;   0.0%      ;
 +----------------------------+-------------+
 
 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Source Files Read                                                                                                                                                                    ;
-+----------------------------------+-----------------+------------------------------+-------------------------------------------------------------------------------------------------------------+---------+
-; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                                                                ; Library ;
-+----------------------------------+-----------------+------------------------------+-------------------------------------------------------------------------------------------------------------+---------+
-; hex7seg.v                        ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/hex7seg.v                  ;         ;
-; single_port_rom.v                ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v          ;         ;
-; Processador_GUI_MIPS.v           ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v     ;         ;
-; regfile64.v                      ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/regfile64.v                ;         ;
-; data_ram.v                       ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/data_ram.v                 ;         ;
-; sign_extend.v                    ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/sign_extend.v              ;         ;
-; alu.v                            ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v                      ;         ;
-; control_unit.v                   ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/control_unit.v             ;         ;
-; lpm_mult.tdf                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/lpm_mult.tdf                                         ;         ;
-; aglobal171.inc                   ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/aglobal171.inc                                       ;         ;
-; lpm_add_sub.inc                  ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/lpm_add_sub.inc                                      ;         ;
-; multcore.inc                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/multcore.inc                                         ;         ;
-; bypassff.inc                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/bypassff.inc                                         ;         ;
-; altshift.inc                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/altshift.inc                                         ;         ;
-; db/mult_7dt.tdf                  ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/mult_7dt.tdf            ;         ;
-; lpm_divide.tdf                   ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/lpm_divide.tdf                                       ;         ;
-; abs_divider.inc                  ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/abs_divider.inc                                      ;         ;
-; sign_div_unsign.inc              ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/sign_div_unsign.inc                                  ;         ;
-; db/lpm_divide_hkm.tdf            ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/lpm_divide_hkm.tdf      ;         ;
-; db/sign_div_unsign_9nh.tdf       ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/sign_div_unsign_9nh.tdf ;         ;
-; db/alt_u_div_6af.tdf             ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/alt_u_div_6af.tdf       ;         ;
-; db/add_sub_7pc.tdf               ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/add_sub_7pc.tdf         ;         ;
-; db/add_sub_8pc.tdf               ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/add_sub_8pc.tdf         ;         ;
-+----------------------------------+-----------------+------------------------------+-------------------------------------------------------------------------------------------------------------+---------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                                                ;
++----------------------------------+-----------------+------------------------------+---------------------------------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                                                            ; Library ;
++----------------------------------+-----------------+------------------------------+---------------------------------------------------------------------------------------------------------+---------+
+; divisor_freq.v                   ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/divisor_freq.v         ;         ;
+; debounce.v                       ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/debounce.v             ;         ;
+; hex7seg.v                        ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/hex7seg.v              ;         ;
+; single_port_rom.v                ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v      ;         ;
+; Processador_GUI_MIPS.v           ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v ;         ;
+; regfile64.v                      ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/regfile64.v            ;         ;
+; data_ram.v                       ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/data_ram.v             ;         ;
+; sign_extend.v                    ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/sign_extend.v          ;         ;
+; alu.v                            ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v                  ;         ;
+; control_unit.v                   ; yes             ; User Verilog HDL File        ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/control_unit.v         ;         ;
+; lpm_mult.tdf                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/lpm_mult.tdf                                     ;         ;
+; aglobal171.inc                   ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/aglobal171.inc                                   ;         ;
+; lpm_add_sub.inc                  ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/lpm_add_sub.inc                                  ;         ;
+; multcore.inc                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/multcore.inc                                     ;         ;
+; bypassff.inc                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/bypassff.inc                                     ;         ;
+; altshift.inc                     ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/altshift.inc                                     ;         ;
+; db/mult_46t.tdf                  ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/mult_46t.tdf        ;         ;
+; lpm_divide.tdf                   ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/lpm_divide.tdf                                   ;         ;
+; abs_divider.inc                  ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/abs_divider.inc                                  ;         ;
+; sign_div_unsign.inc              ; yes             ; Megafunction                 ; c:/intelfpga_lite/17.1/quartus/libraries/megafunctions/sign_div_unsign.inc                              ;         ;
+; db/lpm_divide_92p.tdf            ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/lpm_divide_92p.tdf  ;         ;
+; db/abs_divider_4dg.tdf           ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/abs_divider_4dg.tdf ;         ;
+; db/alt_u_div_6af.tdf             ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/alt_u_div_6af.tdf   ;         ;
+; db/add_sub_7pc.tdf               ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/add_sub_7pc.tdf     ;         ;
+; db/add_sub_8pc.tdf               ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/add_sub_8pc.tdf     ;         ;
+; db/lpm_abs_i0a.tdf               ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/lpm_abs_i0a.tdf     ;         ;
+; db/lpm_divide_cqo.tdf            ; yes             ; Auto-Generated Megafunction  ; C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/lpm_divide_cqo.tdf  ;         ;
++----------------------------------+-----------------+------------------------------+---------------------------------------------------------------------------------------------------------+---------+
 
 
-+--------------------------------------------------------------+
-; Analysis & Synthesis Resource Usage Summary                  ;
-+---------------------------------------------+----------------+
-; Resource                                    ; Usage          ;
-+---------------------------------------------+----------------+
-; Estimated Total logic elements              ; 62,810         ;
-;                                             ;                ;
-; Total combinational functions               ; 28100          ;
-; Logic element usage by number of LUT inputs ;                ;
-;     -- 4 input functions                    ; 26233          ;
-;     -- 3 input functions                    ; 1730           ;
-;     -- <=2 input functions                  ; 137            ;
-;                                             ;                ;
-; Logic elements by mode                      ;                ;
-;     -- normal mode                          ; 27424          ;
-;     -- arithmetic mode                      ; 676            ;
-;                                             ;                ;
-; Total registers                             ; 34816          ;
-;     -- Dedicated logic registers            ; 34816          ;
-;     -- I/O registers                        ; 0              ;
-;                                             ;                ;
-; I/O pins                                    ; 83             ;
-;                                             ;                ;
-; Embedded Multiplier 9-bit elements          ; 6              ;
-;                                             ;                ;
-; Maximum fan-out node                        ; CLOCK_50~input ;
-; Maximum fan-out                             ; 34816          ;
-; Total fan-out                               ; 215073         ;
-; Average fan-out                             ; 3.41           ;
-+---------------------------------------------+----------------+
++--------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary                              ;
++---------------------------------------------+----------------------------+
+; Resource                                    ; Usage                      ;
++---------------------------------------------+----------------------------+
+; Estimated Total logic elements              ; 64,392                     ;
+;                                             ;                            ;
+; Total combinational functions               ; 29679                      ;
+; Logic element usage by number of LUT inputs ;                            ;
+;     -- 4 input functions                    ; 27649                      ;
+;     -- 3 input functions                    ; 1677                       ;
+;     -- <=2 input functions                  ; 353                        ;
+;                                             ;                            ;
+; Logic elements by mode                      ;                            ;
+;     -- normal mode                          ; 28302                      ;
+;     -- arithmetic mode                      ; 1377                       ;
+;                                             ;                            ;
+; Total registers                             ; 34966                      ;
+;     -- Dedicated logic registers            ; 34966                      ;
+;     -- I/O registers                        ; 0                          ;
+;                                             ;                            ;
+; I/O pins                                    ; 90                         ;
+;                                             ;                            ;
+; Embedded Multiplier 9-bit elements          ; 8                          ;
+;                                             ;                            ;
+; Maximum fan-out node                        ; divisor_Freq:u_div|clk_out ;
+; Maximum fan-out                             ; 34911                      ;
+; Total fan-out                               ; 221496                     ;
+; Average fan-out                             ; 3.42                       ;
++---------------------------------------------+----------------------------+
 
 
-+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                                                                                              ;
-+-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+--------------+
-; Compilation Hierarchy Node                ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                                                                 ; Entity Name          ; Library Name ;
-+-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+--------------+
-; |Processador_GUI_MIPS                     ; 28100 (22034)       ; 34816 (32)                ; 0           ; 6            ; 0       ; 3         ; 83   ; 0            ; |Processador_GUI_MIPS                                                                                                                               ; Processador_GUI_MIPS ; work         ;
-;    |alu:ALU|                              ; 1800 (705)          ; 0 (0)                     ; 0           ; 6            ; 0       ; 3         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU                                                                                                                       ; alu                  ; work         ;
-;       |lpm_divide:Div0|                   ; 1067 (0)            ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0                                                                                                       ; lpm_divide           ; work         ;
-;          |lpm_divide_hkm:auto_generated|  ; 1067 (0)            ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_hkm:auto_generated                                                                         ; lpm_divide_hkm       ; work         ;
-;             |sign_div_unsign_9nh:divider| ; 1067 (0)            ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_hkm:auto_generated|sign_div_unsign_9nh:divider                                             ; sign_div_unsign_9nh  ; work         ;
-;                |alt_u_div_6af:divider|    ; 1067 (1066)         ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_hkm:auto_generated|sign_div_unsign_9nh:divider|alt_u_div_6af:divider                       ; alt_u_div_6af        ; work         ;
-;                   |add_sub_8pc:add_sub_1| ; 1 (1)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_hkm:auto_generated|sign_div_unsign_9nh:divider|alt_u_div_6af:divider|add_sub_8pc:add_sub_1 ; add_sub_8pc          ; work         ;
-;       |lpm_mult:Mult0|                    ; 28 (0)              ; 0 (0)                     ; 0           ; 6            ; 0       ; 3         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_mult:Mult0                                                                                                        ; lpm_mult             ; work         ;
-;          |mult_7dt:auto_generated|        ; 28 (28)             ; 0 (0)                     ; 0           ; 6            ; 0       ; 3         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_mult:Mult0|mult_7dt:auto_generated                                                                                ; mult_7dt             ; work         ;
-;    |control_unit:CU|                      ; 22 (22)             ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|control_unit:CU                                                                                                               ; control_unit         ; work         ;
-;    |data_ram:DRAM|                        ; 1090 (1090)         ; 32768 (32768)             ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|data_ram:DRAM                                                                                                                 ; data_ram             ; work         ;
-;    |hex7seg:h0|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h0                                                                                                                    ; hex7seg              ; work         ;
-;    |hex7seg:h1|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h1                                                                                                                    ; hex7seg              ; work         ;
-;    |hex7seg:h2|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h2                                                                                                                    ; hex7seg              ; work         ;
-;    |hex7seg:h3|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h3                                                                                                                    ; hex7seg              ; work         ;
-;    |hex7seg:h4|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h4                                                                                                                    ; hex7seg              ; work         ;
-;    |hex7seg:h5|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h5                                                                                                                    ; hex7seg              ; work         ;
-;    |regfile64:RF|                         ; 2916 (2916)         ; 2016 (2016)               ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|regfile64:RF                                                                                                                  ; regfile64            ; work         ;
-;    |single_port_rom:ROM|                  ; 196 (196)           ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|single_port_rom:ROM                                                                                                           ; single_port_rom      ; work         ;
-+-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+--------------+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                                                                                          ;
++-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+--------------+
+; Compilation Hierarchy Node                ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                                                             ; Entity Name          ; Library Name ;
++-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+--------------+
+; |Processador_GUI_MIPS                     ; 29679 (24935)       ; 34966 (126)               ; 0           ; 8            ; 0       ; 4         ; 90   ; 0            ; |Processador_GUI_MIPS                                                                                                                           ; Processador_GUI_MIPS ; work         ;
+;    |Debounce:u_rst_db|                    ; 29 (29)             ; 23 (23)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|Debounce:u_rst_db                                                                                                         ; Debounce             ; work         ;
+;    |alu:ALU|                              ; 3190 (701)          ; 0 (0)                     ; 0           ; 8            ; 0       ; 4         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU                                                                                                                   ; alu                  ; work         ;
+;       |lpm_divide:Div0|                   ; 1205 (0)            ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0                                                                                                   ; lpm_divide           ; work         ;
+;          |lpm_divide_92p:auto_generated|  ; 1205 (0)            ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_92p:auto_generated                                                                     ; lpm_divide_92p       ; work         ;
+;             |abs_divider_4dg:divider|     ; 1205 (33)           ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_92p:auto_generated|abs_divider_4dg:divider                                             ; abs_divider_4dg      ; work         ;
+;                |alt_u_div_6af:divider|    ; 1083 (1080)         ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_92p:auto_generated|abs_divider_4dg:divider|alt_u_div_6af:divider                       ; alt_u_div_6af        ; work         ;
+;                   |add_sub_7pc:add_sub_0| ; 1 (1)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_92p:auto_generated|abs_divider_4dg:divider|alt_u_div_6af:divider|add_sub_7pc:add_sub_0 ; add_sub_7pc          ; work         ;
+;                   |add_sub_8pc:add_sub_1| ; 2 (2)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_92p:auto_generated|abs_divider_4dg:divider|alt_u_div_6af:divider|add_sub_8pc:add_sub_1 ; add_sub_8pc          ; work         ;
+;                |lpm_abs_i0a:my_abs_den|   ; 59 (59)             ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_92p:auto_generated|abs_divider_4dg:divider|lpm_abs_i0a:my_abs_den                      ; lpm_abs_i0a          ; work         ;
+;                |lpm_abs_i0a:my_abs_num|   ; 30 (30)             ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Div0|lpm_divide_92p:auto_generated|abs_divider_4dg:divider|lpm_abs_i0a:my_abs_num                      ; lpm_abs_i0a          ; work         ;
+;       |lpm_divide:Mod0|                   ; 1192 (0)            ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Mod0                                                                                                   ; lpm_divide           ; work         ;
+;          |lpm_divide_cqo:auto_generated|  ; 1192 (0)            ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Mod0|lpm_divide_cqo:auto_generated                                                                     ; lpm_divide_cqo       ; work         ;
+;             |abs_divider_4dg:divider|     ; 1192 (64)           ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Mod0|lpm_divide_cqo:auto_generated|abs_divider_4dg:divider                                             ; abs_divider_4dg      ; work         ;
+;                |alt_u_div_6af:divider|    ; 1113 (1113)         ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Mod0|lpm_divide_cqo:auto_generated|abs_divider_4dg:divider|alt_u_div_6af:divider                       ; alt_u_div_6af        ; work         ;
+;                |lpm_abs_i0a:my_abs_num|   ; 15 (15)             ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_divide:Mod0|lpm_divide_cqo:auto_generated|abs_divider_4dg:divider|lpm_abs_i0a:my_abs_num                      ; lpm_abs_i0a          ; work         ;
+;       |lpm_mult:Mult0|                    ; 92 (0)              ; 0 (0)                     ; 0           ; 8            ; 0       ; 4         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_mult:Mult0                                                                                                    ; lpm_mult             ; work         ;
+;          |mult_46t:auto_generated|        ; 92 (92)             ; 0 (0)                     ; 0           ; 8            ; 0       ; 4         ; 0    ; 0            ; |Processador_GUI_MIPS|alu:ALU|lpm_mult:Mult0|mult_46t:auto_generated                                                                            ; mult_46t             ; work         ;
+;    |control_unit:CU|                      ; 25 (25)             ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|control_unit:CU                                                                                                           ; control_unit         ; work         ;
+;    |data_ram:DRAM|                        ; 1051 (1051)         ; 32768 (32768)             ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|data_ram:DRAM                                                                                                             ; data_ram             ; work         ;
+;    |divisor_Freq:u_div|                   ; 57 (57)             ; 33 (33)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|divisor_Freq:u_div                                                                                                        ; divisor_Freq         ; work         ;
+;    |hex7seg:h0|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h0                                                                                                                ; hex7seg              ; work         ;
+;    |hex7seg:h1|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h1                                                                                                                ; hex7seg              ; work         ;
+;    |hex7seg:h2|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h2                                                                                                                ; hex7seg              ; work         ;
+;    |hex7seg:h3|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h3                                                                                                                ; hex7seg              ; work         ;
+;    |hex7seg:h4|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h4                                                                                                                ; hex7seg              ; work         ;
+;    |hex7seg:h5|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h5                                                                                                                ; hex7seg              ; work         ;
+;    |hex7seg:h6|                           ; 7 (7)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|hex7seg:h6                                                                                                                ; hex7seg              ; work         ;
+;    |regfile64:RF|                         ; 146 (146)           ; 2016 (2016)               ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|regfile64:RF                                                                                                              ; regfile64            ; work         ;
+;    |single_port_rom:ROM|                  ; 197 (197)           ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |Processador_GUI_MIPS|single_port_rom:ROM                                                                                                       ; single_port_rom      ; work         ;
++-------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-------------------------------------------------------------------------------------------------------------------------------------------------+----------------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
 
@@ -277,12 +297,12 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 ; Statistic                             ; Number Used ;
 +---------------------------------------+-------------+
 ; Simple Multipliers (9-bit)            ; 0           ;
-; Simple Multipliers (18-bit)           ; 3           ;
+; Simple Multipliers (18-bit)           ; 4           ;
 ; Embedded Multiplier Blocks            ; --          ;
-; Embedded Multiplier 9-bit elements    ; 6           ;
-; Signed Embedded Multipliers           ; 0           ;
-; Unsigned Embedded Multipliers         ; 3           ;
-; Mixed Sign Embedded Multipliers       ; 0           ;
+; Embedded Multiplier 9-bit elements    ; 8           ;
+; Signed Embedded Multipliers           ; 1           ;
+; Unsigned Embedded Multipliers         ; 1           ;
+; Mixed Sign Embedded Multipliers       ; 2           ;
 ; Variable Sign Embedded Multipliers    ; 0           ;
 ; Dedicated Input Shift Register Chains ; 0           ;
 +---------------------------------------+-------------+
@@ -294,6 +314,8 @@ Note: number of Embedded Multiplier Blocks used is only available after a succes
 +----------------------------------------+----------------------------------------+
 ; Register name                          ; Reason for Removal                     ;
 +----------------------------------------+----------------------------------------+
+; Debounce:u_rst_db|sync_0[1..19]        ; Stuck at GND due to stuck port data_in ;
+; Debounce:u_rst_db|sync_1[1..19]        ; Stuck at GND due to stuck port data_in ;
 ; regfile64:RF|rf[0][0]                  ; Stuck at GND due to stuck port data_in ;
 ; regfile64:RF|rf[0][1]                  ; Stuck at GND due to stuck port data_in ;
 ; regfile64:RF|rf[0][2]                  ; Stuck at GND due to stuck port data_in ;
@@ -326,8 +348,54 @@ Note: number of Embedded Multiplier Blocks used is only available after a succes
 ; regfile64:RF|rf[0][29]                 ; Stuck at GND due to stuck port data_in ;
 ; regfile64:RF|rf[0][30]                 ; Stuck at GND due to stuck port data_in ;
 ; regfile64:RF|rf[0][31]                 ; Stuck at GND due to stuck port data_in ;
-; Total Number of Removed Registers = 32 ;                                        ;
+; Total Number of Removed Registers = 70 ;                                        ;
 +----------------------------------------+----------------------------------------+
+
+
++---------------------------------------------------------------------------------------------------+
+; Removed Registers Triggering Further Register Optimizations                                       ;
++------------------------------+---------------------------+----------------------------------------+
+; Register name                ; Reason for Removal        ; Registers Removed due to This Register ;
++------------------------------+---------------------------+----------------------------------------+
+; Debounce:u_rst_db|sync_0[1]  ; Stuck at GND              ; Debounce:u_rst_db|sync_1[1]            ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[2]  ; Stuck at GND              ; Debounce:u_rst_db|sync_1[2]            ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[3]  ; Stuck at GND              ; Debounce:u_rst_db|sync_1[3]            ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[4]  ; Stuck at GND              ; Debounce:u_rst_db|sync_1[4]            ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[5]  ; Stuck at GND              ; Debounce:u_rst_db|sync_1[5]            ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[6]  ; Stuck at GND              ; Debounce:u_rst_db|sync_1[6]            ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[7]  ; Stuck at GND              ; Debounce:u_rst_db|sync_1[7]            ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[8]  ; Stuck at GND              ; Debounce:u_rst_db|sync_1[8]            ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[9]  ; Stuck at GND              ; Debounce:u_rst_db|sync_1[9]            ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[10] ; Stuck at GND              ; Debounce:u_rst_db|sync_1[10]           ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[11] ; Stuck at GND              ; Debounce:u_rst_db|sync_1[11]           ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[12] ; Stuck at GND              ; Debounce:u_rst_db|sync_1[12]           ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[13] ; Stuck at GND              ; Debounce:u_rst_db|sync_1[13]           ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[14] ; Stuck at GND              ; Debounce:u_rst_db|sync_1[14]           ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[15] ; Stuck at GND              ; Debounce:u_rst_db|sync_1[15]           ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[16] ; Stuck at GND              ; Debounce:u_rst_db|sync_1[16]           ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[17] ; Stuck at GND              ; Debounce:u_rst_db|sync_1[17]           ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[18] ; Stuck at GND              ; Debounce:u_rst_db|sync_1[18]           ;
+;                              ; due to stuck port data_in ;                                        ;
+; Debounce:u_rst_db|sync_0[19] ; Stuck at GND              ; Debounce:u_rst_db|sync_1[19]           ;
+;                              ; due to stuck port data_in ;                                        ;
++------------------------------+---------------------------+----------------------------------------+
 
 
 +------------------------------------------------------+
@@ -335,98 +403,128 @@ Note: number of Embedded Multiplier Blocks used is only available after a succes
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 34816 ;
-; Number of registers using Synchronous Clear  ; 32    ;
-; Number of registers using Synchronous Load   ; 6     ;
+; Total registers                              ; 34966 ;
+; Number of registers using Synchronous Clear  ; 84    ;
+; Number of registers using Synchronous Load   ; 38    ;
 ; Number of registers using Asynchronous Clear ; 0     ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 34816 ;
+; Number of registers using Clock Enable       ; 34908 ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                              ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------+
-; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                    ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------+
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[32][21] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[16][31] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[48][6]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[8][17]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[40][17] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[24][10] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[56][28] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[4][5]   ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[36][2]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[20][27] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[52][18] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[12][2]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[44][3]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[28][10] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[60][28] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[2][24]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[34][14] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[18][28] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[50][1]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[10][19] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[42][26] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[26][10] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[58][4]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[6][23]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[38][19] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[22][0]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[54][21] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[14][16] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[46][12] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[30][26] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[62][30] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[1][16]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[33][11] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[17][20] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[49][14] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[9][0]   ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[41][0]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[25][9]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[57][22] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[5][8]   ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[37][20] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[21][6]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[53][28] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[13][13] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[45][15] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[29][7]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[61][16] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[3][2]   ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[35][29] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[19][14] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[51][26] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[11][9]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[43][4]  ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[27][14] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[59][19] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[7][7]   ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[39][22] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[23][30] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[55][12] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[15][27] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[47][10] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[31][17] ;
-; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[63][7]  ;
-; 6:1                ; 6 bits    ; 24 LEs        ; 12 LEs               ; 12 LEs                 ; Yes        ; |Processador_GUI_MIPS|pc[29]                  ;
-; 6:1                ; 26 bits   ; 104 LEs       ; 78 LEs               ; 26 LEs                 ; Yes        ; |Processador_GUI_MIPS|pc[15]                  ;
-; 3:1                ; 6 bits    ; 12 LEs        ; 12 LEs               ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|writeReg[2]             ;
-; 65:1               ; 32 bits   ; 1376 LEs      ; 1344 LEs             ; 32 LEs                 ; No         ; |Processador_GUI_MIPS|regfile64:RF|rd2[0]     ;
-; 65:1               ; 32 bits   ; 1376 LEs      ; 1344 LEs             ; 32 LEs                 ; No         ; |Processador_GUI_MIPS|regfile64:RF|rd1[20]    ;
-; 1026:1             ; 32 bits   ; 21888 LEs     ; 21888 LEs            ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|rf_wd[24]               ;
-; 18:1               ; 8 bits    ; 96 LEs        ; 80 LEs               ; 16 LEs                 ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux22           ;
-; 18:1               ; 8 bits    ; 96 LEs        ; 80 LEs               ; 16 LEs                 ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux10           ;
-; 19:1               ; 4 bits    ; 48 LEs        ; 40 LEs               ; 8 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux24           ;
-; 19:1               ; 4 bits    ; 48 LEs        ; 40 LEs               ; 8 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux6            ;
-; 20:1               ; 2 bits    ; 26 LEs        ; 16 LEs               ; 10 LEs                 ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux28           ;
-; 20:1               ; 2 bits    ; 26 LEs        ; 20 LEs               ; 6 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux3            ;
-; 21:1               ; 2 bits    ; 28 LEs        ; 20 LEs               ; 8 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux1            ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                               ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                     ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+------------------------------------------------+
+; 3:1                ; 20 bits   ; 40 LEs        ; 20 LEs               ; 20 LEs                 ; Yes        ; |Processador_GUI_MIPS|Debounce:u_rst_db|cnt[7] ;
+; 3:1                ; 28 bits   ; 56 LEs        ; 28 LEs               ; 28 LEs                 ; Yes        ; |Processador_GUI_MIPS|out_reg[25]              ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[32][23]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[16][13]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[48][21]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[8][22]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[40][8]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[24][30]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[56][8]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[4][13]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[36][14]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[20][29]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[52][7]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[12][25]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[44][4]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[28][29]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[60][14]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[2][22]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[34][28]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[18][18]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[50][2]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[10][15]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[42][28]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[26][22]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[58][26]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[6][21]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[38][8]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[22][29]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[54][21]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[14][13]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[46][16]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[30][4]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[62][27]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[1][21]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[33][31]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[17][7]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[49][14]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[9][26]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[41][6]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[25][1]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[57][17]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[5][23]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[37][1]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[21][11]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[53][13]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[13][23]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[45][26]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[29][19]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[61][2]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[3][22]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[35][19]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[19][11]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[51][10]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[11][23]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[43][17]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[27][24]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[59][27]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[7][16]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[39][18]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[23][16]  ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[55][0]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[15][7]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[47][0]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[31][0]   ;
+; 3:1                ; 32 bits   ; 64 LEs        ; 32 LEs               ; 32 LEs                 ; Yes        ; |Processador_GUI_MIPS|regfile64:RF|rf[63][31]  ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 8 LEs                ; 24 LEs                 ; Yes        ; |Processador_GUI_MIPS|lo_reg[29]               ;
+; 6:1                ; 6 bits    ; 24 LEs        ; 12 LEs               ; 12 LEs                 ; Yes        ; |Processador_GUI_MIPS|pc[26]                   ;
+; 6:1                ; 26 bits   ; 104 LEs       ; 78 LEs               ; 26 LEs                 ; Yes        ; |Processador_GUI_MIPS|pc[0]                    ;
+; 7:1                ; 24 bits   ; 96 LEs        ; 24 LEs               ; 72 LEs                 ; Yes        ; |Processador_GUI_MIPS|lo_reg[13]               ;
+; 19:1               ; 32 bits   ; 384 LEs       ; 64 LEs               ; 320 LEs                ; Yes        ; |Processador_GUI_MIPS|hi_reg[3]                ;
+; 3:1                ; 24 bits   ; 48 LEs        ; 48 LEs               ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Add0             ;
+; 3:1                ; 6 bits    ; 12 LEs        ; 12 LEs               ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|writeReg[3]              ;
+; 4:1                ; 8 bits    ; 16 LEs        ; 16 LEs               ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux7             ;
+; 67:1               ; 32 bits   ; 1408 LEs      ; 1376 LEs             ; 32 LEs                 ; No         ; |Processador_GUI_MIPS|rf_a[11]                 ;
+; 67:1               ; 32 bits   ; 1408 LEs      ; 1376 LEs             ; 32 LEs                 ; No         ; |Processador_GUI_MIPS|rf_b[12]                 ;
+; 1:1                ; 32 bits   ; 0 LEs         ; 0 LEs                ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Add0             ;
+; 14:1               ; 3 bits    ; 27 LEs        ; 18 LEs               ; 9 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux11            ;
+; 14:1               ; 2 bits    ; 18 LEs        ; 12 LEs               ; 6 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux23            ;
+; 15:1               ; 5 bits    ; 50 LEs        ; 35 LEs               ; 15 LEs                 ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux15            ;
+; 15:1               ; 6 bits    ; 60 LEs        ; 42 LEs               ; 18 LEs                 ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux22            ;
+; 1027:1             ; 14 bits   ; 9576 LEs      ; 9576 LEs             ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|rf_wd[23]                ;
+; 1027:1             ; 18 bits   ; 12312 LEs     ; 12312 LEs            ; 0 LEs                  ; No         ; |Processador_GUI_MIPS|rf_wd[3]                 ;
+; 16:1               ; 3 bits    ; 30 LEs        ; 24 LEs               ; 6 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux6             ;
+; 16:1               ; 3 bits    ; 30 LEs        ; 24 LEs               ; 6 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux24            ;
+; 17:1               ; 2 bits    ; 22 LEs        ; 20 LEs               ; 2 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux29            ;
+; 18:1               ; 2 bits    ; 24 LEs        ; 16 LEs               ; 8 LEs                  ; No         ; |Processador_GUI_MIPS|alu:ALU|Mux0             ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+------------------------------------------------+
+
+
++-----------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: divisor_Freq:u_div ;
++----------------+----------+-------------------------------------+
+; Parameter Name ; Value    ; Type                                ;
++----------------+----------+-------------------------------------+
+; DIV            ; 12500000 ; Signed Integer                      ;
++----------------+----------+-------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: Debounce:u_rst_db ;
++----------------+---------+-------------------------------------+
+; Parameter Name ; Value   ; Type                                ;
++----------------+---------+-------------------------------------+
+; STABLE_CNT     ; 1000000 ; Signed Integer                      ;
++----------------+---------+-------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
 +------------------------------------------------------------------+
@@ -487,7 +585,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 ; LPM_WIDTHP                                     ; 64           ; Untyped             ;
 ; LPM_WIDTHR                                     ; 64           ; Untyped             ;
 ; LPM_WIDTHS                                     ; 1            ; Untyped             ;
-; LPM_REPRESENTATION                             ; UNSIGNED     ; Untyped             ;
+; LPM_REPRESENTATION                             ; SIGNED       ; Untyped             ;
 ; LPM_PIPELINE                                   ; 0            ; Untyped             ;
 ; LATENCY                                        ; 0            ; Untyped             ;
 ; INPUT_A_IS_CONSTANT                            ; NO           ; Untyped             ;
@@ -500,7 +598,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 ; DEDICATED_MULTIPLIER_CIRCUITRY                 ; AUTO         ; Untyped             ;
 ; DEDICATED_MULTIPLIER_MIN_INPUT_WIDTH_FOR_AUTO  ; 0            ; Untyped             ;
 ; DEDICATED_MULTIPLIER_MIN_OUTPUT_WIDTH_FOR_AUTO ; 0            ; Untyped             ;
-; CBXI_PARAMETER                                 ; mult_7dt     ; Untyped             ;
+; CBXI_PARAMETER                                 ; mult_46t     ; Untyped             ;
 ; INPUT_A_FIXED_VALUE                            ; Bx           ; Untyped             ;
 ; INPUT_B_FIXED_VALUE                            ; Bx           ; Untyped             ;
 ; USE_AHDL_IMPLEMENTATION                        ; OFF          ; Untyped             ;
@@ -515,12 +613,35 @@ Note: In order to hide this table in the UI and the text report file, please set
 +------------------------+----------------+--------------------------------+
 ; LPM_WIDTHN             ; 32             ; Untyped                        ;
 ; LPM_WIDTHD             ; 32             ; Untyped                        ;
-; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                        ;
-; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                        ;
+; LPM_NREPRESENTATION    ; SIGNED         ; Untyped                        ;
+; LPM_DREPRESENTATION    ; SIGNED         ; Untyped                        ;
 ; LPM_PIPELINE           ; 0              ; Untyped                        ;
-; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                        ;
+; LPM_REMAINDERPOSITIVE  ; FALSE          ; Untyped                        ;
 ; MAXIMIZE_SPEED         ; 5              ; Untyped                        ;
-; CBXI_PARAMETER         ; lpm_divide_hkm ; Untyped                        ;
+; CBXI_PARAMETER         ; lpm_divide_92p ; Untyped                        ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                        ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                        ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY                     ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY                   ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE                   ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE                 ;
++------------------------+----------------+--------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++--------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: alu:ALU|lpm_divide:Mod0 ;
++------------------------+----------------+--------------------------------+
+; Parameter Name         ; Value          ; Type                           ;
++------------------------+----------------+--------------------------------+
+; LPM_WIDTHN             ; 32             ; Untyped                        ;
+; LPM_WIDTHD             ; 32             ; Untyped                        ;
+; LPM_NREPRESENTATION    ; SIGNED         ; Untyped                        ;
+; LPM_DREPRESENTATION    ; SIGNED         ; Untyped                        ;
+; LPM_PIPELINE           ; 0              ; Untyped                        ;
+; LPM_REMAINDERPOSITIVE  ; FALSE          ; Untyped                        ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                        ;
+; CBXI_PARAMETER         ; lpm_divide_cqo ; Untyped                        ;
 ; CARRY_CHAIN            ; MANUAL         ; Untyped                        ;
 ; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                        ;
 ; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY                     ;
@@ -541,7 +662,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 ;     -- LPM_WIDTHA                     ; 32                     ;
 ;     -- LPM_WIDTHB                     ; 32                     ;
 ;     -- LPM_WIDTHP                     ; 64                     ;
-;     -- LPM_REPRESENTATION             ; UNSIGNED               ;
+;     -- LPM_REPRESENTATION             ; SIGNED                 ;
 ;     -- INPUT_A_IS_CONSTANT            ; NO                     ;
 ;     -- INPUT_B_IS_CONSTANT            ; NO                     ;
 ;     -- USE_EAB                        ; OFF                    ;
@@ -567,26 +688,28 @@ Note: In order to hide this table in the UI and the text report file, please set
 +-----------------------+-----------------------------+
 ; Type                  ; Count                       ;
 +-----------------------+-----------------------------+
-; boundary_port         ; 83                          ;
-; cycloneiii_ff         ; 34816                       ;
-;     ENA               ; 34784                       ;
+; boundary_port         ; 90                          ;
+; cycloneiii_ff         ; 34966                       ;
+;     ENA               ; 34844                       ;
 ;     ENA SCLR          ; 26                          ;
-;     ENA SCLR SLD      ; 6                           ;
-; cycloneiii_lcell_comb ; 28106                       ;
-;     arith             ; 676                         ;
-;         2 data inputs ; 32                          ;
-;         3 data inputs ; 644                         ;
-;     normal            ; 27430                       ;
-;         0 data inputs ; 30                          ;
-;         1 data inputs ; 7                           ;
-;         2 data inputs ; 74                          ;
-;         3 data inputs ; 1086                        ;
-;         4 data inputs ; 26233                       ;
-; cycloneiii_mac_mult   ; 3                           ;
-; cycloneiii_mac_out    ; 3                           ;
+;     ENA SCLR SLD      ; 38                          ;
+;     SCLR              ; 20                          ;
+;     plain             ; 38                          ;
+; cycloneiii_lcell_comb ; 29686                       ;
+;     arith             ; 1377                        ;
+;         2 data inputs ; 109                         ;
+;         3 data inputs ; 1268                        ;
+;     normal            ; 28309                       ;
+;         0 data inputs ; 61                          ;
+;         1 data inputs ; 11                          ;
+;         2 data inputs ; 179                         ;
+;         3 data inputs ; 409                         ;
+;         4 data inputs ; 27649                       ;
+; cycloneiii_mac_mult   ; 4                           ;
+; cycloneiii_mac_out    ; 4                           ;
 ;                       ;                             ;
-; Max LUT depth         ; 149.50                      ;
-; Average LUT depth     ; 69.50                       ;
+; Max LUT depth         ; 172.10                      ;
+; Average LUT depth     ; 84.79                       ;
 +-----------------------+-----------------------------+
 
 
@@ -595,7 +718,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:02:22     ;
+; Top            ; 00:02:46     ;
 +----------------+--------------+
 
 
@@ -605,7 +728,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 17.1.0 Build 590 10/25/2017 SJ Lite Edition
-    Info: Processing started: Thu Apr 09 19:07:19 2026
+    Info: Processing started: Mon Apr 27 20:09:31 2026
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off Processador_GUI_MIPS -c Processador_GUI_MIPS
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 16 of the 16 processors detected
@@ -620,7 +743,7 @@ Info (12021): Found 1 design units, including 1 entities, in source file dataout
 Info (12021): Found 1 design units, including 1 entities, in source file single_port_rom.v
     Info (12023): Found entity 1: single_port_rom File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file processador_gui_mips.v
-    Info (12023): Found entity 1: Processador_GUI_MIPS File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 6
+    Info (12023): Found entity 1: Processador_GUI_MIPS File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 29
 Info (12021): Found 1 design units, including 1 entities, in source file regfile64.v
     Info (12023): Found entity 1: regfile64 File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/regfile64.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file data_ram.v
@@ -636,92 +759,93 @@ Info (12021): Found 1 design units, including 1 entities, in source file control
 Info (12021): Found 1 design units, including 1 entities, in source file mux2.v
     Info (12023): Found entity 1: mux2 File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/mux2.v Line: 1
 Info (12127): Elaborating entity "Processador_GUI_MIPS" for the top level hierarchy
-Warning (10036): Verilog HDL or VHDL warning at Processador_GUI_MIPS.v(40): object "shamt" assigned a value but never read File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 40
-Info (12128): Elaborating entity "single_port_rom" for hierarchy "single_port_rom:ROM" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 31
+Info (12128): Elaborating entity "divisor_Freq" for hierarchy "divisor_Freq:u_div" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 49
+Info (12128): Elaborating entity "Debounce" for hierarchy "Debounce:u_rst_db" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 58
+Warning (10230): Verilog HDL assignment warning at debounce.v(15): truncated value with size 20 to match size of target (1) File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/debounce.v Line: 15
+Info (12128): Elaborating entity "single_port_rom" for hierarchy "single_port_rom:ROM" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 79
 Warning (10850): Verilog HDL warning at single_port_rom.v(12): number of words (78) in memory file does not match the number of elements in the address range [0:1023] File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v Line: 12
 Warning (10030): Net "rom.data_a" at single_port_rom.v(10) has no driver or initial value, using a default initial value '0' File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v Line: 10
 Warning (10030): Net "rom.waddr_a" at single_port_rom.v(10) has no driver or initial value, using a default initial value '0' File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v Line: 10
 Warning (10030): Net "rom.we_a" at single_port_rom.v(10) has no driver or initial value, using a default initial value '0' File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/single_port_rom.v Line: 10
-Info (12128): Elaborating entity "control_unit" for hierarchy "control_unit:CU" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 54
-Warning (10270): Verilog HDL Case Statement warning at control_unit.v(23): incomplete case statement has no default case item File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/control_unit.v Line: 23
-Info (12128): Elaborating entity "sign_extend" for hierarchy "sign_extend:SE" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 59
-Info (12128): Elaborating entity "regfile64" for hierarchy "regfile64:RF" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 77
-Info (12128): Elaborating entity "alu" for hierarchy "alu:ALU" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 83
-Info (12128): Elaborating entity "data_ram" for hierarchy "data_ram:DRAM" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 94
-Info (12128): Elaborating entity "hex7seg" for hierarchy "hex7seg:h0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 122
+Info (12128): Elaborating entity "control_unit" for hierarchy "control_unit:CU" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 103
+Warning (10270): Verilog HDL Case Statement warning at control_unit.v(27): incomplete case statement has no default case item File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/control_unit.v Line: 27
+Info (12128): Elaborating entity "sign_extend" for hierarchy "sign_extend:SE" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 113
+Info (12128): Elaborating entity "regfile64" for hierarchy "regfile64:RF" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 133
+Info (12128): Elaborating entity "alu" for hierarchy "alu:ALU" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 151
+Info (12128): Elaborating entity "data_ram" for hierarchy "data_ram:DRAM" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 172
+Info (12128): Elaborating entity "hex7seg" for hierarchy "hex7seg:h0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 209
 Warning (127007): Memory Initialization File or Hexadecimal (Intel-Format) File "C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/Processador_GUI_MIPS.ram0_single_port_rom_8cb1eed8.hdl.mif" contains "don't care" values -- overwriting them with 0s
-Info (278001): Inferred 2 megafunctions from design logic
-    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "alu:ALU|Mult0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 19
-    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "alu:ALU|Div0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 20
-Info (12130): Elaborated megafunction instantiation "alu:ALU|lpm_mult:Mult0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 19
-Info (12133): Instantiated megafunction "alu:ALU|lpm_mult:Mult0" with the following parameter: File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 19
+Info (278001): Inferred 3 megafunctions from design logic
+    Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "alu:ALU|Mult0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 29
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "alu:ALU|Div0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 40
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "alu:ALU|Mod0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 39
+Info (12130): Elaborated megafunction instantiation "alu:ALU|lpm_mult:Mult0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 29
+Info (12133): Instantiated megafunction "alu:ALU|lpm_mult:Mult0" with the following parameter: File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 29
     Info (12134): Parameter "LPM_WIDTHA" = "32"
     Info (12134): Parameter "LPM_WIDTHB" = "32"
     Info (12134): Parameter "LPM_WIDTHP" = "64"
     Info (12134): Parameter "LPM_WIDTHR" = "64"
     Info (12134): Parameter "LPM_WIDTHS" = "1"
-    Info (12134): Parameter "LPM_REPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_REPRESENTATION" = "SIGNED"
     Info (12134): Parameter "INPUT_A_IS_CONSTANT" = "NO"
     Info (12134): Parameter "INPUT_B_IS_CONSTANT" = "NO"
     Info (12134): Parameter "MAXIMIZE_SPEED" = "5"
-Info (12021): Found 1 design units, including 1 entities, in source file db/mult_7dt.tdf
-    Info (12023): Found entity 1: mult_7dt File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/mult_7dt.tdf Line: 30
-Info (12130): Elaborated megafunction instantiation "alu:ALU|lpm_divide:Div0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 20
-Info (12133): Instantiated megafunction "alu:ALU|lpm_divide:Div0" with the following parameter: File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 20
+Info (12021): Found 1 design units, including 1 entities, in source file db/mult_46t.tdf
+    Info (12023): Found entity 1: mult_46t File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/mult_46t.tdf Line: 30
+Info (12130): Elaborated megafunction instantiation "alu:ALU|lpm_divide:Div0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 40
+Info (12133): Instantiated megafunction "alu:ALU|lpm_divide:Div0" with the following parameter: File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 40
     Info (12134): Parameter "LPM_WIDTHN" = "32"
     Info (12134): Parameter "LPM_WIDTHD" = "32"
-    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
-    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
-Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_hkm.tdf
-    Info (12023): Found entity 1: lpm_divide_hkm File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/lpm_divide_hkm.tdf Line: 24
-Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_9nh.tdf
-    Info (12023): Found entity 1: sign_div_unsign_9nh File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/sign_div_unsign_9nh.tdf Line: 24
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "SIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "SIGNED"
+    Info (12134): Parameter "LPM_HINT" = "LPM_REMAINDERPOSITIVE=FALSE"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_92p.tdf
+    Info (12023): Found entity 1: lpm_divide_92p File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/lpm_divide_92p.tdf Line: 24
+Info (12021): Found 1 design units, including 1 entities, in source file db/abs_divider_4dg.tdf
+    Info (12023): Found entity 1: abs_divider_4dg File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/abs_divider_4dg.tdf Line: 26
 Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_6af.tdf
     Info (12023): Found entity 1: alt_u_div_6af File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/alt_u_div_6af.tdf Line: 26
 Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_7pc.tdf
     Info (12023): Found entity 1: add_sub_7pc File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/add_sub_7pc.tdf Line: 22
 Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_8pc.tdf
     Info (12023): Found entity 1: add_sub_8pc File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/add_sub_8pc.tdf Line: 22
-Warning (14284): Synthesized away the following node(s):
-    Warning (14285): Synthesized away the following DSP element node(s):
-        Warning (14320): Synthesized away node "alu:ALU|lpm_mult:Mult0|mult_7dt:auto_generated|mac_mult7" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/mult_7dt.tdf Line: 66
-        Warning (14320): Synthesized away node "alu:ALU|lpm_mult:Mult0|mult_7dt:auto_generated|mac_out8" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/mult_7dt.tdf Line: 90
-Info (13014): Ignored 84 buffer(s)
-    Info (13019): Ignored 84 SOFT buffer(s)
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_abs_i0a.tdf
+    Info (12023): Found entity 1: lpm_abs_i0a File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/lpm_abs_i0a.tdf Line: 24
+Info (12130): Elaborated megafunction instantiation "alu:ALU|lpm_divide:Mod0" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 39
+Info (12133): Instantiated megafunction "alu:ALU|lpm_divide:Mod0" with the following parameter: File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/alu.v Line: 39
+    Info (12134): Parameter "LPM_WIDTHN" = "32"
+    Info (12134): Parameter "LPM_WIDTHD" = "32"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "SIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "SIGNED"
+    Info (12134): Parameter "LPM_HINT" = "LPM_REMAINDERPOSITIVE=FALSE"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_cqo.tdf
+    Info (12023): Found entity 1: lpm_divide_cqo File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/db/lpm_divide_cqo.tdf Line: 24
+Info (13014): Ignored 372 buffer(s)
+    Info (13016): Ignored 124 CARRY_SUM buffer(s)
+    Info (13019): Ignored 248 SOFT buffer(s)
 Info (286030): Timing-Driven Synthesis is running
+Info (144001): Generated suppressed messages file C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/output_files/Processador_GUI_MIPS.map.smsg
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
-Warning (21074): Design contains 21 input pin(s) that do not drive logic
-    Warning (15610): No output dependent on input pin "SW[0]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[1]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[2]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[3]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[4]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[5]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[6]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[7]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[8]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[9]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[10]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[11]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[12]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[13]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[14]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[15]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[16]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "SW[17]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 8
-    Warning (15610): No output dependent on input pin "KEY[1]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 9
-    Warning (15610): No output dependent on input pin "KEY[2]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 9
-    Warning (15610): No output dependent on input pin "KEY[3]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 9
-Info (21057): Implemented 62963 device resources after synthesis - the final resource count might be different
+Warning (21074): Design contains 3 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "KEY[1]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 32
+    Warning (15610): No output dependent on input pin "KEY[2]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 32
+    Warning (15610): No output dependent on input pin "KEY[3]" File: C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/Processador_GUI_MIPS.v Line: 32
+Info (21057): Implemented 64554 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 23 input pins
-    Info (21059): Implemented 60 output pins
-    Info (21061): Implemented 62874 logic cells
-    Info (21062): Implemented 6 DSP elements
-Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 34 warnings
-    Info: Peak virtual memory: 5236 megabytes
-    Info: Processing ended: Thu Apr 09 19:09:57 2026
-    Info: Elapsed time: 00:02:38
-    Info: Total CPU time (on all processors): 00:02:45
+    Info (21059): Implemented 67 output pins
+    Info (21061): Implemented 64456 logic cells
+    Info (21062): Implemented 8 DSP elements
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 12 warnings
+    Info: Peak virtual memory: 5201 megabytes
+    Info: Processing ended: Mon Apr 27 20:12:34 2026
+    Info: Elapsed time: 00:03:03
+    Info: Total CPU time (on all processors): 00:03:08
+
+
++------------------------------------------+
+; Analysis & Synthesis Suppressed Messages ;
++------------------------------------------+
+The suppressed messages can be found in C:/Users/Guilherme Ferreira/Desktop/Projeto Labs/processador/processadorMipsLite/output_files/Processador_GUI_MIPS.map.smsg.
 
 

@@ -26,13 +26,13 @@ module control_unit (
             /* -------- F1 (R‑type) -------- */
             6'b000000: begin regDst=1; regWrite=1; aluOp=4'd0; end   // ADD
             6'b000010: begin regDst=1; regWrite=1; aluOp=4'd1; end   // SUB
-            6'b000100: begin regDst=1; aluOp=4'd8; end               // MULT
-            6'b000110: begin regDst=1; aluOp=4'd9; end               // DIV
+            6'b000100: begin regDst=1; isMultDiv=1; aluOp=4'd8; end  // MULT
+            6'b000110: begin regDst=1; isMultDiv=1; aluOp=4'd9; end  // DIV
             6'b001000: begin regDst=1; regWrite=1; aluOp=4'd2; end   // AND
             6'b001010: begin regDst=1; regWrite=1; aluOp=4'd3; end   // OR
-            6'b001101: begin regDst=1; regWrite=1; aluOp=4'd7; end   // SR
-            6'b001110: begin regDst=1; regWrite=1; aluOp=4'd6; end   // SL
-            6'b011001: begin regDst=1; regWrite=1; aluOp=4'd5; end   // SLT
+            6'b001101: begin regDst=1; regWrite=1; aluOp=4'd6; end   // SR
+            6'b001110: begin regDst=1; regWrite=1; aluOp=4'd5; end   // SL
+            6'b011001: begin regDst=1; regWrite=1; aluOp=4'd7; end   // SLT
             6'b010010: begin jr=1; jump=1;                        end // JUMPR
 
             /* -------- F2 (I‑type) -------- */

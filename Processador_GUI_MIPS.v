@@ -36,6 +36,7 @@ module Processador_GUI_MIPS (
     output wire [6:0]  HEX3,
     output wire [6:0]  HEX4,
     output wire [6:0]  HEX5,
+    output wire [6:0]  HEX6,
     output wire [17:0] LEDR
 );
     /* ========================= GERAÇÃO DO clk_cpu ======================== */
@@ -130,9 +131,8 @@ module Processador_GUI_MIPS (
     wire        in_writeEn = is_in & enter_pulse;
 
     /* ========================= REGFILE E SIGN-EXT ======================== */
-    wire [31:0] rf_a, rf_b, rf_wd;
-    wire [31:0] immExt;
-    sign_extend #(.IN_W(14)) SE (.in(imm14), .out(immExt));
+    localparam [5:0] LO_REG = 6'd61;
+    localparam [5:0] HI_REG = 6'd62;
 
     // Leituras do banco: F1 usa RS/RT; F2 usa RS em rt e, em SW/BEQ/BNE, lê também o campo [25:20].
     // OUT (FI) precisa ler o registrador no campo [25:20] (= 'rs') por rd1.
@@ -149,15 +149,37 @@ module Processador_GUI_MIPS (
         .rs2 (rf_rs2),
         .rd  (writeReg),
         .wd  (rf_wd),
-        .rd1 (rf_a),
-        .rd2 (rf_b)
+        .rd1 (rf_a_raw),
+        .rd2 (rf_b_raw)
     );
+
+    reg [31:0] hi_reg, lo_reg;
+    assign rf_a = (rf_rs1 == LO_REG) ? lo_reg :
+                  (rf_rs1 == HI_REG) ? hi_reg :
+                                        rf_a_raw;
+    assign rf_b = (rf_rs2 == LO_REG) ? lo_reg :
+                  (rf_rs2 == HI_REG) ? hi_reg :
+                                        rf_b_raw;
 
     /* ========================= ALU ======================================= */
     wire [31:0] alu_in_b = aluSrc ? immExt : rf_b;
     wire [31:0] alu_y;
+    wire [31:0] alu_hi, alu_lo;
     wire        alu_zero;
-    alu ALU (.a(rf_a), .b(alu_in_b), .op(aluOp), .y(alu_y), .zero(alu_zero));
+    alu ALU (
+        .a(rf_a), .b(alu_in_b), .op(aluOp), .shamt(shamt),
+        .y(alu_y), .hi_out(alu_hi), .lo_out(alu_lo), .zero(alu_zero)
+    );
+
+    always @(posedge clk_cpu) begin
+        if (rst) begin
+            hi_reg <= 32'd0;
+            lo_reg <= 32'd0;
+        end else if (isMultDiv) begin
+            hi_reg <= alu_hi;
+            lo_reg <= alu_lo;
+        end
+    end
 
     /* ========================= DATA MEMORY =============================== */
     wire [31:0] data_rd;
@@ -171,6 +193,7 @@ module Processador_GUI_MIPS (
     );
 
     /* ========================= WRITE-BACK MUX ============================ */
+    wire [31:0] input_value = {14'b0, SW[17:0]};
     wire [31:0] wb_core = memToReg ? data_rd : alu_y;
     assign rf_wd = is_in ? in_data    :
                    jal   ? pc_plus4   :
@@ -202,7 +225,7 @@ module Processador_GUI_MIPS (
     reg [31:0] out_reg;
     always @(posedge clk_cpu) begin
         if (rst)         out_reg <= 32'd0;
-        else if (is_out) out_reg <= rf_a;
+        else if (is_out) out_reg <= rf_a;z
     end
 
     /* ========================= I/O VISUAL =============================== */
@@ -222,4 +245,5 @@ module Processador_GUI_MIPS (
     hex7seg h3 (.hex(out_reg[15:12]), .seg(HEX3));
     hex7seg h4 (.hex(out_reg[19:16]), .seg(HEX4));
     hex7seg h5 (.hex(out_reg[23:20]), .seg(HEX5));
+    hex7seg h6 (.hex(out_reg[27:24]), .seg(HEX6));
 endmodule

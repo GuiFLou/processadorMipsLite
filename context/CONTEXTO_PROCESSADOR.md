@@ -338,6 +338,9 @@ $lo ← RS / RT (quociente)
 $hi ← RS % RT (resto)
 ```
 
+Divisão por zero segue uma convenção definida pelo hardware: se `RT == 0`,
+`$lo` recebe `32'hFFFF_FFFF` e `$hi` recebe o valor original de `RS`.
+
 O campo RD é **0** (ignorado pelo hardware). O compilador obtém o quociente com `move $tN,$lo`.
 
 **Exemplo real (gcd.txt, addr 23):**
