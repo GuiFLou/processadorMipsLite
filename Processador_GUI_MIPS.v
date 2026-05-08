@@ -109,7 +109,7 @@ module Processador_GUI_MIPS (
     /* ========================= UNIDADE DE CONTROLE ======================= */
     wire regDst, aluSrc, memToReg, regWrite, memWrite;
     wire branchEq, branchNe, jump, jal, jr, halt;
-    wire is_in, is_out;
+    wire is_in, is_out, isMultDiv;
     wire [3:0] aluOp;
     control_unit CU (
         .opcode(opcode),
@@ -118,8 +118,18 @@ module Processador_GUI_MIPS (
         .branchEq(branchEq), .branchNe(branchNe),
         .jump(jump), .jal(jal), .jr(jr),
         .halt(halt),
-        .is_in(is_in), .is_out(is_out),
+        .is_in(is_in), .is_out(is_out), .isMultDiv(isMultDiv),
         .aluOp(aluOp)
+    );
+
+    /* ========================= SIGN-EXTEND DO IMEDIATO ===================
+       imm14 (14 bits) é estendido em sinal para 32 bits. Usado pelo
+       operando B da ALU (quando aluSrc=1) e pelo cálculo do alvo de
+       branch (pc_plus4 + immExt). */
+    wire [31:0] immExt;
+    sign_extend #(.IN_W(14)) SE (
+        .in (imm14),
+        .out(immExt)
     );
 
     /* ========================= STALL DO IN =============================== */
@@ -141,6 +151,13 @@ module Processador_GUI_MIPS (
 
     // Destino de escrita: JAL → $ra (31); F1 → RD[13:8]; F2/FI → campo [25:20].
     wire [5:0] writeReg = jal ? 6'd31 : (regDst ? rd : rs);
+
+    // Saídas brutas do banco (rd1/rd2) e versões já com bypass de $hi/$lo.
+    // Declaração explícita evita que o Verilog crie wires de 1 bit por
+    // inferência implícita.
+    wire [31:0] rf_a_raw, rf_b_raw;
+    wire [31:0] rf_a, rf_b;
+    wire [31:0] rf_wd;
 
     regfile64 RF (
         .clk (clk_cpu), .rst(rst),
@@ -225,7 +242,7 @@ module Processador_GUI_MIPS (
     reg [31:0] out_reg;
     always @(posedge clk_cpu) begin
         if (rst)         out_reg <= 32'd0;
-        else if (is_out) out_reg <= rf_a;z
+        else if (is_out) out_reg <= rf_a;
     end
 
     /* ========================= I/O VISUAL =============================== */

@@ -14,12 +14,14 @@ module control_unit (
     output reg        halt,    // <‑‑ NOVO (para HLT)
     output reg        is_in,   // <‑‑ NOVO (FI – IN  : escrita do regfile e PC tratados no top-level)
     output reg        is_out,  // <‑‑ NOVO (FI – OUT : captura do valor para os displays no top-level)
+    output reg        isMultDiv, // <-- NOVO (MULT/DIV: habilita escrita em $hi/$lo no top-level)
     output reg  [3:0] aluOp
 );
     always @* begin
         /* defaults = NOP */
         {regDst, aluSrc, memToReg, regWrite, memWrite,
-         branchEq, branchNe, jump, jal, jr, halt, is_in, is_out} = 13'b0;
+         branchEq, branchNe, jump, jal, jr, halt,
+         is_in, is_out, isMultDiv} = 14'b0;
         aluOp = 4'd0;
 
         case (opcode)
