@@ -210,7 +210,6 @@ module Processador_GUI_MIPS (
     );
 
     /* ========================= WRITE-BACK MUX ============================ */
-    wire [31:0] input_value = {14'b0, SW[17:0]};
     wire [31:0] wb_core = memToReg ? data_rd : alu_y;
     assign rf_wd = is_in ? in_data    :
                    jal   ? pc_plus4   :
