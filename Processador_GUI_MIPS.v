@@ -254,12 +254,18 @@ module Processador_GUI_MIPS (
     assign LEDR[16]   = halt;
     assign LEDR[17]   = stall_in;
 
-    // HEX0..HEX5 mostram em hexadecimal os 24 bits baixos do último OUT.
-    hex7seg h0 (.hex(out_reg[ 3: 0]), .seg(HEX0));
-    hex7seg h1 (.hex(out_reg[ 7: 4]), .seg(HEX1));
-    hex7seg h2 (.hex(out_reg[11: 8]), .seg(HEX2));
-    hex7seg h3 (.hex(out_reg[15:12]), .seg(HEX3));
-    hex7seg h4 (.hex(out_reg[19:16]), .seg(HEX4));
-    hex7seg h5 (.hex(out_reg[23:20]), .seg(HEX5));
-    hex7seg h6 (.hex(out_reg[27:24]), .seg(HEX6));
+    // HEX0..HEX6 mostram o último OUT em decimal (BCD):
+    // HEX0 = unidade, HEX1 = dezena, ... HEX6 = milhão.
+    wire [27:0] out_bcd;
+    bin32_to_bcd7 u_out_bcd (
+        .bin(out_reg),
+        .bcd(out_bcd)
+    );
+    hex7seg h0 (.hex(out_bcd[ 3: 0]), .seg(HEX0));
+    hex7seg h1 (.hex(out_bcd[ 7: 4]), .seg(HEX1));
+    hex7seg h2 (.hex(out_bcd[11: 8]), .seg(HEX2));
+    hex7seg h3 (.hex(out_bcd[15:12]), .seg(HEX3));
+    hex7seg h4 (.hex(out_bcd[19:16]), .seg(HEX4));
+    hex7seg h5 (.hex(out_bcd[23:20]), .seg(HEX5));
+    hex7seg h6 (.hex(out_bcd[27:24]), .seg(HEX6));
 endmodule

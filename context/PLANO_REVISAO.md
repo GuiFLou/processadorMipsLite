@@ -2,35 +2,65 @@
 
 Documento de referência: `CONTEXTO_PROCESSADOR.md` (especificação autoritativa da ISA e microarquitetura).
 
-> **Status:** A maior parte das correções de datapath, control unit, ALU e I/O já foi aplicada. As issues abaixo são as que **ainda estão pendentes** após a revisão do código atual.
+> **Status:** A maior parte das correções de datapath, control unit, ALU e I/O já foi aplicada. Este documento agora separa **bugs/riscos que podem fazer o processador não funcionar conforme o propósito** (seção nova abaixo) dos **próximos passos** (testbench e FPGA).
 
 ---
 
-## Visão geral dos problemas restantes
+## Visão geral
 
-Sobra apenas um cleanup de código morto (`input_value`), a criação do testbench e a verificação dos pinos no `.qsf` antes de programar a placa.
+O datapath monociclo está, em sua maior parte, correto para os 5 programas-alvo. Restam, porém, alguns **riscos reais de funcionamento** (alguns bloqueiam a validação, outros violam a ISA em instruções ainda não exercitadas) que precisam ser conferidos antes de confiar no processador. Eles estão listados na seção **"Issues que podem impedir o funcionamento"**. Em seguida vêm os próximos passos já planejados (testbench e integração FPGA).
+
+> Observação: o cleanup do `wire input_value` citado na antiga Fase 1 **já foi feito** — esse wire não existe mais em `Processador_GUI_MIPS.v` (só sobrou a menção neste documento). Os 90 `set_location_assignment` do `.qsf` cobrem `CLOCK_50`, `KEY[0..3]`, `SW[0..17]`, `HEX0..HEX6` e `LEDR[17:0]`.
 
 ---
 
-## Fase 1 — Pequenos cleanups no top-level
+## Issues que podem impedir o funcionamento
 
-### 1.1 Dead code: `input_value`
+Ordenadas por severidade. Referências de arquivo:linha apontam para o estado atual do código.
 
-**Arquivo:** `Processador_GUI_MIPS.v` (linha 196)
+
+### 🟡 Bugs latentes (não exercitados pelos 5 testes, mas violam a ISA)
+
+#### I6. `MULTI`/`DIVI` (F2) escrevem no regfile em vez de `$hi`/`$lo`
+
+**Arquivo:** `control_unit.v:43-44`
 
 ```verilog
-wire [31:0] input_value = {14'b0, SW[17:0]};
+6'b000101: begin aluSrc=1; regWrite=1; aluOp=4'd8; end   // MULTI
+6'b000111: begin aluSrc=1; regWrite=1; aluOp=4'd9; end   // DIVI
 ```
 
-Esse wire é declarado mas o write-back do IN realmente usa `in_data = {22'b0, SW[9:0]}` (linha 130). Como o `LEDR[9:0]` ecoa apenas `SW[9:0]`, a versão de 18 bits virou código morto.
+Pela ISA (`CONTEXTO §3.1`), MULTI/DIVI devem fazer `{Hi,Lo} ← RS ×/÷ signext(Imm)` — ou seja, **`isMultDiv=1` e `regWrite=0`**, igual a MULT/DIV. Do jeito atual, eles ligam `regWrite` e gravam `y=lo_out` diretamente num registrador, sem atualizar `$hi`/`$lo`.
 
-**Ação:** remover a linha (ou, se a intenção for ler 18 bits, alinhar `in_data`, `LEDR` e o comentário do IN para 18 bits).
+- **Impacto:** nenhum nos 5 testes (não usam MULTI/DIVI), mas é uma divergência de ISA que quebraria qualquer programa que os use.
+- **Ação:** trocar para `begin aluSrc=1; isMultDiv=1; aluOp=4'd8/9; end`.
+
+#### I7. `ANDI`/`ORI` usam extensão de sinal em vez de extensão com zero
+
+**Arquivos:** `control_unit.v:45-46` (ANDI/ORI) usam o mesmo `immExt`, e `Processador_GUI_MIPS.v:129-133` instancia um único `sign_extend`.
+
+A ISA (`CONTEXTO §3.1`) define `ANDI`/`ORI` com `zeroext(Imm)`. Com sign-extend, um imediato com bit 13 = 1 vira `0xFFFFxxxx`, corrompendo o AND/OR.
+
+- **Impacto:** nenhum nos 5 testes; latente.
+- **Ação:** gerar uma versão zero-estendida do imediato e selecioná-la para ANDI/ORI (ou tratar no decode).
+
+### 🔵 Riscos de simulação / robustez
+
+#### I9. Memórias sem reset/inicialização garantida em simulação
+
+`data_ram.v` não tem reset (a RAM nasce `X` em simulação) e o `regfile64` só zera no `rst`. O compilador sempre escreve antes de ler as variáveis, então em execução real funciona, mas um testbench precisa **aplicar reset** e, idealmente, inicializar a RAM para evitar `X` propagando.
+
+#### I10. `$readmemb` depende do arquivo no diretório de trabalho
+
+`single_port_rom.v:12` usa `$readmemb(FILENAME, rom)` com caminho relativo. Em simulação, o `.txt` precisa estar no diretório onde o simulador roda (ou usar caminho absoluto). Conferir ao montar o testbench.
 
 ---
 
 ## Fase 2 — Testbench e validação (Fase 5 antiga)
 
 Não existe nenhum `tb_*.v` no repositório (`Glob tb_*.v` → 0 arquivos). A criação do testbench foi adiada e ainda precisa ser feita.
+
+> **Pré-requisito (issue I1):** dos binários abaixo, apenas `gcd.txt` existe no repositório. Antes de rodar a sequência completa, é preciso gerar `teste2.txt`, `teste.txt`, `fatorial.txt` e `sort.txt` com o compilador.
 
 ### 2.1 Criar testbench básico
 
@@ -95,15 +125,24 @@ Se algum desses estiver faltando ou apontar para o pino errado da DE2-115, ajust
 
 ---
 
-## Resumo das alterações ainda pendentes
+## Resumo das issues e pendências
 
-| Arquivo | Alterações restantes |
-|---------|---------------------|
-| `Processador_GUI_MIPS.v` | Remover `wire input_value` (linha 196) que ficou como código morto |
-| `tb_processador.v` | **Criar** testbench cobrindo `teste2.txt` → `gcd.txt` → `sort.txt` |
-| `Processador_GUI_MIPS.qsf` | Reconferir pinos de KEY[1], SW, HEX0–HEX6 e LEDR |
+| ID | Severidade | Arquivo:linha | Resumo |
+|----|-----------|---------------|--------|
+| I1 | 🔴 | (repo) | Faltam `teste2/teste/fatorial/sort.txt`; só `gcd.txt` existe |
+| I2 | 🔴 | `Processador_GUI_MIPS.v:94` | `FILENAME` da ROM fixo em `"gcd.txt"` |
+| I3 | 🟠 | `regfile64.v:19-26` | `$sp`/PC só corretos após reset (sem power-on init) |
+| I4 | 🟠 | `Processador_GUI_MIPS.v:62-67` | Reset síncrono ao `clk_cpu` lento + debounce |
+| I5 | ✅ | `Processador_GUI_MIPS.v`, `bin32_to_bcd7.v` | Saída decimal nos displays (conversão binário→BCD) |
+| I6 | 🟡 | `control_unit.v:43-44` | MULTI/DIVI gravam no regfile em vez de `$hi`/`$lo` |
+| I7 | 🟡 | `control_unit.v:45-46` | ANDI/ORI usam sign-extend em vez de zero-extend |
+| I8 | 🟡 | `Processador_GUI_MIPS.v:140` | IN lê só `SW[9:0]` (máx. 1023) |
+| I9 | 🔵 | `data_ram.v` | RAM sem reset → `X` em simulação |
+| I10 | 🔵 | `single_port_rom.v:12` | `$readmemb` com caminho relativo |
+| I11 | ✅ | `Processador_GUI_MIPS.qsf` | Arquivos mortos removidos e `.qsf` limpo |
+| — | pendência | `tb_processador.v` | **Criar** testbench cobrindo `teste2.txt` → `gcd.txt` → `sort.txt` |
 
-Tudo o que já estava na ISA e datapath (rf_rs1/rs2/writeReg, endereçamento word da RAM, ALU com `shamt`, `hi_out`/`lo_out`, alinhamento CU↔ALU, init de `$sp`, ROM combinacional, IN/OUT, debounce, displays de OUT, `sign_extend` instanciado, `isMultDiv` declarado, wires de 32 bits explícitos) **já foi aplicado** e não precisa de novas mudanças.
+Tudo o que já estava na ISA e datapath (rf_rs1/rs2/writeReg, endereçamento word da RAM, ALU com `shamt`, `hi_out`/`lo_out`, alinhamento CU↔ALU, init de `$sp` no reset, ROM combinacional, IN/OUT, debounce, displays de OUT, `sign_extend` instanciado, `isMultDiv` declarado, wires de 32 bits explícitos) **já foi aplicado**. As issues I1–I11 acima são os pontos que ainda podem fazer o processador não funcionar conforme o propósito.
 
 ---
 
