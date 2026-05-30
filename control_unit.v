@@ -40,8 +40,8 @@ module control_unit (
             /* -------- F2 (I‑type) -------- */
             6'b000001: begin aluSrc=1; regWrite=1; aluOp=4'd0; end   // ADDI
             6'b000011: begin aluSrc=1; regWrite=1; aluOp=4'd1; end   // SUBI
-            6'b000101: begin aluSrc=1; regWrite=1; aluOp=4'd8; end   // MULTI
-            6'b000111: begin aluSrc=1; regWrite=1; aluOp=4'd9; end   // DIVI
+            6'b000101: begin aluSrc=1; isMultDiv=1; aluOp=4'd8; end  // MULTI
+            6'b000111: begin aluSrc=1; isMultDiv=1; aluOp=4'd9; end  // DIVI
             6'b001001: begin aluSrc=1; regWrite=1; aluOp=4'd2; end   // ANDI
             6'b001011: begin aluSrc=1; regWrite=1; aluOp=4'd3; end   // ORI
             6'b001100: begin aluSrc=1; regWrite=1; aluOp=4'd4; end   // NOT

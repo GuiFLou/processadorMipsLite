@@ -122,15 +122,17 @@ module Processador_GUI_MIPS (
         .aluOp(aluOp)
     );
 
-    /* ========================= SIGN-EXTEND DO IMEDIATO ===================
-       imm14 (14 bits) é estendido em sinal para 32 bits. Usado pelo
-       operando B da ALU (quando aluSrc=1) e pelo cálculo do alvo de
-       branch (pc_plus4 + immExt). */
+    /* ========================= EXTENSÃO DO IMEDIATO ======================
+       Imediatos aritméticos/endereço usam sinal; ANDI/ORI usam máscara
+       lógica, então precisam completar os bits altos com zero. */
     wire [31:0] immExt;
     sign_extend #(.IN_W(14)) SE (
         .in (imm14),
         .out(immExt)
     );
+    wire        is_logic_imm = (opcode == 6'b001001) || (opcode == 6'b001011);
+    wire [31:0] immZeroExt  = {18'b0, imm14};
+    wire [31:0] aluImmExt   = is_logic_imm ? immZeroExt : immExt;
 
     /* ========================= STALL DO IN =============================== */
     // Enquanto o opcode for IN e o usuário não tiver pulsado KEY[1],
@@ -179,7 +181,7 @@ module Processador_GUI_MIPS (
                                         rf_b_raw;
 
     /* ========================= ALU ======================================= */
-    wire [31:0] alu_in_b = aluSrc ? immExt : rf_b;
+    wire [31:0] alu_in_b = aluSrc ? aluImmExt : rf_b;
     wire [31:0] alu_y;
     wire [31:0] alu_hi, alu_lo;
     wire        alu_zero;
