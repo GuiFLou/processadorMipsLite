@@ -240,30 +240,6 @@
 					"strict" : false
 				},
 				{
-					"name" : "LEDR[10]",
-					"strict" : false
-				},
-				{
-					"name" : "LEDR[11]",
-					"strict" : false
-				},
-				{
-					"name" : "LEDR[12]",
-					"strict" : false
-				},
-				{
-					"name" : "LEDR[13]",
-					"strict" : false
-				},
-				{
-					"name" : "LEDR[14]",
-					"strict" : false
-				},
-				{
-					"name" : "LEDR[15]",
-					"strict" : false
-				},
-				{
 					"name" : "LEDR[16]",
 					"strict" : false
 				},
@@ -276,63 +252,7 @@
 					"strict" : false
 				},
 				{
-					"name" : "SW[17]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[16]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[15]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[14]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[13]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[12]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[11]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[10]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[9]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[8]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[7]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[6]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[5]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[4]",
-					"strict" : false
-				},
-				{
-					"name" : "SW[3]",
+					"name" : "SW[1]",
 					"strict" : false
 				},
 				{
@@ -340,11 +260,39 @@
 					"strict" : false
 				},
 				{
-					"name" : "SW[1]",
+					"name" : "SW[3]",
+					"strict" : false
+				},
+				{
+					"name" : "SW[4]",
+					"strict" : false
+				},
+				{
+					"name" : "SW[5]",
+					"strict" : false
+				},
+				{
+					"name" : "SW[6]",
+					"strict" : false
+				},
+				{
+					"name" : "SW[7]",
+					"strict" : false
+				},
+				{
+					"name" : "SW[8]",
+					"strict" : false
+				},
+				{
+					"name" : "SW[9]",
 					"strict" : false
 				},
 				{
 					"name" : "CLOCK_50",
+					"strict" : false
+				},
+				{
+					"name" : "KEY[1]",
 					"strict" : false
 				},
 				{
