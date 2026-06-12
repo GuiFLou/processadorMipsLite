@@ -14,6 +14,12 @@ module data_ram #(
     input  wire                 we_b
 );
     reg [DATA_W-1:0] mem [0:(1<<ADDR_W)-1];
+    integer i;
+
+    initial begin
+        for (i = 0; i < (1<<ADDR_W); i = i + 1)
+            mem[i] = {DATA_W{1'b0}};
+    end
 
     always @(posedge clk) begin
         if (we_a) mem[addr_a] <= wdata_a;

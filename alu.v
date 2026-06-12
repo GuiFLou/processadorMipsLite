@@ -23,7 +23,7 @@ module alu (
             4'h3: y = a | b;                                // OR
             4'h4: y = ~a;                                   // NOT (unário – usa A)
             4'h5: y = a << shamt[4:0];                      // SL
-            4'h6: y = a >> shamt[4:0];                      // SR
+            4'h6: y = $signed(a) >>> shamt[4:0];              // SR (aritmético)
             4'h7: y = ($signed(a) < $signed(b)) ? 32'd1 : 32'd0; // SLT
             4'h8: begin                                      // MULT
                 mult_result = $signed({{32{a[31]}}, a}) * $signed({{32{b[31]}}, b});

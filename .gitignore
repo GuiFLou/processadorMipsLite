@@ -2,3 +2,8 @@
 db/
 output_files/
 incremental_db/
+
+# Agents files
+.agents/
+.product-team/
+skills-lock.json

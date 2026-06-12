@@ -26,7 +26,11 @@
 //    ser usado pelo restante do design.
 // ===================================================================
 
-module Processador_GUI_MIPS (
+module Processador_GUI_MIPS #(
+    parameter CPU_DIV      = 12_500_000,  // ~2 Hz em CLOCK_50; reduzir no testbench
+    parameter BTN_STABLE   = 1_000_000,   // debounce @ 50 MHz; reduzir no testbench
+    parameter ROM_FILE     = "gcd.txt"
+) (
     input  wire        CLOCK_50,
     input  wire [17:0] SW,
     input  wire [3:0]  KEY,
@@ -43,7 +47,7 @@ module Processador_GUI_MIPS (
     // ~2 Hz a partir do CLOCK_50 (12_500_000 → toggle, período de 1 s).
     // Aumente DIV para clock mais lento, diminua para mais rápido.
     wire clk_cpu;
-    divisor_Freq #(.DIV(12_500_000)) u_div (
+    divisor_Freq #(.DIV(CPU_DIV)) u_div (
         .clk_in (CLOCK_50),
         .clk_out(clk_cpu)
     );
@@ -53,7 +57,7 @@ module Processador_GUI_MIPS (
     //    rebote mecânico do botão geraria múltiplos resets.
     wire rst_raw = ~KEY[0];                 // KEY ativo-baixo
     wire rst_db;
-    Debounce #(.STABLE_CNT(1_000_000)) u_rst_db (
+    Debounce #(.STABLE_CNT(BTN_STABLE)) u_rst_db (
         .clk(CLOCK_50), .btn_in(rst_raw), .btn_out(rst_db)
     );
 
@@ -74,7 +78,7 @@ module Processador_GUI_MIPS (
     // Assim, dois IN consecutivos exigem dois apertos distintos.
     wire enter_raw = ~KEY[1];               // KEY ativo-baixo
     wire enter_db;
-    Debounce #(.STABLE_CNT(1_000_000)) u_enter_db (
+    Debounce #(.STABLE_CNT(BTN_STABLE)) u_enter_db (
         .clk(CLOCK_50), .btn_in(enter_raw), .btn_out(enter_db)
     );
     reg enter_s0, enter_s1, enter_s2;
@@ -91,7 +95,7 @@ module Processador_GUI_MIPS (
 
     /* ========================= INSTRUCTION ROM =========================== */
     wire [31:0] instr;
-    single_port_rom #(.ADDR_W(10), .FILENAME("gcd.txt")) ROM (
+    single_port_rom #(.ADDR_W(10), .FILENAME(ROM_FILE)) ROM (
         .clk  (clk_cpu),
         .addr (pc[9:0]),                // PC em endereço de palavra (CONTEXTO §1)
         .data (instr)
