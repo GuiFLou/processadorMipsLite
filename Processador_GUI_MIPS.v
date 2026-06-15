@@ -27,7 +27,7 @@
 // ===================================================================
 
 module Processador_GUI_MIPS #(
-    parameter CPU_DIV      = 12_500_000,  // ~2 Hz em CLOCK_50; reduzir no testbench
+    parameter CPU_DIV      = 416_667,     // ~60 Hz em CLOCK_50 (50 MHz / (2·416667))
     parameter BTN_STABLE   = 1_000_000,   // debounce @ 50 MHz; reduzir no testbench
     parameter ROM_FILE     = "gcd.txt"
 ) (
@@ -44,7 +44,9 @@ module Processador_GUI_MIPS #(
     output wire [17:0] LEDR
 );
     /* ========================= GERAÇÃO DO clk_cpu ======================== */
-    // ~2 Hz a partir do CLOCK_50 (12_500_000 → toggle, período de 1 s).
+    // clk_cpu ≈ 50 MHz / (2·DIV). Referência rápida:
+    //   DIV=12_500_000 → ~2 Hz   | DIV=  416_667 → ~60 Hz
+    //   DIV= 1_250_000 → ~20 Hz  | DIV=  250_000  → ~100 Hz
     // Aumente DIV para clock mais lento, diminua para mais rápido.
     wire clk_cpu;
     divisor_Freq #(.DIV(CPU_DIV)) u_div (
