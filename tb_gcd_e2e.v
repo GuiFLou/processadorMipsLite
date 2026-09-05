@@ -42,7 +42,7 @@ module tb_gcd_e2e;
         saw_in = 0;
 
         $display("=== E2E gcd.txt ===");
-        $display("MDC(%0d,%0d) esperado=6 | SW[9:0] entradas + KEY[1] cada IN", in_a, in_b);
+        $display("MDC(%0d,%0d) esperado=6 | KEY[1] confirma cada IN e OUT", in_a, in_b);
 
         SW = 0; KEY = 4'b1111;
         KEY[0] = 0;
@@ -64,13 +64,18 @@ module tb_gcd_e2e;
             end
 
             if (LEDR[17] && !stall_prev) begin
-                saw_in = 1;
-                SW[9:0] = (in_i == 0) ? in_a : (in_i == 1) ? in_b :
-                          (in_i % 2 == 0) ? in_a : in_b;
-                $display(">> IN #%0d @ pc=%0d SW[9:0]=%0d (KEY[1])", in_i + 1,
-                         uut.pc, SW[9:0]);
+                if (uut.instr[31:26] == 6'b011010) begin
+                    saw_in = 1;
+                    SW[9:0] = (in_i == 0) ? in_a : (in_i == 1) ? in_b :
+                              (in_i % 2 == 0) ? in_a : in_b;
+                    $display(">> IN #%0d @ pc=%0d SW[9:0]=%0d (KEY[1])", in_i + 1,
+                             uut.pc, SW[9:0]);
+                    in_i = in_i + 1;
+                end else if (uut.instr[31:26] == 6'b011011) begin
+                    #1; // aguarda atualização não bloqueante de out_reg
+                    $display(">> OUT @ pc=%0d valor=%0d (KEY[1])", uut.pc, uut.out_reg);
+                end
                 pulse_key1();
-                in_i = in_i + 1;
                 stall_prev = 0;
             end else
                 stall_prev = LEDR[17];

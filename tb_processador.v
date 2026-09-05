@@ -46,6 +46,8 @@ module tb_processador;
 
     initial begin
         integer n;
+        reg [31:0] out_pc;
+        reg saw_out_wait;
 
         $display("=== SR (ALU) ===");
         alu_a = 32'hFFFF_FFF8; alu_op = 4'h6; alu_shamt = 8'd1;
@@ -64,17 +66,40 @@ module tb_processador;
 
         for (n = 0; n < 50000; n = n + 1) begin
             @(posedge uut.clk_cpu);
-            if (LEDR[17]) begin
+            if (LEDR[17] && uut.instr[31:26] == 6'b011010) begin
                 SW[9:0] = 10'd42;
                 pulse_key1();
                 n = 50000;
             end
         end
+
+        saw_out_wait = 1'b0;
+        for (n = 0; n < 50000; n = n + 1) begin
+            @(posedge uut.clk_cpu);
+            if (LEDR[17] && uut.instr[31:26] == 6'b011011) begin
+                saw_out_wait = 1'b1;
+                out_pc = uut.pc;
+                if (uut.out_reg !== 32'd42)
+                    $display("FAIL OUT: display=%0d", uut.out_reg);
+
+                repeat (3) begin
+                    @(posedge uut.clk_cpu);
+                    if (uut.pc !== out_pc)
+                        $display("FAIL OUT: PC avancou sem Enter");
+                end
+
+                pulse_key1();
+                n = 50000;
+            end
+        end
+
         for (n = 0; n < 50000; n = n + 1) begin
             @(posedge uut.clk_cpu);
             if (LEDR[16]) n = 50000;
         end
-        if (uut.out_reg === 32'd42)
+        if (!saw_out_wait)
+            $display("FAIL OUT: nao entrou em espera");
+        else if (uut.out_reg === 32'd42)
             $display("PASS smoke: IN(42) -> OUT(42)");
         else
             $display("FAIL smoke: out=%0d", uut.out_reg);

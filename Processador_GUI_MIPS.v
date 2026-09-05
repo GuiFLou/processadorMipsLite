@@ -140,11 +140,13 @@ module Processador_GUI_MIPS #(
     wire [31:0] immZeroExt  = {18'b0, imm14};
     wire [31:0] aluImmExt   = is_logic_imm ? immZeroExt : immExt;
 
-    /* ========================= STALL DO IN =============================== */
-    // Enquanto o opcode for IN e o usuário não tiver pulsado KEY[1],
-    // o PC fica congelado e o regfile não escreve. No ciclo do pulso,
-    // grava {22'b0, SW[9:0]} no registrador apontado pelo campo Reg (FI[25:20]).
-    wire        stall_in   = is_in & ~enter_pulse;
+    /* ========================= STALL DE I/O ============================== */
+    // IN e OUT congelam o PC até o usuário pulsar KEY[1].
+    // IN só escreve no regfile no ciclo do pulso; OUT já atualiza o display
+    // enquanto aguarda a confirmação.
+    wire        stall_in   = is_in  & ~enter_pulse;
+    wire        stall_out  = is_out & ~enter_pulse;
+    wire        stall_io   = stall_in | stall_out;
     wire [31:0] in_data    = {22'b0, SW[9:0]};
     wire        in_writeEn = is_in & enter_pulse;
 
@@ -230,7 +232,7 @@ module Processador_GUI_MIPS #(
     wire [31:0] jump_target   = {6'b0, jaddr};
     wire [31:0] jr_target     = rf_a;
 
-    wire [31:0] pc_next = (halt | stall_in) ? pc :
+    wire [31:0] pc_next = (halt | stall_io) ? pc :
                           jr            ? jr_target  :
                           jump          ? jump_target :
                           branch_taken  ? branch_target :
@@ -256,11 +258,11 @@ module Processador_GUI_MIPS #(
     // LEDR fornece feedback visual do estado da máquina:
     //   [9:0]  – eco dos switches (o que será lido pelo próximo IN)
     //   [16]   – HALT  (programa terminou)
-    //   [17]   – WAIT  (executando IN, aguardando KEY[1])
+    //   [17]   – WAIT  (executando IN ou OUT, aguardando KEY[1])
     assign LEDR[9:0]  = SW[9:0];
     assign LEDR[15:10] = 6'b0;
     assign LEDR[16]   = halt;
-    assign LEDR[17]   = stall_in;
+    assign LEDR[17]   = stall_io;
 
     // HEX0..HEX6 mostram o último OUT em decimal (BCD):
     // HEX0 = unidade, HEX1 = dezena, ... HEX6 = milhão.
