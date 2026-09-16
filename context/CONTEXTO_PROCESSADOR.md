@@ -156,7 +156,9 @@ O PC avança como `PC ← PC + 1` (não `PC + 4`). Cada posição da memória de
 | IN | teste, gcd, sort |
 | OUT | todos |
 
-Instruções **não usadas** pelos testes atuais: SUBI, MULTI, DIVI, AND, ANDI, OR, ORI, NOT, SR, SL, BNE, NOP. Estas devem ser implementadas mas não são críticas para a validação inicial.
+Instruções **não usadas** pelos testes legados da ROM: SUBI, MULTI, DIVI,
+AND, ANDI, OR, ORI, NOT, SR, SL e BNE. NOP é usado como cabeçalho de
+metadados por todos os dez programas recompilados e armazenados no HD.
 
 ---
 
@@ -225,9 +227,71 @@ Endereço 25:     variável i de main
 
 A pilha começa no topo (ex: $sp = 1023) e cresce para baixo com `addi $sp,$sp,-1`.
 
+### 5.4 HD simulado e DMA para RAM
+
+O módulo `hd_sim` representa um HD com 64 setores de 256 palavras de 32 bits.
+Internamente, as 16.384 palavras são armazenadas de forma linear. O conteúdo
+inicial é zerado e pode ser substituído por um arquivo definido no parâmetro
+`HD_FILE`. O valor padrão é `hd_image.txt`, que concatena os binários
+recompilados e o preenchimento de cada setor com palavras zero. Durante a
+compilação do Quartus, o `$readmemb` de `hd_sim.v` usa esse arquivo para
+inicializar o armazenamento do HD.
+
+Layout inicial dos programas:
+
+| Setor | Programa |
+|-------|----------|
+| 3 | `area_triangulo` |
+| 4 | `busca_linear` |
+| 5 | `fatorial` |
+| 6 | `fibonacci` |
+| 7 | `gcd` |
+| 8 | `media` |
+| 9 | `numero_primo` |
+| 10 | `potencia` |
+| 11 | `soma_digitos` |
+| 12 | `sort` |
+
+Os setores 0–2 permanecem zerados e reservados para catálogo e kernel. Os
+setores 13–63 também começam zerados. Cada programa ocupa o início de seu
+setor e o restante é preenchido com palavras zero.
+
+O HD é controlado por quatro endereços MMIO:
+
+| Endereço | Registrador | Função |
+|----------|-------------|--------|
+| 1020 | `cmd` | `1`: setor HD → RAM; `3`: RAM → setor HD |
+| 1021 | `sector` | Setor lógico entre 0 e 63 |
+| 1022 | `addr` | Endereço-base da transferência na RAM |
+| 1023 | `status` | `0`: idle; `1`: busy; `2`: done; `3`: error |
+
+O software configura `sector` e `addr` e, por último, escreve o comando em
+`cmd`. Cada comando transfere o setor completo pela porta B da RAM. Os
+parâmetros são congelados durante a operação, e novas escritas MMIO são
+ignoradas enquanto `status` estiver em `busy`.
+
+O endereço-base deve estar entre 0 e 760. Assim, a última das 256 palavras
+fica no máximo no endereço 1015. Os endereços 1016–1019 permanecem reservados
+para futuros registradores de controle, e 1020–1023 pertencem ao HD. Setor,
+endereço ou comando inválido produz `error` sem iniciar a transferência.
+
+A CPU continua executando durante o DMA e pode consultar `status`. BIOS e SO
+não devem acessar a faixa da RAM que está sendo transferida. Se CPU e DMA
+tentarem escrever no mesmo endereço na mesma borda de clock, a porta do DMA
+tem prioridade.
+
+Nesta etapa, o acesso ao HD é reservado à futura BIOS e ao SO por convenção.
+Ainda não há proteção por modo kernel, transferência para a memória de
+instruções, trap ou interrupção.
+
 ---
 
 ## 6. Cálculo de endereços de salto e branch
+
+Salvo quando o texto indicar explicitamente um binário recompilado do HD, os
+exemplos das seções 6–12 são registros dos binários legados anteriores ao NOP
+de metadados. As palavras continuam úteis para ilustrar a codificação, mas
+seus endereços não devem ser usados para localizar instruções na imagem atual.
 
 ### 6.1 Jump (J) e JAL
 
@@ -237,17 +301,23 @@ Formato F3. O campo Endereço (26 bits) contém o **endereço absoluto** (word a
 PC ← Endereço[25:0]
 ```
 
-**Exemplo real (gcd.txt, addr 0):**
+**Exemplo do `gcd` recompilado no setor 7 do HD (addr 0):**
 ```
-01000100000000000000000000100110
-│opcode│        endereço        │
-│010001│00000000000000000000100110│ = J para endereço 38 (main)
+01011100000000000000000001001001
+│opcode│        metadado        │
+│010111│00000000000000000001001001│ = NOP; tamanho total 73 palavras
 ```
 
-**Exemplo real (gcd.txt, addr 31):**
+**Exemplo do mesmo binário (addr 2):**
 ```
-01001100000000000000000000000001
-│010011│00000000000000000000000001│ = JAL para endereço 1 (gcd)
+01000100000000000000000000110001
+│010001│00000000000000000000110001│ = J para endereço 49 (main)
+```
+
+**Exemplo do mesmo binário (addr 39):**
+```
+01001100000000000000000000000011
+│010011│00000000000000000000000011│ = JAL para endereço 3 (gcd)
 ```
 
 ### 6.2 Branch (BEQ/BNE)
@@ -483,7 +553,10 @@ O processador deve parar de avançar o PC. Tipicamente implementado como um flag
 
 ---
 
-## 12. Fluxo de execução típico
+## 12. Fluxo de execução típico dos binários legados
+
+Os fluxos desta seção documentam o layout anterior ao cabeçalho NOP. O layout
+atual dos programas no HD está na seção 14.
 
 ### 12.1 Programa simples (teste2.cms: 5+3=8)
 
@@ -595,25 +668,28 @@ Addr 38: main:            → início de main
 
 ---
 
-## 14. Binários de referência para teste
+## 14. Binários armazenados no HD
 
-Os seguintes binários foram validados manualmente e podem ser usados para testar o processador:
+Os dez programas foram recompilados pelo compilador e incluídos em
+`hd_image.txt`. A primeira palavra de cada programa é um NOP de metadados:
+o opcode é `010111` e os 26 bits restantes contêm o tamanho total, incluindo
+o próprio cabeçalho e o HLT final.
 
-| Arquivo | Instruções | Comportamento esperado |
-|---------|-----------|----------------------|
-| `teste2.txt` | 15 | Calcula 5+3=8, output 8 |
-| `teste.txt` | 15 | Lê 2 valores (in), soma, output resultado |
-| `fatorial.txt` | 27 | Calcula 5!=120, output 120 |
-| `gcd.txt` | 58 | Lê 2 valores, calcula MDC (Euclides recursivo), output |
-| `sort.txt` | 141 | Lê 10 valores, ordena (selection sort), output 10 valores |
+| Programa | Setor | Palavras |
+|----------|-------|----------|
+| `area_triangulo` | 3 | 27 |
+| `busca_linear` | 4 | 62 |
+| `fatorial` | 5 | 33 |
+| `fibonacci` | 6 | 40 |
+| `gcd` | 7 | 73 |
+| `media` | 8 | 45 |
+| `numero_primo` | 9 | 56 |
+| `potencia` | 10 | 37 |
+| `soma_digitos` | 11 | 43 |
+| `sort` | 12 | 161 |
 
-**Ordem de teste recomendada:** teste2 → teste → fatorial → gcd → sort (complexidade crescente).
-
-- **teste2** valida: ADD, ADDI, LW, SW, OUT, HLT, J
-- **teste** adiciona: IN
-- **fatorial** adiciona: SLT, BEQ, MULT, MOVE, SUB, loops
-- **gcd** adiciona: JAL, JR, DIV, chamadas recursivas, $v0, $ra
-- **sort** adiciona: múltiplas funções, arrays, pilha intensiva
+Na montagem de `hd_image.txt`, cada `.txt` é copiado diretamente para o início
+do setor correspondente. O restante do setor é preenchido com palavras zero.
 
 ---
 

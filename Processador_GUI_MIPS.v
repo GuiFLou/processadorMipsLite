@@ -29,7 +29,8 @@
 module Processador_GUI_MIPS #(
     parameter CPU_DIV      = 416_667,     // ~60 Hz em CLOCK_50 (50 MHz / (2·416667))
     parameter BTN_STABLE   = 1_000_000,   // debounce @ 50 MHz; reduzir no testbench
-    parameter ROM_FILE     = "gcd.txt"
+    parameter ROM_FILE     = "gcd.txt",
+    parameter HD_FILE      = "hd_image.txt"
 ) (
     input  wire        CLOCK_50,
     input  wire [17:0] SW,
@@ -208,6 +209,50 @@ module Processador_GUI_MIPS #(
         end
     end
 
+    /* ========================= HD MMIO ================================== */
+    // A comparacao usa o endereco completo para nao criar aliases por
+    // truncamento (por exemplo, 2044 nao pode ser tratado como 1020).
+    wire is_hd_mmio = (alu_y >= 32'd1020) && (alu_y <= 32'd1023);
+
+    wire hd_cmd_write    = memWrite && (alu_y == 32'd1020);
+    wire hd_sector_write = memWrite && (alu_y == 32'd1021);
+    wire hd_addr_write   = memWrite && (alu_y == 32'd1022);
+
+    wire [31:0] hd_cmd_out;
+    wire [31:0] hd_sector_out;
+    wire [31:0] hd_addr_out;
+    wire [31:0] hd_status_out;
+
+    wire [9:0]  dma_ram_addr;
+    wire [31:0] dma_ram_wdata;
+    wire [31:0] dma_ram_rdata;
+    wire        dma_ram_we;
+
+    hd_sim #(.HD_FILE(HD_FILE)) HD (
+        .clk           (clk_cpu),
+        .rst           (rst),
+        .reg_cmd_in    (rf_b),
+        .reg_sector_in (rf_b),
+        .reg_addr_in   (rf_b),
+        .cmd_write     (hd_cmd_write),
+        .sector_write  (hd_sector_write),
+        .addr_write    (hd_addr_write),
+        .reg_cmd_out   (hd_cmd_out),
+        .reg_sector_out(hd_sector_out),
+        .reg_addr_out  (hd_addr_out),
+        .reg_status_out(hd_status_out),
+        .ram_addr_b    (dma_ram_addr),
+        .ram_wdata_b   (dma_ram_wdata),
+        .ram_rdata_b   (dma_ram_rdata),
+        .ram_we_b      (dma_ram_we)
+    );
+
+    wire [31:0] hd_mmio_read =
+        (alu_y == 32'd1020) ? hd_cmd_out    :
+        (alu_y == 32'd1021) ? hd_sector_out :
+        (alu_y == 32'd1022) ? hd_addr_out   :
+                              hd_status_out;
+
     /* ========================= DATA MEMORY =============================== */
     wire [31:0] data_rd;
     data_ram DRAM (
@@ -215,12 +260,16 @@ module Processador_GUI_MIPS #(
         .addr_a  (alu_y[9:0]),
         .wdata_a (rf_b),
         .rdata_a (data_rd),
-        .we_a    (memWrite),
-        .addr_b  (10'd0), .wdata_b(32'd0), .we_b(1'b0)
+        .we_a    (memWrite && !is_hd_mmio),
+        .addr_b  (dma_ram_addr),
+        .wdata_b (dma_ram_wdata),
+        .rdata_b (dma_ram_rdata),
+        .we_b    (dma_ram_we)
     );
 
     /* ========================= WRITE-BACK MUX ============================ */
-    wire [31:0] wb_core = memToReg ? data_rd : alu_y;
+    wire [31:0] mem_read_value = is_hd_mmio ? hd_mmio_read : data_rd;
+    wire [31:0] wb_core = memToReg ? mem_read_value : alu_y;
     assign rf_wd = is_in ? in_data    :
                    jal   ? pc_plus4   :
                                        wb_core;
