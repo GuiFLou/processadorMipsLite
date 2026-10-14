@@ -54,7 +54,6 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name VERILOG_FILE divisor_freq.v
 set_global_assignment -name VERILOG_FILE debounce.v
 set_global_assignment -name VERILOG_FILE hex7seg.v
-set_global_assignment -name VERILOG_FILE single_port_rom.v
 set_global_assignment -name VERILOG_FILE Processador_GUI_MIPS.v
 set_global_assignment -name SDC_FILE Processador_GUI_MIPS.sdc
 
@@ -196,6 +195,7 @@ set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name VERILOG_FILE regfile64.v
 set_global_assignment -name VERILOG_FILE data_ram.v
 set_global_assignment -name VERILOG_FILE hd_sim.v
+set_global_assignment -name VERILOG_FILE inst_mem_rw.v
 set_global_assignment -name MISC_FILE hd_image.txt
 set_global_assignment -name VERILOG_FILE sign_extend.v
 set_global_assignment -name VERILOG_FILE bin32_to_bcd7.v

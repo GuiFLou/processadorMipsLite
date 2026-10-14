@@ -206,7 +206,7 @@ O banco tem **64 registradores** de 32 bits. O compilador utiliza os seguintes:
 - 1024 palavras × 32 bits
 - Endereçada pelo PC (word address, 0 a 1023)
 - Carregada com o conteúdo do `.txt` (uma linha = uma instrução)
-- Somente leitura durante execução
+- Fetch combinacional pelo PC; a porta B aceita escrita do HD (comando 2)
 
 ### 5.2 Memória de dados (RAM)
 
@@ -252,37 +252,41 @@ Layout inicial dos programas:
 | 11 | `soma_digitos` |
 | 12 | `sort` |
 
-Os setores 0–2 permanecem zerados e reservados para catálogo e kernel. Os
-setores 13–63 também começam zerados. Cada programa ocupa o início de seu
-setor e o restante é preenchido com palavras zero.
+Na imagem atual, os programas continuam nos setores 3–12, cada um no início
+do seu setor. O layout da folha da vez reserva os setores 1–6 para as
+imagens de código e de RAM do kernel, e os setores 13–63 para as imagens
+de RAM dos programas. Essa imagem ainda não foi remontada.
 
 O HD é controlado por quatro endereços MMIO:
 
 | Endereço | Registrador | Função |
 |----------|-------------|--------|
-| 1020 | `cmd` | `1`: setor HD → RAM; `3`: RAM → setor HD |
+| 1020 | `cmd` | `1`: HD → RAM; `2`: HD → IMEM; `3`: RAM → HD |
 | 1021 | `sector` | Setor lógico entre 0 e 63 |
-| 1022 | `addr` | Endereço-base da transferência na RAM |
+| 1022 | `addr` | Endereço-base na RAM (cmd 1/3) ou na IMEM (cmd 2) |
 | 1023 | `status` | `0`: idle; `1`: busy; `2`: done; `3`: error |
 
 O software configura `sector` e `addr` e, por último, escreve o comando em
-`cmd`. Cada comando transfere o setor completo pela porta B da RAM. Os
-parâmetros são congelados durante a operação, e novas escritas MMIO são
-ignoradas enquanto `status` estiver em `busy`.
+`cmd`. Cada comando transfere o setor completo. Os parâmetros são congelados
+durante a operação, e novas escritas MMIO são ignoradas enquanto `status`
+estiver em `busy`.
 
-O endereço-base deve estar entre 0 e 760. Assim, a última das 256 palavras
-fica no máximo no endereço 1015. Os endereços 1016–1019 permanecem reservados
-para futuros registradores de controle, e 1020–1023 pertencem ao HD. Setor,
+A memória de instruções (`inst_mem_rw`) mantém o fetch combinacional da ROM
+original e aceita escrita pela porta B do HD. O comando `2` copia um setor
+do HD para a IMEM a partir de `addr`.
+
+O endereço-base da RAM (comandos 1 e 3) deve estar entre 0 e 760, para a
+última palavra não passar de 1015. O endereço-base da IMEM (comando 2) deve
+estar entre 0 e 768, para a última palavra não passar de 1023. Setor,
 endereço ou comando inválido produz `error` sem iniciar a transferência.
 
-A CPU continua executando durante o DMA e pode consultar `status`. BIOS e SO
-não devem acessar a faixa da RAM que está sendo transferida. Se CPU e DMA
+A CPU continua executando durante o DMA e pode consultar `status`. O SO
+não deve acessar a faixa da RAM que está sendo transferida. Se CPU e DMA
 tentarem escrever no mesmo endereço na mesma borda de clock, a porta do DMA
 tem prioridade.
 
-Nesta etapa, o acesso ao HD é reservado à futura BIOS e ao SO por convenção.
-Ainda não há proteção por modo kernel, transferência para a memória de
-instruções, trap ou interrupção.
+Nesta etapa, o acesso ao HD é reservado ao SO por convenção.
+Ainda não há proteção por modo kernel, trap ou interrupção.
 
 ---
 

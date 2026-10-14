@@ -1,12 +1,12 @@
 // hd_sim.v — HD simulado com transferencias de setor entre HD e RAM
 //
 // O armazenamento e linear internamente, mas a CPU seleciona um setor logico.
-// Cada comando transfere SECTOR_SZ palavras pela porta B da data_ram.
+// Cada comando transfere SECTOR_SZ palavras pela porta B da RAM ou da IMEM.
 //
 // Registradores MMIO:
-//   cmd    (1020): 1 = HD -> RAM, 3 = RAM -> HD
+//   cmd    (1020): 1 = HD -> RAM, 2 = HD -> IMEM, 3 = RAM -> HD
 //   sector (1021): setor logico
-//   addr   (1022): endereco-base na RAM
+//   addr   (1022): endereco-base no destino/origem
 //   status (1023): 0 = idle, 1 = busy, 2 = done, 3 = error
 
 module hd_sim #(
@@ -16,6 +16,8 @@ module hd_sim #(
     parameter DATA_W       = 32,
     parameter RAM_ADDR_W   = 10,
     parameter RAM_MAX_ADDR = 1015,
+    parameter IMEM_ADDR_W  = 10,
+    parameter IMEM_MAX_ADDR = 1023,
     parameter HD_FILE      = "hd_image.txt"
 )(
     input  wire                  clk,
@@ -36,17 +38,23 @@ module hd_sim #(
     output wire [RAM_ADDR_W-1:0] ram_addr_b,
     output wire [DATA_W-1:0]     ram_wdata_b,
     input  wire [DATA_W-1:0]     ram_rdata_b,
-    output wire                  ram_we_b
+    output wire                  ram_we_b,
+
+    output wire [IMEM_ADDR_W-1:0] imem_addr_b,
+    output wire [DATA_W-1:0]      imem_wdata_b,
+    output wire                   imem_we_b
 );
     localparam TOTAL_SECTORS = TRACKS * SPT;
     localparam TOTAL_WORDS   = TOTAL_SECTORS * SECTOR_SZ;
     localparam HD_ADDR_W     = (TOTAL_WORDS <= 2) ? 1 : $clog2(TOTAL_WORDS);
     localparam SECTOR_W      = (TOTAL_SECTORS <= 2) ? 1 : $clog2(TOTAL_SECTORS);
     localparam WORD_COUNT_W  = (SECTOR_SZ <= 2) ? 1 : $clog2(SECTOR_SZ);
-    localparam MAX_DMA_BASE  = RAM_MAX_ADDR - (SECTOR_SZ - 1);
+    localparam MAX_RAM_BASE  = RAM_MAX_ADDR - (SECTOR_SZ - 1);
+    localparam MAX_IMEM_BASE = IMEM_MAX_ADDR - (SECTOR_SZ - 1);
 
-    localparam [DATA_W-1:0] CMD_HD_TO_RAM = {{(DATA_W-1){1'b0}}, 1'b1};
-    localparam [DATA_W-1:0] CMD_RAM_TO_HD = {{(DATA_W-2){1'b0}}, 2'b11};
+    localparam [DATA_W-1:0] CMD_HD_TO_RAM  = {{(DATA_W-1){1'b0}}, 1'b1};
+    localparam [DATA_W-1:0] CMD_HD_TO_IMEM = {{(DATA_W-2){1'b0}}, 2'b10};
+    localparam [DATA_W-1:0] CMD_RAM_TO_HD  = {{(DATA_W-2){1'b0}}, 2'b11};
 
     localparam [1:0] STATUS_IDLE  = 2'd0;
     localparam [1:0] STATUS_BUSY  = 2'd1;
@@ -77,6 +85,7 @@ module hd_sim #(
     // Parametros ativos ficam congelados durante toda a transferencia.
     reg [SECTOR_W-1:0]    active_sector;
     reg [RAM_ADDR_W-1:0]  active_ram_base;
+    reg                    active_dest_imem;
     reg [WORD_COUNT_W-1:0] word_count;
     reg [1:0]              state;
 
@@ -87,9 +96,12 @@ module hd_sim #(
     reg                  hd_read_valid;
 
     wire command_valid = (reg_cmd_in == CMD_HD_TO_RAM) ||
+                         (reg_cmd_in == CMD_HD_TO_IMEM) ||
                          (reg_cmd_in == CMD_RAM_TO_HD);
     wire sector_valid  = (r_sector < TOTAL_SECTORS);
-    wire address_valid = (r_addr <= MAX_DMA_BASE);
+    wire address_valid = (reg_cmd_in == CMD_HD_TO_IMEM)
+                       ? (r_addr <= MAX_IMEM_BASE)
+                       : (r_addr <= MAX_RAM_BASE);
 
     wire [HD_ADDR_W-1:0] hd_word_addr =
         (active_sector * SECTOR_SZ) + word_count;
@@ -101,11 +113,15 @@ module hd_sim #(
     assign reg_addr_out   = r_addr;
     assign reg_status_out = {{(DATA_W-2){1'b0}}, r_status};
 
-    assign ram_addr_b  = (state == STATE_RAM_TO_HD)
-                       ? ram_word_addr
-                       : hd_read_ram_addr;
-    assign ram_wdata_b = hd_read_data;
-    assign ram_we_b    = hd_read_valid;
+    assign ram_addr_b  = active_dest_imem ? {RAM_ADDR_W{1'b0}} :
+                         (state == STATE_RAM_TO_HD) ? ram_word_addr
+                                                    : hd_read_ram_addr;
+    assign ram_wdata_b = active_dest_imem ? {DATA_W{1'b0}} : hd_read_data;
+    assign ram_we_b    = hd_read_valid && !active_dest_imem;
+
+    assign imem_addr_b  = hd_read_ram_addr;
+    assign imem_wdata_b = hd_read_data;
+    assign imem_we_b    = hd_read_valid && active_dest_imem;
 
     always @(posedge clk) begin
         if (rst) begin
@@ -115,6 +131,7 @@ module hd_sim #(
             r_status       <= STATUS_IDLE;
             active_sector  <= {SECTOR_W{1'b0}};
             active_ram_base <= {RAM_ADDR_W{1'b0}};
+            active_dest_imem <= 1'b0;
             word_count     <= {WORD_COUNT_W{1'b0}};
             state           <= STATE_IDLE;
             hd_read_data    <= {DATA_W{1'b0}};
@@ -133,14 +150,15 @@ module hd_sim #(
                         if (!command_valid || !sector_valid || !address_valid) begin
                             r_status <= STATUS_ERROR;
                         end else begin
-                            active_sector   <= r_sector[SECTOR_W-1:0];
-                            active_ram_base <= r_addr[RAM_ADDR_W-1:0];
-                            word_count      <= {WORD_COUNT_W{1'b0}};
-                            hd_read_valid   <= 1'b0;
-                            r_status        <= STATUS_BUSY;
-                            state           <= (reg_cmd_in == CMD_HD_TO_RAM)
-                                             ? STATE_HD_TO_RAM
-                                             : STATE_RAM_TO_HD;
+                            active_sector    <= r_sector[SECTOR_W-1:0];
+                            active_ram_base  <= r_addr[RAM_ADDR_W-1:0];
+                            active_dest_imem <= (reg_cmd_in == CMD_HD_TO_IMEM);
+                            word_count       <= {WORD_COUNT_W{1'b0}};
+                            hd_read_valid    <= 1'b0;
+                            r_status         <= STATUS_BUSY;
+                            state            <= (reg_cmd_in == CMD_RAM_TO_HD)
+                                              ? STATE_RAM_TO_HD
+                                              : STATE_HD_TO_RAM;
                         end
                     end
                 end
@@ -159,8 +177,8 @@ module hd_sim #(
                 end
 
                 STATE_HD_DRAIN: begin
-                    // ram_we_b ainda estava ativo nesta borda, gravando a
-                    // ultima palavra antes de encerrar a transferencia.
+                    // we da RAM ou da IMEM ainda estava ativo nesta borda,
+                    // gravando a ultima palavra antes de encerrar.
                     hd_read_valid <= 1'b0;
                     state         <= STATE_IDLE;
                     r_status      <= STATUS_DONE;

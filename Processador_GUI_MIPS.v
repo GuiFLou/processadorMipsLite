@@ -15,7 +15,7 @@
 //
 //    • clk_cpu  (~2 Hz, gerado pelo divisor_Freq):
 //        Clock REAL de todo o núcleo do processador.
-//        PC, RegFile, RAM e ROM são clocados por ele. Como roda
+//        PC, RegFile, RAM e a porta B da IMEM são clocados por ele. Como roda
 //        devagar, dá para acompanhar visualmente cada instrução
 //        executando nos displays de 7 segmentos.
 //
@@ -96,12 +96,18 @@ module Processador_GUI_MIPS #(
     reg  [31:0] pc;
     wire [31:0] pc_plus4 = pc + 32'd1;
 
-    /* ========================= INSTRUCTION ROM =========================== */
+    /* ========================= INSTRUCTION MEMORY ======================== */
     wire [31:0] instr;
-    single_port_rom #(.ADDR_W(10), .FILENAME(ROM_FILE)) ROM (
-        .clk  (clk_cpu),
-        .addr (pc[9:0]),                // PC em endereço de palavra (CONTEXTO §1)
-        .data (instr)
+    wire [9:0]  dma_imem_addr;
+    wire [31:0] dma_imem_wdata;
+    wire        dma_imem_we;
+    inst_mem_rw #(.ADDR_W(10), .FILENAME(ROM_FILE)) IMEM (
+        .clk     (clk_cpu),
+        .addr_a  (pc[9:0]),
+        .rdata_a (instr),
+        .addr_b  (dma_imem_addr),
+        .wdata_b (dma_imem_wdata),
+        .we_b    (dma_imem_we)
     );
 
     /* ======== CAMPOS DA INSTRUÇÃO (MIPS-Lite) ================= */
@@ -244,7 +250,10 @@ module Processador_GUI_MIPS #(
         .ram_addr_b    (dma_ram_addr),
         .ram_wdata_b   (dma_ram_wdata),
         .ram_rdata_b   (dma_ram_rdata),
-        .ram_we_b      (dma_ram_we)
+        .ram_we_b      (dma_ram_we),
+        .imem_addr_b   (dma_imem_addr),
+        .imem_wdata_b  (dma_imem_wdata),
+        .imem_we_b     (dma_imem_we)
     );
 
     wire [31:0] hd_mmio_read =
