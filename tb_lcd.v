@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-// Exercita display_ctx (1019) via SW/LW, catálogo MENU e KEY[2]/KEY[3].
+// Exercita display_ctx (4091) via SW/LW, catálogo MENU e KEY[2]/KEY[3].
 // Programa: tb_lcd_mmio.txt (sem IN/OUT).
 
 module tb_lcd;
@@ -89,10 +89,10 @@ module tb_lcd;
         for (n = 0; n < 5000 && uut.disp_mode !== 8'd1; n = n + 1)
             @(posedge uut.clk_cpu);
         if (uut.disp_mode !== 8'd1) begin
-            $display("FAIL SW 1019: mode nao chegou a 1");
+            $display("FAIL SW 4091: mode nao chegou a 1");
             fails = fails + 1;
         end else
-            $display("PASS SW 1019: mode=1");
+            $display("PASS SW 4091: mode=1");
 
         for (n = 0; n < 40000; n = n + 1) begin
             @(posedge CLOCK_50);
@@ -157,10 +157,10 @@ module tb_lcd;
 
         /* $t1 = LW apos as teclas; $t2 = LW apos SW do mesmo modo */
         if (uut.RF.rf[9][7:0] !== 8'd1 || uut.RF.rf[9][26:22] !== 5'd1) begin
-            $display("FAIL LW 1019 $t1: %h", uut.RF.rf[9]);
+            $display("FAIL LW 4091 $t1: %h", uut.RF.rf[9]);
             fails = fails + 1;
         end else
-            $display("PASS LW 1019: mode+sel no $t1");
+            $display("PASS LW 4091: mode+sel no $t1");
 
         if (uut.RF.rf[10][7:0] !== 8'd1 || uut.RF.rf[10][26:22] !== 5'd1) begin
             $display("FAIL same-mode SW zerou sel: %h", uut.RF.rf[10]);
@@ -179,6 +179,20 @@ module tb_lcd;
             fails = fails + 1;
         end else
             $display("PASS RAM 1016: 77");
+
+        if (uut.RF.rf[13] !== 32'd0 || uut.DRAM.mem[4088] !== 32'd0) begin
+            $display("FAIL CSR 4088: $t5=%0d ram=%0d", uut.RF.rf[13], uut.DRAM.mem[4088]);
+            fails = fails + 1;
+        end else
+            $display("PASS CSR 4088: leitura 0, RAM intacta");
+
+        if (uut.RF.rf[14][7:0] !== 8'd2 || uut.disp_mode !== 8'd2 ||
+            uut.DRAM.mem[4091] !== 32'd0) begin
+            $display("FAIL alias 8187: $t6=%h mode=%0d ram4091=%0d",
+                     uut.RF.rf[14], uut.disp_mode, uut.DRAM.mem[4091]);
+            fails = fails + 1;
+        end else
+            $display("PASS alias 8187: display_ctx intacto");
 
         if (fails == 0)
             $display("PASS tb_lcd");

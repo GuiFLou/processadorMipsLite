@@ -16,8 +16,8 @@ O compilador está completo e validado. Os binários de todos os 5 programas de 
 | Formatos de instrução | 3 (F1, F2, F3/FI) |
 | Banco de registradores | 64 registradores × 32 bits |
 | Identificador de registrador | 6 bits |
-| Memória de instruções | 1024 palavras × 32 bits |
-| Memória de dados | 1024 palavras × 32 bits |
+| Memória de instruções | 4096 palavras × 32 bits (`inst_mem_rw`) |
+| Memória de dados | 4096 palavras × 32 bits (`data_ram`) |
 | Endereçamento | Por palavra (PC avança de 1 em 1) |
 | PC inicial | 0 |
 
@@ -201,17 +201,18 @@ O banco tem **64 registradores** de 32 bits. O compilador utiliza os seguintes:
 
 ## 5. Memória
 
-### 5.1 Memória de instruções (ROM)
+### 5.1 Memória de instruções (`inst_mem_rw`)
 
-- 1024 palavras × 32 bits
-- Endereçada pelo PC (word address, 0 a 1023)
-- Carregada com o conteúdo do `.txt` (uma linha = uma instrução)
+- 4096 palavras × 32 bits
+- Endereçada pelo PC (word address, 0 a 4095)
+- Carregada com o conteúdo do `.txt` (uma linha = uma instrução); o restante fica em zero
 - Fetch combinacional pelo PC; a porta B aceita escrita do HD (comando 2)
 
 ### 5.2 Memória de dados (RAM)
 
-- 1024 palavras × 32 bits
+- 4096 palavras × 32 bits
 - Endereçada por `RS + signext(Imm)` nas instruções LW/SW
+- A porta A da CPU usa 0–4087. Os endereços 4088–4095 são MMIO
 - A região baixa (a partir do endereço 0, apontada por `$gp`) contém variáveis globais
 - A região alta (a partir do endereço apontado por `$sp`) contém a pilha (cresce para baixo)
 
@@ -241,31 +242,29 @@ Layout inicial dos programas:
 
 | Setor | Programa |
 |-------|----------|
-| 3 | `area_triangulo` |
-| 4 | `busca_linear` |
-| 5 | `fatorial` |
-| 6 | `fibonacci` |
-| 7 | `gcd` |
-| 8 | `media` |
-| 9 | `numero_primo` |
-| 10 | `potencia` |
-| 11 | `soma_digitos` |
-| 12 | `sort` |
+| 20 | `area_triangulo` |
+| 21 | `busca_linear` |
+| 22 | `fatorial` |
+| 23 | `fibonacci` |
+| 24 | `gcd` |
+| 25 | `media` |
+| 26 | `numero_primo` |
+| 27 | `potencia` |
+| 28 | `soma_digitos` |
+| 29 | `sort` |
 
-Na imagem atual, os programas continuam nos setores 3–12, cada um no início
-do seu setor. O layout da folha da vez reserva os setores 1–6 para as
-imagens de código e de RAM do kernel, e os setores 13–63 para as imagens
-de RAM dos programas. Essa imagem ainda não foi remontada.
+Na imagem, os programas ocupam os setores 20–29, cada um no início do seu
+setor. Os setores 1–12 guardam NOP e o salto de guarda na palavra 3071.
 
-O HD é controlado por quatro endereços MMIO (1020–1023). O LCD usa **1019**
+O HD é controlado por quatro endereços MMIO (4092–4095). O LCD usa **4091**
 (`display_ctx`, §10.3) e não participa do DMA.
 
 | Endereço | Registrador | Função |
 |----------|-------------|--------|
-| 1020 | `cmd` | `1`: HD → RAM; `2`: HD → IMEM; `3`: RAM → HD |
-| 1021 | `sector` | Setor lógico entre 0 e 63 |
-| 1022 | `addr` | Endereço-base na RAM (cmd 1/3) ou na IMEM (cmd 2) |
-| 1023 | `status` | `0`: idle; `1`: busy; `2`: done; `3`: error |
+| 4092 | `cmd` | `1`: HD → RAM; `2`: HD → IMEM; `3`: RAM → HD |
+| 4093 | `sector` | Setor lógico entre 0 e 63 |
+| 4094 | `addr` | Endereço-base na RAM (cmd 1/3) ou na IMEM (cmd 2) |
+| 4095 | `status` | `0`: idle; `1`: busy; `2`: done; `3`: error |
 
 O software configura `sector` e `addr` e, por último, escreve o comando em
 `cmd`. Cada comando transfere o setor completo. Os parâmetros são congelados
@@ -276,14 +275,16 @@ A memória de instruções (`inst_mem_rw`) mantém o fetch combinacional da ROM
 original e aceita escrita pela porta B do HD. O comando `2` copia um setor
 do HD para a IMEM a partir de `addr`.
 
-O endereço-base da RAM (comandos 1 e 3) deve estar entre 0 e 760, para a
-última palavra não passar de 1015. O endereço-base da IMEM (comando 2) deve
-estar entre 0 e 768, para a última palavra não passar de 1023. Setor,
+O endereço-base da RAM (comandos 1 e 3) deve estar entre 0 e 3832, para a
+última palavra não passar de 4087. O endereço-base da IMEM (comando 2) deve
+estar entre 0 e 3840, para a última palavra não passar de 4095. Setor,
 endereço ou comando inválido produz `error` sem iniciar a transferência.
 
-A CPU continua executando durante o DMA e pode consultar `status`. O SO
-não deve acessar a faixa da RAM que está sendo transferida. Se CPU e DMA
-tentarem escrever no mesmo endereço na mesma borda de clock, a porta do DMA
+Durante a transferência o PC e as escritas da CPU ficam parados. A 256ª
+palavra e o avanço do PC acontecem no mesmo ciclo. O comando inválido não
+trava o PC. `clk_cpu` no topo é aproximadamente 5 kHz (`CPU_DIV = 5000`).
+O programa não deve acessar a faixa da RAM que está sendo transferida. Se a
+porta A e o DMA escreverem no mesmo endereço na mesma borda, a porta do DMA
 tem prioridade.
 
 Nesta etapa, o acesso ao HD é reservado ao SO por convenção.
@@ -545,11 +546,11 @@ saída ← Reg
 ### 10.3 LCD (MMIO, sem opcode)
 
 O painel 16×2 da DE2-115 **não** tem instrução na ISA. O kernel escreve o
-registrador `display_ctx` no endereço **1019**. O hardware desenha uma
+registrador `display_ctx` no endereço **4091**. O hardware desenha uma
 mensagem fixa (MENU, ID?, RUN, OK, ERR). KEY[2]/KEY[3] mudam o índice da
-opção; KEY[1] confirma (sem alterar o índice). Um `SW` em 1019 só zera o
+opção; KEY[1] confirma (sem alterar o índice). Um `SW` em 4091 só zera o
 índice quando o modo muda; reescrever o mesmo modo preserva a seleção.
-Leitura de 1019 devolve modo `[7:0]`, ID `[17:8]`, PID `[21:18]` e
+Leitura de 4091 devolve modo `[7:0]`, ID `[17:8]`, PID `[21:18]` e
 índice `[26:22]`.
 
 ---

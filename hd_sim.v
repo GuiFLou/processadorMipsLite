@@ -4,20 +4,20 @@
 // Cada comando transfere SECTOR_SZ palavras pela porta B da RAM ou da IMEM.
 //
 // Registradores MMIO:
-//   cmd    (1020): 1 = HD -> RAM, 2 = HD -> IMEM, 3 = RAM -> HD
-//   sector (1021): setor logico
-//   addr   (1022): endereco-base no destino/origem
-//   status (1023): 0 = idle, 1 = busy, 2 = done, 3 = error
+//   cmd    (4092): 1 = HD -> RAM, 2 = HD -> IMEM, 3 = RAM -> HD
+//   sector (4093): setor logico
+//   addr   (4094): endereco-base no destino/origem
+//   status (4095): 0 = idle, 1 = busy, 2 = done, 3 = error
 
 module hd_sim #(
     parameter TRACKS       = 8,
     parameter SPT          = 8,
     parameter SECTOR_SZ    = 256,
     parameter DATA_W       = 32,
-    parameter RAM_ADDR_W   = 10,
-    parameter RAM_MAX_ADDR = 1015,
-    parameter IMEM_ADDR_W  = 10,
-    parameter IMEM_MAX_ADDR = 1023,
+    parameter RAM_ADDR_W    = 12,
+    parameter RAM_MAX_ADDR  = 4087,
+    parameter IMEM_ADDR_W   = 12,
+    parameter IMEM_MAX_ADDR = 4095,
     parameter HD_FILE      = "hd_image.txt"
 )(
     input  wire                  clk,
@@ -42,7 +42,13 @@ module hd_sim #(
 
     output wire [IMEM_ADDR_W-1:0] imem_addr_b,
     output wire [DATA_W-1:0]      imem_wdata_b,
-    output wire                   imem_we_b
+    output wire                   imem_we_b,
+
+    // cpu_stall segura o PC. cpu_freeze segura as escritas da CPU.
+    // No ciclo que aceita o comando o PC já não avança, mas a escrita
+    // do hd_cmd ainda entra. No ciclo da 256ª palavra o PC avança uma vez.
+    output wire                   cpu_stall,
+    output wire                   cpu_freeze
 );
     localparam TOTAL_SECTORS = TRACKS * SPT;
     localparam TOTAL_WORDS   = TOTAL_SECTORS * SECTOR_SZ;
@@ -122,6 +128,13 @@ module hd_sim #(
     assign imem_addr_b  = hd_read_ram_addr;
     assign imem_wdata_b = hd_read_data;
     assign imem_we_b    = hd_read_valid && active_dest_imem;
+
+    wire accept = (state == STATE_IDLE) && cmd_write &&
+                  command_valid && sector_valid && address_valid;
+    wire retire = (state == STATE_HD_DRAIN) ||
+                  ((state == STATE_RAM_TO_HD) && (word_count == SECTOR_SZ - 1));
+    assign cpu_freeze = (state != STATE_IDLE);
+    assign cpu_stall  = (cpu_freeze && !retire) || accept;
 
     always @(posedge clk) begin
         if (rst) begin

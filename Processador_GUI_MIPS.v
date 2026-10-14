@@ -12,7 +12,7 @@
 //        Divisor, debounce dos KEY e o lcd_controller (tempos do
 //        HD44780 em µs/ms; não cabem no clk_cpu).
 //
-//    • clk_cpu  (~60 Hz com CPU_DIV=416_667):
+//    • clk_cpu  (~5 kHz com CPU_DIV=5_000):
 //        Núcleo — PC, RegFile, RAM, porta B da IMEM e o CSR display_ctx.
 //        clk_cpu ≈ 50 MHz / (2·DIV). DIV maior → mais lento.
 //
@@ -24,9 +24,9 @@
 // ===================================================================
 
 module Processador_GUI_MIPS #(
-    parameter CPU_DIV      = 416_667,     // ~60 Hz em CLOCK_50 (50 MHz / (2·416667))
+    parameter CPU_DIV      = 5_000,         // ~5 kHz em CLOCK_50 (50 MHz / (2·5000))
     parameter BTN_STABLE   = 1_000_000,   // debounce @ 50 MHz; reduzir no testbench
-    parameter ROM_FILE     = "gcd.txt",
+    parameter ROM_FILE     = "so.txt",
     parameter HD_FILE      = "hd_image.txt",
     parameter LCD_T_POWER  = 2_000_000,
     parameter LCD_T_INIT1  = 220_000,
@@ -56,8 +56,8 @@ module Processador_GUI_MIPS #(
 );
     /* ========================= GERAÇÃO DO clk_cpu ======================== */
     // clk_cpu ≈ 50 MHz / (2·DIV). Referência rápida:
-    //   DIV=12_500_000 → ~2 Hz   | DIV=  416_667 → ~60 Hz
-    //   DIV= 1_250_000 → ~20 Hz  | DIV=  250_000  → ~100 Hz
+    //   DIV=12_500_000 → ~2 Hz   | DIV=  5_000 → ~5 kHz
+    //   DIV= 1_250_000 → ~20 Hz  | DIV=    1   → metade de CLOCK_50
     // Aumente DIV para clock mais lento, diminua para mais rápido.
     wire clk_cpu;
     divisor_Freq #(.DIV(CPU_DIV)) u_div (
@@ -141,12 +141,12 @@ module Processador_GUI_MIPS #(
 
     /* ========================= INSTRUCTION MEMORY ======================== */
     wire [31:0] instr;
-    wire [9:0]  dma_imem_addr;
+    wire [11:0] dma_imem_addr;
     wire [31:0] dma_imem_wdata;
     wire        dma_imem_we;
-    inst_mem_rw #(.ADDR_W(10), .FILENAME(ROM_FILE)) IMEM (
+    inst_mem_rw #(.ADDR_W(12), .FILENAME(ROM_FILE)) IMEM (
         .clk     (clk_cpu),
-        .addr_a  (pc[9:0]),
+        .addr_a  (pc[11:0]),
         .rdata_a (instr),
         .addr_b  (dma_imem_addr),
         .wdata_b (dma_imem_wdata),
@@ -197,6 +197,8 @@ module Processador_GUI_MIPS #(
     wire        stall_in   = is_in  & ~enter_pulse;
     wire        stall_out  = is_out & ~enter_pulse;
     wire        stall_io   = stall_in | stall_out;
+    wire        hd_stall;
+    wire        hd_freeze;
     wire [31:0] in_data    = {22'b0, SW[9:0]};
     wire        in_writeEn = is_in & enter_pulse;
 
@@ -221,7 +223,7 @@ module Processador_GUI_MIPS #(
 
     regfile64 RF (
         .clk (clk_cpu), .rst(rst),
-        .we  (regWrite | in_writeEn),
+        .we  ((regWrite | in_writeEn) && !hd_freeze),
         .rs1 (rf_rs1),
         .rs2 (rf_rs2),
         .rd  (writeReg),
@@ -252,31 +254,38 @@ module Processador_GUI_MIPS #(
         if (rst) begin
             hi_reg <= 32'd0;
             lo_reg <= 32'd0;
-        end else if (isMultDiv) begin
+        end else if (isMultDiv && !hd_freeze) begin
             hi_reg <= alu_hi;
             lo_reg <= alu_lo;
         end
     end
 
-    /* ========================= HD MMIO 1020–1023 ======================== */
-    // Endereço completo: 2044 não pode aliasar 1020.
-    wire is_hd_mmio = (alu_y >= 32'd1020) && (alu_y <= 32'd1023);
+    /* ========================= HD MMIO 4092–4095 ======================== */
+    // Endereço completo: 8188 não pode aliasar 4092.
+    wire is_hd_mmio = (alu_y >= 32'd4092) && (alu_y <= 32'd4095);
+    wire is_ram     = (alu_y <= 32'd4087);
 
-    wire hd_cmd_write    = memWrite && (alu_y == 32'd1020);
-    wire hd_sector_write = memWrite && (alu_y == 32'd1021);
-    wire hd_addr_write   = memWrite && (alu_y == 32'd1022);
+    wire hd_cmd_write    = memWrite && (alu_y == 32'd4092);
+    wire hd_sector_write = memWrite && (alu_y == 32'd4093);
+    wire hd_addr_write   = memWrite && (alu_y == 32'd4094);
 
     wire [31:0] hd_cmd_out;
     wire [31:0] hd_sector_out;
     wire [31:0] hd_addr_out;
     wire [31:0] hd_status_out;
 
-    wire [9:0]  dma_ram_addr;
+    wire [11:0] dma_ram_addr;
     wire [31:0] dma_ram_wdata;
     wire [31:0] dma_ram_rdata;
     wire        dma_ram_we;
 
-    hd_sim #(.HD_FILE(HD_FILE)) HD (
+    hd_sim #(
+        .HD_FILE(HD_FILE),
+        .RAM_ADDR_W(12),
+        .RAM_MAX_ADDR(4087),
+        .IMEM_ADDR_W(12),
+        .IMEM_MAX_ADDR(4095)
+    ) HD (
         .clk           (clk_cpu),
         .rst           (rst),
         .reg_cmd_in    (rf_b),
@@ -295,27 +304,30 @@ module Processador_GUI_MIPS #(
         .ram_we_b      (dma_ram_we),
         .imem_addr_b   (dma_imem_addr),
         .imem_wdata_b  (dma_imem_wdata),
-        .imem_we_b     (dma_imem_we)
+        .imem_we_b     (dma_imem_we),
+        .cpu_stall     (hd_stall),
+        .cpu_freeze    (hd_freeze)
     );
 
     wire [31:0] hd_mmio_read =
-        (alu_y == 32'd1020) ? hd_cmd_out    :
-        (alu_y == 32'd1021) ? hd_sector_out :
-        (alu_y == 32'd1022) ? hd_addr_out   :
+        (alu_y == 32'd4092) ? hd_cmd_out    :
+        (alu_y == 32'd4093) ? hd_sector_out :
+        (alu_y == 32'd4094) ? hd_addr_out   :
                               hd_status_out;
 
-    /* ========================= DISPLAY_CTX 1019 ========================= */
-    // Fora da faixa do HD (1020–1023). O DMA da RAM para em 1015.
-    wire is_disp_ctx = (alu_y == 32'd1019);
+    /* ========================= DISPLAY_CTX 4091 ========================= */
+    // 4088–4090 ficam reservados: leitura 0, escrita ignorada.
+    // O DMA da RAM para em 4087.
+    wire is_disp_ctx = (alu_y == 32'd4091);
 
     /* ========================= DATA MEMORY =============================== */
     wire [31:0] data_rd;
-    data_ram DRAM (
+    data_ram #(.ADDR_W(12)) DRAM (
         .clk     (clk_cpu),
-        .addr_a  (alu_y[9:0]),
+        .addr_a  (alu_y[11:0]),
         .wdata_a (rf_b),
         .rdata_a (data_rd),
-        .we_a    (memWrite && !is_hd_mmio && !is_disp_ctx),
+        .we_a    (memWrite && is_ram && !hd_freeze),
         .addr_b  (dma_ram_addr),
         .wdata_b (dma_ram_wdata),
         .rdata_b (dma_ram_rdata),
@@ -335,7 +347,7 @@ module Processador_GUI_MIPS #(
             disp_id   <= 10'd0;
             disp_pid  <= 4'd15;
             disp_sel  <= 5'd0;
-        end else if (memWrite && is_disp_ctx) begin
+        end else if (memWrite && is_disp_ctx && !hd_freeze) begin
             disp_mode <= rf_b[7:0];
             disp_id   <= rf_b[17:8];
             disp_pid  <= rf_b[21:18];
@@ -380,7 +392,8 @@ module Processador_GUI_MIPS #(
     /* ========================= WRITE-BACK MUX ============================ */
     wire [31:0] mem_read_value = is_disp_ctx ? disp_ctx_rd :
                                  is_hd_mmio  ? hd_mmio_read :
-                                               data_rd;
+                                 is_ram      ? data_rd :
+                                               32'd0;
     wire [31:0] wb_core = memToReg ? mem_read_value : alu_y;
     assign rf_wd = is_in ? in_data    :
                    jal   ? pc_plus4   :
@@ -393,7 +406,7 @@ module Processador_GUI_MIPS #(
     wire [31:0] jump_target   = {6'b0, jaddr};
     wire [31:0] jr_target     = rf_a;
 
-    wire [31:0] pc_next = (halt | stall_io) ? pc :
+    wire [31:0] pc_next = (halt | stall_io | hd_stall) ? pc :
                           jr            ? jr_target  :
                           jump          ? jump_target :
                           branch_taken  ? branch_target :
@@ -412,7 +425,7 @@ module Processador_GUI_MIPS #(
     reg [31:0] out_reg;
     always @(posedge clk_cpu) begin
         if (rst)         out_reg <= 32'd0;
-        else if (is_out) out_reg <= rf_a;
+        else if (is_out && !hd_freeze) out_reg <= rf_a;
     end
 
     /* ========================= I/O VISUAL =============================== */

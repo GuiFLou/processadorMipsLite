@@ -1,6 +1,6 @@
 module data_ram #(
     parameter DATA_W = 32,
-    parameter ADDR_W = 10              // 1024 palavras
+    parameter ADDR_W = 12              // 4096 palavras
 )(
     input  wire                 clk,
     // porta A – CPU

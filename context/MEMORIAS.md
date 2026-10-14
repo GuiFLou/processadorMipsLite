@@ -13,7 +13,7 @@ Registradores de propósito especial. O compilador e o hardware dependem destes 
 | `$zero` | 0 | `000000` | Sempre zero. Leituras retornam 0; escritas são ignoradas. |
 | `$v0` | 2 | `000010` | Valor de retorno de funções. |
 | `$gp` | 28 | `011100` | Ponteiro global. Base das variáveis em `$gp + offset`. Reset: `0`. |
-| `$sp` | 29 | `011101` | Ponteiro de pilha. Cresce para baixo. Reset do hardware: `1023`. O compilador reajusta para `1015` no boot (abaixo do MMIO). |
+| `$sp` | 29 | `011101` | Ponteiro de pilha. Cresce para baixo. Reset do hardware atual: `1023`. No mapa de 4096, o kernel usa `$sp = 1023` e o programa usa `$sp = 1791`. |
 | `$fp` | 30 | `011110` | Ponteiro de frame. Locais em offsets negativos; parâmetros em offsets positivos. |
 | `$ra` | 31 | `011111` | Endereço de retorno. Escrito automaticamente por `JAL` com `PC + 1`. |
 | `$lo` | 61 | `111101` | Parte baixa de `MULT` / quociente de `DIV`. |
@@ -44,6 +44,8 @@ Os demais números do banco (1, 3–7, 18–27, 32–60, 63) existem no hardware
 
 ### 2.2 ROM de instruções — `single_port_rom.v`
 
+Módulo antigo, fora do topo. O fetch do processador é a `inst_mem_rw`, de 4096 palavras.
+
 | | |
 |--|--|
 | Tamanho | 1024 × 32 bits |
@@ -57,10 +59,10 @@ Cada posição contém uma instrução completa de 32 bits. O PC avança de 1 em
 
 | | |
 |--|--|
-| Tamanho | 1024 × 32 bits |
-| Endereços | 0–1023 |
+| Tamanho | 4096 × 32 bits |
+| Endereços | 0–4095; a porta A da CPU só usa 0–4087 |
 | Acesso | `LW` / `SW` com endereço efetivo `RS + signext(Imm)` |
-| Portas | A = CPU; B reservada (hoje amarrada em 0) |
+| Portas | A = CPU; B = DMA do HD |
 | Init | zeros |
 
 Layout usado pelos programas C‑ (sem SO):
@@ -71,7 +73,7 @@ Layout usado pelos programas C‑ (sem SO):
 topo        pilha, cresce para baixo           ($sp inicia no topo)
 ```
 
-O topo efetivo da pilha no software é **1015**, para não colidir com MMIO (1016–1023).
+O reset do hardware põe `$sp` em **1023**, topo dos dados do kernel. O MMIO fica em 4088–4095, então `LW`/`SW` da CPU não passam de 4087.
 
 ### 2.4 Outros registradores do datapath (fora do banco)
 
@@ -85,65 +87,112 @@ Não fazem parte do banco de 64, mas armazenam estado:
 
 ---
 
-## 3. Estruturas em criação / planejadas
+## 3. Mapa decidido para o SO — 4096 palavras
 
-Ainda não estão no núcleo Verilog atual do processador. Incluir aqui quando forem integradas.
+Decisão de 2026-10-13: IMEM e RAM têm **4096 × 32 bits**. Kernel, folha da vez e supervisor co-residem na IMEM. O código do kernel não é descarregado para um programa executar.
 
-### 3.1 Memória de instrução gravável — `inst_mem_rw`
+O Verilog do topo usa `ADDR_W = 12`. `display_ctx` está em 4091 e o HD em 4092–4095. Os endereços 4088–4090 estão reservados. Faltam timer, modo privilegiado, o efeito dos CSRs `pc_load`/`cause`/`ctrl` e o Assembly do supervisor.
 
-Substitui a ROM somente-leitura. Dual-port: fetch pelo PC + escrita (DMA do HD).
+### 3.1 Memória de instrução — co-residência
 
-Mapa previsto (1024 palavras):
+`J` e `JAL` usam endereço absoluto. O kernel permanece em 0, então o reset e os saltos dele não mudam. Um programa carregado na folha da vez precisa receber a base **3072** em cada `J` e `JAL`. Os desvios condicionais são relativos ao PC.
 
-Uma imagem por vez, sempre a partir do endereço 0. No reset, a imagem é o
-kernel. Na troca de contexto, a ROM inteira do ocupante atual vai para o HD
-e a imagem do próximo ocupante entra no lugar.
+| Endereços | Tamanho | Uso |
+|-----------|---------|-----|
+| 0–3071 | 3072 palavras, 12 setores | kernel residente |
+| 3072–3839 | 768 palavras, 3 setores | folha da vez: um programa |
+| 3840–4095 | 256 palavras | supervisor Assembly residente |
+
+O maior binário atual tem 161 palavras e ocupa um setor, gravado a partir de 3072. O endereço 3071 é o salto de guarda do kernel.
+
+### 3.2 RAM de dados — kernel residente e janela do programa
 
 | Endereços | Uso |
 |-----------|-----|
-| 0–767 | folha da vez: kernel ou programa (substituível) |
-| 768–1023 | supervisor Assembly residente (não vai ao HD) |
+| 0–1023 | dados e pilha do kernel (`$gp = 0`, `$sp = 1023`) |
+| 1024–1279 | mailbox e estado protegido do supervisor |
+| 1280–1535 | buffer de um setor |
+| 1536–1791 | janela de dados do programa (`$gp = 1536`, `$sp = 1791`) |
+| 1792–4087 | reservado |
+| 4088–4095 | MMIO |
 
-### 3.2 HD simulado — `hd_sim`
+Na troca, a janela 1536–1791 volta ao HD. Os dados do kernel e o código em 0–3071 permanecem.
 
-Armazenamento persistente fora da RAM/ROM. Acesso via MMIO, não via `LW`/`SW` direto no array.
+**Mailbox (1024–1279)**
+
+| Endereços | Conteúdo |
+|-----------|----------|
+| 1024–1041 | contexto de usuário (18 palavras) |
+| 1042–1059 | contexto do kernel (18 palavras) |
+| 1060 | `cause` |
+| 1061 | PID atual |
+| 1062 | próximo PID |
+| 1063 | registrador destino de `IN` |
+| 1064 | valor fonte de `OUT` |
+| 1065 | setor de código do próximo programa |
+| 1066 | setor de dados do próximo PID |
+| 1067 | reservado |
+| 1068 | saldo do quantum |
+| 1069–1279 | reservados |
+
+Ordem de cada contexto: PC, `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp`, `$ra`, `$hi`, `$lo`.
+
+### 3.3 HD simulado — `hd_sim`
+
+Armazenamento persistente fora da RAM/ROM, já instanciado no top-level. Acesso via MMIO, não via `LW`/`SW` direto no array. Durante as 256 palavras o PC e as escritas da CPU ficam parados; o PC avança uma vez junto com a última palavra. `clk_cpu` é aproximadamente 5 kHz. A imagem em `hd_image.txt` segue o layout abaixo. Os dez programas estão nos setores 20–29. Os setores 1–12 estão em NOP, com o salto de guarda na palavra 3071. A IMEM de reset é `so.txt`, com esses mesmos bytes no kernel e o restante em zero.
 
 | | |
 |--|--|
 | Geometria | 8 trilhas × 8 setores × 256 palavras |
 | Capacidade | 64 setores = 16.384 palavras |
 
-### 3.3 MMIO — endereços 1016–1023 da RAM
+| Setores | Conteúdo |
+|---------|----------|
+| 0 | diretório |
+| 1–12 | código do kernel (3072 palavras) |
+| 13–16 | dados do kernel (1024 palavras) |
+| 17–19 | reservados |
+| 20–35 | até 16 executáveis, um setor cada |
+| 36–45 | janela de RAM dos PIDs 0–9 |
+| 46–63 | reservados |
 
-`LW`/`SW` nesses endereços não acessam `data_ram`; o datapath desvia para periféricos.
+### 3.4 MMIO — endereços 4088–4095 da RAM
 
-**CSRs (1016–1019)**
+`LW`/`SW` nesses endereços não acessam a RAM de dados. `display_ctx` está em **4091**. `pc_load`, `cause` e `ctrl` estão reservados em 4088–4090.
+
+**CSRs (4088–4091)**
 
 | Endereço | Nome | Propósito |
 |----------|------|-----------|
-| 1016 | `pc_load` | Escrita carrega o PC; leitura devolve `epc`. |
-| 1017 | `cause` | Causa da última trap (somente leitura). |
-| 1018 | `ctrl` | modo, timer, DISPATCH; quantum em bits deste registrador. |
-| 1019 | `display_ctx` | Modo do LCD, ID, PID; leitura inclui o índice da opção. **Implementado.** |
+| 4088 | `pc_load` | Escrita carrega o PC; leitura devolve `epc`. |
+| 4089 | `cause` | Causa da última trap (somente leitura). |
+| 4090 | `ctrl` | modo, timer, DISPATCH; quantum em bits deste registrador. |
+| 4091 | `display_ctx` | Modo do LCD, ID, PID; leitura inclui o índice da opção. O catálogo já existe no Verilog. |
 
-**HD (1020–1023)**
+Campos de `display_ctx`: escrita `[7:0]` modo, `[17:8]` ID, `[21:18]` PID; leitura `[26:22]` índice da opção. Modos: 1 MENU, 2 ID?, 3 RUN, 4 OK, 5 ERR.
+
+**HD (4092–4095)**
 
 | Endereço | Nome | Propósito |
 |----------|------|-----------|
-| 1020 | `hd_cmd` | Comando: 0 nop, 1 setor→RAM, 2 setor→IMEM, 3 RAM→setor. |
-| 1021 | `hd_sector` | Setor lógico (LBA 0–63). |
-| 1022 | `hd_addr` | Endereço-base de origem/destino. |
-| 1023 | `hd_status` | 0 idle, 1 busy, 2 done, 3 erro. |
+| 4092 | `hd_cmd` | Comando: 0 nop, 1 setor→RAM, 2 setor→IMEM, 3 RAM→setor. |
+| 4093 | `hd_sector` | Setor lógico (LBA 0–63). |
+| 4094 | `hd_addr` | Endereço-base de origem/destino. |
+| 4095 | `hd_status` | 0 idle, 1 busy, 2 done, 3 erro. |
+
+Não há comando IMEM→HD. O código da folha da vez é descartado; a cópia persistente permanece no HD.
 
 ---
 
 ## 4. Resumo rápido
 
 ```
-Banco de regs   64 × 32     0–63          (reservados: 0, 2, 28–31, 61, 62)
-ROM / IMEM    1024 × 32     0–767 / 768–1023  folha da vez / supervisor
-RAM           1024 × 32     0–1015        dados + pilha
-MMIO              8 × 32    1016–1023     CSRs + HD; 1019 = display_ctx (LCD)
-HD sim          16384 × 32  setores 0–63  persistência (em criação)
-PC / hi / lo / out          fora do banco
+Banco de regs   64 × 32       0–63
+IMEM          4096 × 32       0–3071 kernel | 3072–3839 folha | 3840–4095 supervisor
+RAM           4096 × 32       0–1023 kernel | 1024–1279 mailbox | 1280–1535 buffer
+                              1536–1791 janela do programa | 4088–4095 MMIO
+HD sim         16384 × 32     setores 0–63; programas nos setores 20–29
+IMEM de reset   so.txt         kernel igual aos setores 1–12; folha e supervisor em zero
+Verilog       4096 × 32       MMIO em 4088–4095; display_ctx em 4091; clk_cpu ~5 kHz
+PC / hi / lo / out            fora do banco
 ```
