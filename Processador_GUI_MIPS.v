@@ -9,28 +9,32 @@
 //  Há DOIS domínios de clock no projeto:
 //
 //    • CLOCK_50  (50 MHz, vindo do oscilador da DE2-115):
-//        Alimenta apenas a "borda" do design — o divisor de
-//        frequência e o debouncer do botão de reset. Esses módulos
-//        precisam de uma base de tempo rápida para funcionar.
+//        Divisor, debounce dos KEY e o lcd_controller (tempos do
+//        HD44780 em µs/ms; não cabem no clk_cpu).
 //
-//    • clk_cpu  (~2 Hz, gerado pelo divisor_Freq):
-//        Clock REAL de todo o núcleo do processador.
-//        PC, RegFile, RAM e a porta B da IMEM são clocados por ele. Como roda
-//        devagar, dá para acompanhar visualmente cada instrução
-//        executando nos displays de 7 segmentos.
+//    • clk_cpu  (~60 Hz com CPU_DIV=416_667):
+//        Núcleo — PC, RegFile, RAM, porta B da IMEM e o CSR display_ctx.
+//        clk_cpu ≈ 50 MHz / (2·DIV). DIV maior → mais lento.
 //
-//  Cuidado com CDC (Clock Domain Crossing):
-//    O único sinal que cruza de CLOCK_50 → clk_cpu é o `rst` (saída
-//    do debouncer). Para evitar metaestabilidade, ele passa por um
-//    sincronizador de 2 flip-flops no domínio do clk_cpu antes de
-//    ser usado pelo restante do design.
+//  CDC (Clock Domain Crossing):
+//    CLOCK_50 → clk_cpu: rst_db e os KEY[1..3] debounced entram
+//    por 2–3 FFs no clk_cpu; KEY vira pulso de 1 ciclo.
+//    clk_cpu → CLOCK_50: mode/id/pid/sel do display_ctx; o LCD
+//    sincroniza com 2 FFs e só usa o segundo no catálogo.
 // ===================================================================
 
 module Processador_GUI_MIPS #(
     parameter CPU_DIV      = 416_667,     // ~60 Hz em CLOCK_50 (50 MHz / (2·416667))
     parameter BTN_STABLE   = 1_000_000,   // debounce @ 50 MHz; reduzir no testbench
     parameter ROM_FILE     = "gcd.txt",
-    parameter HD_FILE      = "hd_image.txt"
+    parameter HD_FILE      = "hd_image.txt",
+    parameter LCD_T_POWER  = 2_000_000,
+    parameter LCD_T_INIT1  = 220_000,
+    parameter LCD_T_INIT2  = 6_000,
+    parameter LCD_T_CLEAR  = 100_000,
+    parameter LCD_T_CMD    = 2_000,
+    parameter LCD_T_SETUP  = 3,
+    parameter LCD_T_EN     = 20
 ) (
     input  wire        CLOCK_50,
     input  wire [17:0] SW,
@@ -42,7 +46,13 @@ module Processador_GUI_MIPS #(
     output wire [6:0]  HEX4,
     output wire [6:0]  HEX5,
     output wire [6:0]  HEX6,
-    output wire [17:0] LEDR
+    output wire [17:0] LEDR,
+    output wire [7:0]  LCD_DATA,
+    output wire        LCD_EN,
+    output wire        LCD_RS,
+    output wire        LCD_RW,
+    output wire        LCD_ON,
+    output wire        LCD_BLON
 );
     /* ========================= GERAÇÃO DO clk_cpu ======================== */
     // clk_cpu ≈ 50 MHz / (2·DIV). Referência rápida:
@@ -91,6 +101,39 @@ module Processador_GUI_MIPS #(
         enter_s2 <= enter_s1;
     end
     wire enter_pulse = enter_s1 & ~enter_s2;
+
+    /* ========================= KEY[2]/KEY[3] (menu LCD) ================= */
+    // Mesmo caminho de KEY[1]: debounce @50 MHz, sync e borda em clk_cpu.
+    // Durante IN/OUT (stall_io) os pulsos são ignorados.
+    wire left_raw  = ~KEY[2];
+    wire right_raw = ~KEY[3];
+    wire left_db, right_db;
+    Debounce #(.STABLE_CNT(BTN_STABLE)) u_left_db (
+        .clk(CLOCK_50), .btn_in(left_raw), .btn_out(left_db)
+    );
+    Debounce #(.STABLE_CNT(BTN_STABLE)) u_right_db (
+        .clk(CLOCK_50), .btn_in(right_raw), .btn_out(right_db)
+    );
+    reg left_s0, left_s1, left_s2;
+    reg right_s0, right_s1, right_s2;
+    always @(posedge clk_cpu) begin
+        left_s0  <= left_db;
+        left_s1  <= left_s0;
+        left_s2  <= left_s1;
+        right_s0 <= right_db;
+        right_s1 <= right_s0;
+        right_s2 <= right_s1;
+    end
+    wire left_pulse  = left_s1  & ~left_s2;
+    wire right_pulse = right_s1 & ~right_s2;
+
+    /* Reset do LCD no domínio CLOCK_50 (independente do rst do CPU). */
+    reg rst50_s0, rst50_s1;
+    always @(posedge CLOCK_50) begin
+        rst50_s0 <= rst_db;
+        rst50_s1 <= rst50_s0;
+    end
+    wire rst_lcd = rst50_s1;
 
     /* ========================= PROGRAM COUNTER =========================== */
     reg  [31:0] pc;
@@ -215,9 +258,8 @@ module Processador_GUI_MIPS #(
         end
     end
 
-    /* ========================= HD MMIO ================================== */
-    // A comparacao usa o endereco completo para nao criar aliases por
-    // truncamento (por exemplo, 2044 nao pode ser tratado como 1020).
+    /* ========================= HD MMIO 1020–1023 ======================== */
+    // Endereço completo: 2044 não pode aliasar 1020.
     wire is_hd_mmio = (alu_y >= 32'd1020) && (alu_y <= 32'd1023);
 
     wire hd_cmd_write    = memWrite && (alu_y == 32'd1020);
@@ -262,6 +304,10 @@ module Processador_GUI_MIPS #(
         (alu_y == 32'd1022) ? hd_addr_out   :
                               hd_status_out;
 
+    /* ========================= DISPLAY_CTX 1019 ========================= */
+    // Fora da faixa do HD (1020–1023). O DMA da RAM para em 1015.
+    wire is_disp_ctx = (alu_y == 32'd1019);
+
     /* ========================= DATA MEMORY =============================== */
     wire [31:0] data_rd;
     data_ram DRAM (
@@ -269,15 +315,72 @@ module Processador_GUI_MIPS #(
         .addr_a  (alu_y[9:0]),
         .wdata_a (rf_b),
         .rdata_a (data_rd),
-        .we_a    (memWrite && !is_hd_mmio),
+        .we_a    (memWrite && !is_hd_mmio && !is_disp_ctx),
         .addr_b  (dma_ram_addr),
         .wdata_b (dma_ram_wdata),
         .rdata_b (dma_ram_rdata),
         .we_b    (dma_ram_we)
     );
 
+    reg  [7:0] disp_mode;
+    reg  [9:0] disp_id;
+    reg  [3:0] disp_pid;
+    reg  [4:0] disp_sel;
+    wire [4:0] disp_nitems = (disp_mode == 8'd1) ? 5'd5 : 5'd1;
+    wire [31:0] disp_ctx_rd = {5'b0, disp_sel, disp_pid, disp_id, disp_mode};
+
+    always @(posedge clk_cpu) begin
+        if (rst) begin
+            disp_mode <= 8'd0;
+            disp_id   <= 10'd0;
+            disp_pid  <= 4'd15;
+            disp_sel  <= 5'd0;
+        end else if (memWrite && is_disp_ctx) begin
+            disp_mode <= rf_b[7:0];
+            disp_id   <= rf_b[17:8];
+            disp_pid  <= rf_b[21:18];
+            if (rf_b[7:0] != disp_mode)
+                disp_sel <= 5'd0;
+        end else if (!stall_io && (disp_nitems > 5'd1)) begin
+            if (enter_pulse) begin
+                /* confirma; o índice permanece para o kernel ler */
+            end else if (left_pulse) begin
+                disp_sel <= (disp_sel == 5'd0) ? (disp_nitems - 5'd1)
+                                               : (disp_sel - 5'd1);
+            end else if (right_pulse) begin
+                disp_sel <= (disp_sel + 5'd1 >= disp_nitems) ? 5'd0
+                                                            : (disp_sel + 5'd1);
+            end
+        end
+    end
+
+    lcd_controller #(
+        .T_POWER(LCD_T_POWER),
+        .T_INIT1(LCD_T_INIT1),
+        .T_INIT2(LCD_T_INIT2),
+        .T_CLEAR(LCD_T_CLEAR),
+        .T_CMD  (LCD_T_CMD),
+        .T_SETUP(LCD_T_SETUP),
+        .T_EN   (LCD_T_EN)
+    ) u_lcd (
+        .clk    (CLOCK_50),
+        .rst    (rst_lcd),
+        .mode   (disp_mode),
+        .prog_id(disp_id),
+        .pid    (disp_pid),
+        .sel    (disp_sel),
+        .LCD_DATA(LCD_DATA),
+        .LCD_EN (LCD_EN),
+        .LCD_RS (LCD_RS),
+        .LCD_RW (LCD_RW),
+        .LCD_ON (LCD_ON),
+        .LCD_BLON(LCD_BLON)
+    );
+
     /* ========================= WRITE-BACK MUX ============================ */
-    wire [31:0] mem_read_value = is_hd_mmio ? hd_mmio_read : data_rd;
+    wire [31:0] mem_read_value = is_disp_ctx ? disp_ctx_rd :
+                                 is_hd_mmio  ? hd_mmio_read :
+                                               data_rd;
     wire [31:0] wb_core = memToReg ? mem_read_value : alu_y;
     assign rf_wd = is_in ? in_data    :
                    jal   ? pc_plus4   :

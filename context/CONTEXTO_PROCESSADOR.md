@@ -257,7 +257,8 @@ do seu setor. O layout da folha da vez reserva os setores 1–6 para as
 imagens de código e de RAM do kernel, e os setores 13–63 para as imagens
 de RAM dos programas. Essa imagem ainda não foi remontada.
 
-O HD é controlado por quatro endereços MMIO:
+O HD é controlado por quatro endereços MMIO (1020–1023). O LCD usa **1019**
+(`display_ctx`, §10.3) e não participa do DMA.
 
 | Endereço | Registrador | Função |
 |----------|-------------|--------|
@@ -540,6 +541,16 @@ saída ← Reg
 │011011│001100│00000000000000000000│
 │ OUT  │$t4=12│      zeros         │
 ```
+
+### 10.3 LCD (MMIO, sem opcode)
+
+O painel 16×2 da DE2-115 **não** tem instrução na ISA. O kernel escreve o
+registrador `display_ctx` no endereço **1019**. O hardware desenha uma
+mensagem fixa (MENU, ID?, RUN, OK, ERR). KEY[2]/KEY[3] mudam o índice da
+opção; KEY[1] confirma (sem alterar o índice). Um `SW` em 1019 só zera o
+índice quando o modo muda; reescrever o mesmo modo preserva a seleção.
+Leitura de 1019 devolve modo `[7:0]`, ID `[17:8]`, PID `[21:18]` e
+índice `[26:22]`.
 
 ---
 
