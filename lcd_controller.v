@@ -86,24 +86,25 @@ module lcd_controller #(
                 line1[0] = "M"; line1[1] = "E"; line1[2] = "N"; line1[3] = "U";
                 line2[0] = ">";
                 case (sel_q)
-                    5'd1: begin line2[1]="M"; line2[2]="L"; line2[3]="T"; end
-                    5'd2: begin line2[1]="L"; line2[2]="S"; line2[3]="T"; end
-                    5'd3: begin line2[1]="R"; line2[2]="E"; line2[3]="N"; end
-                    5'd4: begin line2[1]="D"; line2[2]="E"; line2[3]="L"; end
-                    default: begin line2[1]="R"; line2[2]="U"; line2[3]="N"; end
+                    5'd1: begin
+                        line2[1]="2"; line2[2]=" ";
+                        line2[3]="M"; line2[4]="L"; line2[5]="T";
+                    end
+                    5'd2: begin
+                        line2[1]="3"; line2[2]=" ";
+                        line2[3]="A"; line2[4]="R"; line2[5]="Q";
+                    end
+                    default: begin
+                        line2[1]="1"; line2[2]=" ";
+                        line2[3]="R"; line2[4]="U"; line2[5]="N";
+                    end
                 endcase
             end
             8'd2: begin
-                line1[0] = "I"; line1[1] = "D"; line1[2] = "?";
-                val = id_q;
-                d3 = val / 1000; val = val % 1000;
-                d2 = val / 100;  val = val % 100;
-                d1 = val / 10;
-                d0 = val % 10;
-                line2[0] = 8'h30 + d3[3:0];
-                line2[1] = 8'h30 + d2[3:0];
-                line2[2] = 8'h30 + d1[3:0];
-                line2[3] = 8'h30 + d0[3:0];
+                line1[0]="B"; line1[1]="E"; line1[2]="M"; line1[3]="-";
+                line1[4]="V"; line1[5]="I"; line1[6]="N"; line1[7]="D";
+                line1[8]="O";
+                line2[0]="S"; line2[1]="O";
             end
             8'd3: begin
                 line1[0] = "R"; line1[1] = "U"; line1[2] = "N";
@@ -129,6 +130,51 @@ module lcd_controller #(
             end
             8'd5: begin
                 line1[0] = "E"; line1[1] = "R"; line1[2] = "R";
+            end
+            8'd6: begin
+                line1[0] = "P"; line1[1] = "R"; line1[2] = "O"; line1[3] = "G";
+                line2[0] = ">";
+                val = id_q;
+                d3 = val / 1000; val = val % 1000;
+                d2 = val / 100;  val = val % 100;
+                d1 = val / 10;
+                d0 = val % 10;
+                line2[1] = 8'h30 + d3[3:0];
+                line2[2] = 8'h30 + d2[3:0];
+                line2[3] = 8'h30 + d1[3:0];
+                line2[4] = 8'h30 + d0[3:0];
+                line2[5] = " ";
+                case (sel_q)
+                    5'd1: begin line2[6]="B"; line2[7]="U"; line2[8]="S"; line2[9]="C"; line2[10]="A"; end
+                    5'd2: begin line2[6]="F"; line2[7]="A"; line2[8]="T"; end
+                    5'd3: begin line2[6]="F"; line2[7]="I"; line2[8]="B"; end
+                    5'd4: begin line2[6]="G"; line2[7]="C"; line2[8]="D"; end
+                    5'd5: begin line2[6]="M"; line2[7]="E"; line2[8]="D"; line2[9]="I"; line2[10]="A"; end
+                    5'd6: begin line2[6]="P"; line2[7]="R"; line2[8]="I"; line2[9]="M"; line2[10]="O"; end
+                    5'd7: begin line2[6]="P"; line2[7]="O"; line2[8]="T"; end
+                    5'd8: begin line2[6]="D"; line2[7]="I"; line2[8]="G"; end
+                    5'd9: begin line2[6]="S"; line2[7]="O"; line2[8]="R"; line2[9]="T"; end
+                    default: begin line2[6]="A"; line2[7]="R"; line2[8]="E"; line2[9]="A"; end
+                endcase
+            end
+            8'd7: begin
+                line1[0]="Q"; line1[1]="U"; line1[2]="A"; line1[3]="N";
+                line1[4]="T"; line1[5]="O"; line1[6]="S";
+                line2[0] = ">";
+                val = sel_q + 1;
+                if (val >= 10) begin
+                    line2[1] = "1";
+                    line2[2] = "0";
+                end else begin
+                    line2[1] = "0";
+                    line2[2] = 8'h30 + val[3:0];
+                end
+            end
+            8'd8: begin
+                line1[0]="A"; line1[1]="R"; line1[2]="Q"; line1[3]="U";
+                line1[4]="I"; line1[5]="V"; line1[6]="O"; line1[7]="S";
+                line2[0]="F"; line2[1]="A"; line2[2]="S"; line2[3]="E";
+                line2[4]=" "; line2[5]="3";
             end
             default: ;
         endcase

@@ -3,6 +3,11 @@ db/
 output_files/
 incremental_db/
 
+# Saída do Icarus e lixo local
+sim_*
+.DS_Store
+context/modelsim_aoc*/
+
 # Agents files
 .agents/
 .product-team/

@@ -167,9 +167,9 @@ Armazenamento persistente fora da RAM/ROM, já instanciado no top-level. Acesso 
 | 4088 | `pc_load` | Escrita carrega o PC; leitura devolve `epc`. |
 | 4089 | `cause` | Causa da última trap (somente leitura). |
 | 4090 | `ctrl` | modo, timer, DISPATCH; quantum em bits deste registrador. |
-| 4091 | `display_ctx` | Modo do LCD, ID, PID; leitura inclui o índice da opção. O catálogo já existe no Verilog. |
+| 4091 | `display_ctx` | Modo do LCD, ID, PID. Leitura inclui índice e ack. O catálogo já existe no Verilog. |
 
-Campos de `display_ctx`: escrita `[7:0]` modo, `[17:8]` ID, `[21:18]` PID; leitura `[26:22]` índice da opção. Modos: 1 MENU, 2 ID?, 3 RUN, 4 OK, 5 ERR.
+Campos de `display_ctx`: escrita `[7:0]` modo, `[17:8]` ID, `[21:18]` PID. Toda escrita zera o ack. Leitura: `[27]` ack, `[26:22]` índice, e os mesmos campos da escrita. KEY[1] liga o ack quando a CPU não está em IN/OUT. KEY[2]/KEY[3] andam o índice só em modo com mais de um item. Modos: 1 MENU (3), 2 BEM-VINDO, 3 RUN, 4 OK, 5 ERR, 6 PROG (10), 7 QUANTOS (10), 8 ARQUIVOS.
 
 **HD (4092–4095)**
 

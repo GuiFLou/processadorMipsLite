@@ -307,7 +307,7 @@ Formato F3. O campo Endereço (26 bits) contém o **endereço absoluto** (word a
 PC ← Endereço[25:0]
 ```
 
-**Exemplo do `gcd` recompilado no setor 7 do HD (addr 0):**
+**Exemplo do `gcd` recompilado, gravado no setor 24 do HD (addr 0 do binário):**
 ```
 01011100000000000000000001001001
 │opcode│        metadado        │
@@ -547,11 +547,13 @@ saída ← Reg
 
 O painel 16×2 da DE2-115 **não** tem instrução na ISA. O kernel escreve o
 registrador `display_ctx` no endereço **4091**. O hardware desenha uma
-mensagem fixa (MENU, ID?, RUN, OK, ERR). KEY[2]/KEY[3] mudam o índice da
-opção; KEY[1] confirma (sem alterar o índice). Um `SW` em 4091 só zera o
-índice quando o modo muda; reescrever o mesmo modo preserva a seleção.
-Leitura de 4091 devolve modo `[7:0]`, ID `[17:8]`, PID `[21:18]` e
-índice `[26:22]`.
+mensagem fixa: 1 MENU, 2 BEM-VINDO, 3 RUN, 4 OK, 5 ERR, 6 PROG, 7 QUANTOS,
+8 ARQUIVOS. MENU tem 3 itens; PROG e QUANTOS têm 10; as outras telas têm 1.
+KEY[2]/KEY[3] andam o índice quando há mais de um item. KEY[1] liga o ack
+(bit 27) sem mudar o índice, desde que a CPU não esteja parada em IN ou OUT.
+O Enter que solta um IN/OUT não confirma o menu. Toda escrita em 4091 zera
+o ack. Um `SW` só zera o índice quando o modo muda; o mesmo modo preserva
+a seleção. Leitura devolve `{4'b0, ack, sel[4:0], pid[3:0], id[9:0], mode[7:0]}`.
 
 ---
 
@@ -691,18 +693,18 @@ Os dez programas foram recompilados pelo compilador e incluídos em
 o opcode é `010111` e os 26 bits restantes contêm o tamanho total, incluindo
 o próprio cabeçalho e o HLT final.
 
-| Programa | Setor | Palavras |
-|----------|-------|----------|
-| `area_triangulo` | 3 | 27 |
-| `busca_linear` | 4 | 62 |
-| `fatorial` | 5 | 33 |
-| `fibonacci` | 6 | 40 |
-| `gcd` | 7 | 73 |
-| `media` | 8 | 45 |
-| `numero_primo` | 9 | 56 |
-| `potencia` | 10 | 37 |
-| `soma_digitos` | 11 | 43 |
-| `sort` | 12 | 161 |
+| Programa | Setor | Palavras | ID |
+|----------|-------|----------|----|
+| `area_triangulo` | 20 | 27 | 1 |
+| `busca_linear` | 21 | 62 | 2 |
+| `fatorial` | 22 | 33 | 3 |
+| `fibonacci` | 23 | 40 | 4 |
+| `gcd` | 24 | 73 | 5 |
+| `media` | 25 | 45 | 6 |
+| `numero_primo` | 26 | 56 | 7 |
+| `potencia` | 27 | 37 | 8 |
+| `soma_digitos` | 28 | 43 | 9 |
+| `sort` | 29 | 161 | 10 |
 
 Na montagem de `hd_image.txt`, cada `.txt` é copiado diretamente para o início
 do setor correspondente. O restante do setor é preenchido com palavras zero.

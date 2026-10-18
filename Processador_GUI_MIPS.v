@@ -104,7 +104,8 @@ module Processador_GUI_MIPS #(
 
     /* ========================= KEY[2]/KEY[3] (menu LCD) ================= */
     // Mesmo caminho de KEY[1]: debounce @50 MHz, sync e borda em clk_cpu.
-    // Durante IN/OUT (stall_io) os pulsos são ignorados.
+    // Durante stall_io as setas são ignoradas. O ciclo do Enter também:
+    // nele o stall cai, e uma seta no mesmo pulso moveria o sel.
     wire left_raw  = ~KEY[2];
     wire right_raw = ~KEY[3];
     wire left_db, right_db;
@@ -338,8 +339,15 @@ module Processador_GUI_MIPS #(
     reg  [9:0] disp_id;
     reg  [3:0] disp_pid;
     reg  [4:0] disp_sel;
-    wire [4:0] disp_nitems = (disp_mode == 8'd1) ? 5'd5 : 5'd1;
-    wire [31:0] disp_ctx_rd = {5'b0, disp_sel, disp_pid, disp_id, disp_mode};
+    reg        disp_ack;
+    /* 1 MENU=3, 6 PROG=10, 7 QUANTOS=10. As outras telas têm um item. */
+    wire [4:0] disp_nitems =
+        (disp_mode == 8'd1) ? 5'd3  :
+        (disp_mode == 8'd6) ? 5'd10 :
+        (disp_mode == 8'd7) ? 5'd10 :
+                              5'd1;
+    /* [27] ack, [26:22] sel, [21:18] pid, [17:8] id, [7:0] mode. */
+    wire [31:0] disp_ctx_rd = {4'b0, disp_ack, disp_sel, disp_pid, disp_id, disp_mode};
 
     always @(posedge clk_cpu) begin
         if (rst) begin
@@ -347,16 +355,22 @@ module Processador_GUI_MIPS #(
             disp_id   <= 10'd0;
             disp_pid  <= 4'd15;
             disp_sel  <= 5'd0;
+            disp_ack  <= 1'b0;
         end else if (memWrite && is_disp_ctx && !hd_freeze) begin
             disp_mode <= rf_b[7:0];
             disp_id   <= rf_b[17:8];
             disp_pid  <= rf_b[21:18];
+            disp_ack  <= 1'b0;
             if (rf_b[7:0] != disp_mode)
                 disp_sel <= 5'd0;
+        end else if (enter_pulse) begin
+            /* KEY[1] confirma a tela. No ciclo em que solta IN/OUT, is_in/is_out
+             * ainda valem 1, então esse Enter não liga o ack. O ramo inteiro
+             * fica na frente das setas: stall_io cai nesse ciclo. */
+            if (!is_in && !is_out)
+                disp_ack <= 1'b1;
         end else if (!stall_io && (disp_nitems > 5'd1)) begin
-            if (enter_pulse) begin
-                /* confirma; o índice permanece para o kernel ler */
-            end else if (left_pulse) begin
+            if (left_pulse) begin
                 disp_sel <= (disp_sel == 5'd0) ? (disp_nitems - 5'd1)
                                                : (disp_sel - 5'd1);
             end else if (right_pulse) begin

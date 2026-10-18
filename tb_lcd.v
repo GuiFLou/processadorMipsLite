@@ -1,7 +1,8 @@
 `timescale 1ns / 1ps
 
-// Exercita display_ctx (4091) via SW/LW, catálogo MENU e KEY[2]/KEY[3].
-// Programa: tb_lcd_mmio.txt (sem IN/OUT).
+// Exercita display_ctx (4091): SW/LW, catálogo, KEY[2]/KEY[3] e o ack do KEY[1].
+// Programa: tb_lcd_mmio.txt. O IN no final prova que o Enter da entrada
+// não liga o ack.
 
 module tb_lcd;
 
@@ -126,14 +127,34 @@ module tb_lcd;
             fails = fails + 1;
         end
 
+        pulse_key(3);
+        @(posedge uut.clk_cpu);
+        @(posedge uut.clk_cpu);
+        if (uut.disp_sel !== 5'd0) begin
+            $display("FAIL KEY3 wrap: sel=%0d", uut.disp_sel);
+            fails = fails + 1;
+        end else
+            $display("PASS KEY3: sel voltou a 0");
+
         pulse_key(2);
         @(posedge uut.clk_cpu);
         @(posedge uut.clk_cpu);
-        if (uut.disp_sel !== 5'd1) begin
-            $display("FAIL KEY2: sel=%0d", uut.disp_sel);
+        if (uut.disp_sel !== 5'd2) begin
+            $display("FAIL KEY2 wrap: sel=%0d", uut.disp_sel);
             fails = fails + 1;
         end else
-            $display("PASS KEY2: sel voltou a 1");
+            $display("PASS KEY2: sel foi a 2");
+
+        pulse_key(3);
+        @(posedge uut.clk_cpu);
+        @(posedge uut.clk_cpu);
+        pulse_key(3);
+        @(posedge uut.clk_cpu);
+        @(posedge uut.clk_cpu);
+        if (uut.disp_sel !== 5'd1) begin
+            $display("FAIL KEY3 volta: sel=%0d", uut.disp_sel);
+            fails = fails + 1;
+        end
 
         begin : hold_sel
             reg [4:0] sel_before;
@@ -141,32 +162,82 @@ module tb_lcd;
             pulse_key(1);
             @(posedge uut.clk_cpu);
             @(posedge uut.clk_cpu);
-            if (uut.disp_sel !== sel_before) begin
-                $display("FAIL KEY1: alterou sel");
+            if (uut.disp_sel !== sel_before || uut.disp_ack !== 1'b1) begin
+                $display("FAIL KEY1: sel=%0d ack=%b", uut.disp_sel, uut.disp_ack);
                 fails = fails + 1;
             end else
-                $display("PASS KEY1: sel inalterado");
+                $display("PASS KEY1: sel inalterado, ack=1");
         end
 
-        for (n = 0; n < 20000 && !LEDR[16]; n = n + 1)
-            @(posedge uut.clk_cpu);
+        begin : release_in
+            reg saw_in;
+            reg saw_edge;
+            reg [4:0] sel_now;
+            integer k;
+            saw_in = 1'b0;
+            saw_edge = 1'b0;
+            for (n = 0; n < 20000 && !LEDR[16]; n = n + 1) begin
+                @(posedge uut.clk_cpu);
+                if (LEDR[17] && !saw_in) begin
+                    saw_in = 1'b1;
+                    if (uut.disp_ack !== 1'b0 || uut.disp_mode !== 8'd1 ||
+                        uut.disp_sel !== 5'd0) begin
+                        $display("FAIL IN: mode=%0d sel=%0d ack=%b",
+                                 uut.disp_mode, uut.disp_sel, uut.disp_ack);
+                        fails = fails + 1;
+                    end
+                    SW[9:0] = 10'd37;
+                    /* O pulso nasce no aperto. KEY[1] e KEY[3] descem juntos. */
+                    KEY[1] = 1'b0;
+                    KEY[3] = 1'b0;
+                    for (k = 0; k < 80 && !saw_edge; k = k + 1) begin
+                        @(posedge uut.clk_cpu);
+                        if (uut.enter_pulse && uut.right_pulse) begin
+                            saw_edge = 1'b1;
+                            sel_now = uut.disp_sel;
+                            @(posedge uut.clk_cpu);
+                            if (uut.disp_sel !== sel_now || uut.disp_ack !== 1'b0 ||
+                                uut.RF.rf[15] !== 32'd37) begin
+                                $display("FAIL IN+KEY3: sel %0d->%0d ack=%b $t7=%0d",
+                                         sel_now, uut.disp_sel, uut.disp_ack, uut.RF.rf[15]);
+                                fails = fails + 1;
+                            end else
+                                $display("PASS IN: KEY1+KEY3 gravou 37 sem ack e sem andar");
+                        end
+                    end
+                    KEY[1] = 1'b1;
+                    KEY[3] = 1'b1;
+                    repeat (BTN_STABLE + 20) @(posedge CLOCK_50);
+                end
+            end
+            if (!saw_in) begin
+                $display("FAIL IN: CPU nao parou no IN");
+                fails = fails + 1;
+            end
+            if (!saw_edge) begin
+                $display("FAIL IN: KEY1 e KEY3 nao pulsaram juntos");
+                fails = fails + 1;
+            end
+        end
         if (!LEDR[16]) begin
             $display("FAIL HLT: programa nao parou");
             fails = fails + 1;
         end
 
         /* $t1 = LW apos as teclas; $t2 = LW apos SW do mesmo modo */
-        if (uut.RF.rf[9][7:0] !== 8'd1 || uut.RF.rf[9][26:22] !== 5'd1) begin
+        if (uut.RF.rf[9][7:0] !== 8'd1 || uut.RF.rf[9][26:22] !== 5'd1 ||
+            uut.RF.rf[9][27] !== 1'b1) begin
             $display("FAIL LW 4091 $t1: %h", uut.RF.rf[9]);
             fails = fails + 1;
         end else
-            $display("PASS LW 4091: mode+sel no $t1");
+            $display("PASS LW 4091: mode+sel+ack no $t1");
 
-        if (uut.RF.rf[10][7:0] !== 8'd1 || uut.RF.rf[10][26:22] !== 5'd1) begin
-            $display("FAIL same-mode SW zerou sel: %h", uut.RF.rf[10]);
+        if (uut.RF.rf[10][7:0] !== 8'd1 || uut.RF.rf[10][26:22] !== 5'd1 ||
+            uut.RF.rf[10][27] !== 1'b0) begin
+            $display("FAIL same-mode SW: %h", uut.RF.rf[10]);
             fails = fails + 1;
         end else
-            $display("PASS same-mode SW: sel preservado");
+            $display("PASS same-mode SW: sel preservado, ack zerado");
 
         if (uut.RF.rf[8][7:0] !== 8'd2 || uut.RF.rf[8][26:22] !== 5'd0) begin
             $display("FAIL mode-change sel: %h", uut.RF.rf[8]);
@@ -193,6 +264,83 @@ module tb_lcd;
             fails = fails + 1;
         end else
             $display("PASS alias 8187: display_ctx intacto");
+
+        /* Modo 2 tem um item e a CPU já parou. KEY[1] ainda confirma. */
+        pulse_key(1);
+        @(posedge uut.clk_cpu);
+        @(posedge uut.clk_cpu);
+        if (uut.disp_ack !== 1'b1 || uut.disp_sel !== 5'd0 || uut.disp_mode !== 8'd2) begin
+            $display("FAIL KEY1 apos HLT: ack=%b sel=%0d mode=%0d",
+                     uut.disp_ack, uut.disp_sel, uut.disp_mode);
+            fails = fails + 1;
+        end else
+            $display("PASS KEY1 apos HLT: ack=1 com um item");
+
+        force uut.disp_mode = 8'd1;
+        force uut.disp_sel  = 5'd2;
+        force uut.disp_id   = 10'd0;
+        repeat (8) @(posedge CLOCK_50);
+        if (uut.u_lcd.line2[0] !== ">" || uut.u_lcd.line2[1] !== "3" ||
+            uut.u_lcd.line2[3] !== "A" || uut.u_lcd.line2[5] !== "Q") begin
+            $display("FAIL catalogo MENU");
+            fails = fails + 1;
+        end else
+            $display("PASS catalogo: 3 ARQ");
+
+        force uut.disp_mode = 8'd6;
+        force uut.disp_sel  = 5'd0;
+        force uut.disp_id   = 10'd1;
+        repeat (8) @(posedge CLOCK_50);
+        if (uut.disp_nitems !== 5'd10 ||
+            uut.u_lcd.line1[0] !== "P" || uut.u_lcd.line2[1] !== "0" ||
+            uut.u_lcd.line2[4] !== "1" || uut.u_lcd.line2[6] !== "A" ||
+            uut.u_lcd.line2[9] !== "A") begin
+            $display("FAIL catalogo PROG");
+            fails = fails + 1;
+        end else
+            $display("PASS catalogo: >0001 AREA");
+
+        force uut.disp_sel = 5'd9;
+        repeat (8) @(posedge CLOCK_50);
+        if (uut.u_lcd.line2[6] !== "S" || uut.u_lcd.line2[9] !== "T") begin
+            $display("FAIL catalogo SORT");
+            fails = fails + 1;
+        end else
+            $display("PASS catalogo: SORT");
+
+        force uut.disp_mode = 8'd7;
+        force uut.disp_sel  = 5'd9;
+        repeat (8) @(posedge CLOCK_50);
+        if (uut.disp_nitems !== 5'd10 ||
+            uut.u_lcd.line1[0] !== "Q" || uut.u_lcd.line2[0] !== ">" ||
+            uut.u_lcd.line2[1] !== "1" || uut.u_lcd.line2[2] !== "0") begin
+            $display("FAIL catalogo QUANTOS");
+            fails = fails + 1;
+        end else
+            $display("PASS catalogo: >10");
+
+        force uut.disp_mode = 8'd2;
+        repeat (8) @(posedge CLOCK_50);
+        if (uut.u_lcd.line1[0] !== "B" || uut.u_lcd.line1[3] !== "-" ||
+            uut.u_lcd.line1[8] !== "O" || uut.u_lcd.line2[0] !== "S" ||
+            uut.u_lcd.line2[1] !== "O") begin
+            $display("FAIL catalogo BEM-VINDO");
+            fails = fails + 1;
+        end else
+            $display("PASS catalogo: BEM-VINDO");
+
+        force uut.disp_mode = 8'd8;
+        repeat (8) @(posedge CLOCK_50);
+        if (uut.disp_nitems !== 5'd1 ||
+            uut.u_lcd.line1[0] !== "A" || uut.u_lcd.line2[0] !== "F" ||
+            uut.u_lcd.line2[5] !== "3") begin
+            $display("FAIL catalogo ARQ");
+            fails = fails + 1;
+        end else
+            $display("PASS catalogo: FASE 3");
+        release uut.disp_mode;
+        release uut.disp_sel;
+        release uut.disp_id;
 
         if (fails == 0)
             $display("PASS tb_lcd");
