@@ -265,6 +265,11 @@ module Processador_GUI_MIPS #(
     // Endereço completo: 8188 não pode aliasar 4092.
     wire is_hd_mmio = (alu_y >= 32'd4092) && (alu_y <= 32'd4095);
     wire is_ram     = (alu_y <= 32'd4087);
+    /* 4088 só desvia quando o destino está na folha. O tb_lcd grava um
+     * sentinela nesse endereço e precisa continuar na instrução seguinte. */
+    wire pc_load_leaf = (rf_b >= 32'd3072) && (rf_b <= 32'd3839);
+    wire pc_load_we = memWrite && (alu_y == 32'd4088) && !hd_freeze && pc_load_leaf;
+    wire is_cause   = (alu_y == 32'd4089);
 
     wire hd_cmd_write    = memWrite && (alu_y == 32'd4092);
     wire hd_sector_write = memWrite && (alu_y == 32'd4093);
@@ -317,18 +322,40 @@ module Processador_GUI_MIPS #(
                               hd_status_out;
 
     /* ========================= DISPLAY_CTX 4091 ========================= */
-    // 4088–4090 ficam reservados: leitura 0, escrita ignorada.
-    // O DMA da RAM para em 4087.
+    // 4088 arma o retorno da opção 1. 4089 lê a causa. 4090 continua sem efeito.
     wire is_disp_ctx = (alu_y == 32'd4091);
+    wire is_pc_load  = (alu_y == 32'd4088);
+
+    reg [31:0] kret;
+    reg        armed;
+    reg [31:0] epc;
+    reg [31:0] cause_reg;
+    wire       armed_return = halt && armed && !stall_io && !hd_stall;
+
+    always @(posedge clk_cpu) begin
+        if (rst) begin
+            kret      <= 32'd0;
+            armed     <= 1'b0;
+            epc       <= 32'd0;
+            cause_reg <= 32'd0;
+        end else if (pc_load_we) begin
+            kret  <= pc_plus4;
+            armed <= 1'b1;
+        end else if (armed_return) begin
+            armed     <= 1'b0;
+            epc       <= pc;
+            cause_reg <= 32'd2;
+        end
+    end
 
     /* ========================= DATA MEMORY =============================== */
     wire [31:0] data_rd;
     data_ram #(.ADDR_W(12)) DRAM (
         .clk     (clk_cpu),
-        .addr_a  (alu_y[11:0]),
-        .wdata_a (rf_b),
+        .addr_a  (pc_load_we ? 12'd1042 : alu_y[11:0]),
+        .wdata_a (pc_load_we ? pc_plus4 : rf_b),
         .rdata_a (data_rd),
-        .we_a    (memWrite && is_ram && !hd_freeze),
+        .we_a    ((memWrite && is_ram && !hd_freeze) || pc_load_we),
         .addr_b  (dma_ram_addr),
         .wdata_b (dma_ram_wdata),
         .rdata_b (dma_ram_rdata),
@@ -406,6 +433,8 @@ module Processador_GUI_MIPS #(
     /* ========================= WRITE-BACK MUX ============================ */
     wire [31:0] mem_read_value = is_disp_ctx ? disp_ctx_rd :
                                  is_hd_mmio  ? hd_mmio_read :
+                                 is_pc_load  ? epc :
+                                 is_cause    ? cause_reg :
                                  is_ram      ? data_rd :
                                                32'd0;
     wire [31:0] wb_core = memToReg ? mem_read_value : alu_y;
@@ -420,11 +449,13 @@ module Processador_GUI_MIPS #(
     wire [31:0] jump_target   = {6'b0, jaddr};
     wire [31:0] jr_target     = rf_a;
 
-    wire [31:0] pc_next = (halt | stall_io | hd_stall) ? pc :
-                          jr            ? jr_target  :
-                          jump          ? jump_target :
-                          branch_taken  ? branch_target :
-                                          pc_plus4;
+    wire [31:0] pc_next = armed_return        ? kret :
+                          (halt | stall_io | hd_stall) ? pc :
+                          pc_load_we        ? rf_b :
+                          jr                ? jr_target  :
+                          jump              ? jump_target :
+                          branch_taken      ? branch_target :
+                                              pc_plus4;
 
     /* ========================= PC REGISTER ============================== */
     always @(posedge clk_cpu) begin

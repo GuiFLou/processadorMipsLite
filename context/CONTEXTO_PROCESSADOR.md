@@ -688,26 +688,28 @@ Addr 38: main:            → início de main
 
 ## 14. Binários armazenados no HD
 
-Os dez programas foram recompilados pelo compilador e incluídos em
-`hd_image.txt`. A primeira palavra de cada programa é um NOP de metadados:
+Os dez programas foram recompilados com `--target=os-user` e incluídos em
+`hd_image.txt`. O prólogo arma `$gp` em 1536 e `$sp` em 1791, e cada `J`/`JAL`
+já soma 3072. A primeira palavra de cada programa é um NOP de metadados:
 o opcode é `010111` e os 26 bits restantes contêm o tamanho total, incluindo
 o próprio cabeçalho e o HLT final.
 
 | Programa | Setor | Palavras | ID |
 |----------|-------|----------|----|
-| `area_triangulo` | 20 | 27 | 1 |
-| `busca_linear` | 21 | 62 | 2 |
-| `fatorial` | 22 | 33 | 3 |
-| `fibonacci` | 23 | 40 | 4 |
-| `gcd` | 24 | 73 | 5 |
-| `media` | 25 | 45 | 6 |
-| `numero_primo` | 26 | 56 | 7 |
-| `potencia` | 27 | 37 | 8 |
-| `soma_digitos` | 28 | 43 | 9 |
-| `sort` | 29 | 161 | 10 |
+| `area_triangulo` | 20 | 28 | 1 |
+| `busca_linear` | 21 | 63 | 2 |
+| `fatorial` | 22 | 34 | 3 |
+| `fibonacci` | 23 | 41 | 4 |
+| `gcd` | 24 | 74 | 5 |
+| `media` | 25 | 46 | 6 |
+| `numero_primo` | 26 | 57 | 7 |
+| `potencia` | 27 | 38 | 8 |
+| `soma_digitos` | 28 | 44 | 9 |
+| `sort` | 29 | 162 | 10 |
 
-Na montagem de `hd_image.txt`, cada `.txt` é copiado diretamente para o início
+Na montagem de `hd_image.txt`, cada `.txt` desse alvo é copiado para o início
 do setor correspondente. O restante do setor é preenchido com palavras zero.
+O alvo padrão de `exemplos/` continua nascendo no endereço 0 e não entra nesses setores.
 
 ---
 
@@ -721,5 +723,5 @@ do setor correspondente. O restante do setor é preenchido com palavras zero.
 6. **JAL salva PC+1** em $ra (registrador 31), não PC+4.
 7. **$zero** (reg 0) deve ser hardwired a 0. Muitas instruções dependem de ler 0 deste registrador.
 8. **Extensão de sinal** do imediato de 14 bits é essencial — offsets negativos (ex: `addi $sp,$sp,-1`) usam complemento de 2.
-9. **HLT** deve parar o PC. O programa termina com esta instrução.
+9. **HLT** sem retorno armado para o PC e acende LEDR[16]. `SW` em 4088 com destino entre 3072 e 3839 arma o retorno: grava PC+1 e desvia. O HLT seguinte volta para esse PC, grava causa 2 e desarma.
 10. **Endereçamento de memória** de dados é em palavras (não bytes). `lw $t0,1($gp)` lê a palavra no endereço `$gp + 1`, não `$gp + 4`.

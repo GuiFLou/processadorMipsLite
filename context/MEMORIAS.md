@@ -91,7 +91,7 @@ Não fazem parte do banco de 64, mas armazenam estado:
 
 Decisão de 2026-10-13: IMEM e RAM têm **4096 × 32 bits**. Kernel, folha da vez e supervisor co-residem na IMEM. O código do kernel não é descarregado para um programa executar.
 
-O Verilog do topo usa `ADDR_W = 12`. `display_ctx` está em 4091 e o HD em 4092–4095. Os endereços 4088–4090 estão reservados. Faltam timer, modo privilegiado, o efeito dos CSRs `pc_load`/`cause`/`ctrl` e o Assembly do supervisor.
+O Verilog do topo usa `ADDR_W = 12`. `display_ctx` está em 4091 e o HD em 4092–4095. `pc_load` (4088) e `cause` (4089) fazem a volta da opção 1: a escrita em 4088 só arma quando o destino está na folha 3072–3839. `ctrl` (4090) continua sem efeito. Faltam timer, modo privilegiado e o Assembly do supervisor.
 
 ### 3.1 Memória de instrução — co-residência
 
@@ -103,7 +103,7 @@ O Verilog do topo usa `ADDR_W = 12`. `display_ctx` está em 4091 e o HD em 4092�
 | 3072–3839 | 768 palavras, 3 setores | folha da vez: um programa |
 | 3840–4095 | 256 palavras | supervisor Assembly residente |
 
-O maior binário atual tem 161 palavras e ocupa um setor, gravado a partir de 3072. O endereço 3071 é o salto de guarda do kernel.
+O maior binário atual tem 162 palavras (`sort` no alvo os-user) e ocupa um setor, gravado a partir de 3072. O endereço 3071 é o salto de guarda do kernel.
 
 ### 3.2 RAM de dados — kernel residente e janela do programa
 
@@ -158,15 +158,15 @@ Armazenamento persistente fora da RAM/ROM, já instanciado no top-level. Acesso 
 
 ### 3.4 MMIO — endereços 4088–4095 da RAM
 
-`LW`/`SW` nesses endereços não acessam a RAM de dados. `display_ctx` está em **4091**. `pc_load`, `cause` e `ctrl` estão reservados em 4088–4090.
+`LW`/`SW` nesses endereços não acessam a RAM de dados. `display_ctx` está em **4091**. `pc_load` e `cause` estão em 4088 e 4089. `ctrl` (4090) ainda não tem efeito.
 
 **CSRs (4088–4091)**
 
 | Endereço | Nome | Propósito |
 |----------|------|-----------|
-| 4088 | `pc_load` | Escrita carrega o PC; leitura devolve `epc`. |
-| 4089 | `cause` | Causa da última trap (somente leitura). |
-| 4090 | `ctrl` | modo, timer, DISPATCH; quantum em bits deste registrador. |
+| 4088 | `pc_load` | Escrita com destino 3072–3839 carrega o PC, arma o retorno e espelha PC+1 na RAM 1042. Fora da folha a escrita é ignorada. Leitura devolve `epc`. |
+| 4089 | `cause` | HLT armado grava 2. Escrita ignorada. Leitura devolve a causa. |
+| 4090 | `ctrl` | modo, timer, DISPATCH; quantum em bits deste registrador. Ainda sem efeito. |
 | 4091 | `display_ctx` | Modo do LCD, ID, PID. Leitura inclui índice e ack. O catálogo já existe no Verilog. |
 
 Campos de `display_ctx`: escrita `[7:0]` modo, `[17:8]` ID, `[21:18]` PID. Toda escrita zera o ack. Leitura: `[27]` ack, `[26:22]` índice, e os mesmos campos da escrita. KEY[1] liga o ack quando a CPU não está em IN/OUT. KEY[2]/KEY[3] andam o índice só em modo com mais de um item. Modos: 1 MENU (3), 2 BEM-VINDO, 3 RUN, 4 OK, 5 ERR, 6 PROG (10), 7 QUANTOS (10), 8 ARQUIVOS.
