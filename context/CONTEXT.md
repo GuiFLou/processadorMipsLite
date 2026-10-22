@@ -27,7 +27,11 @@ Este documento descreve o compilador completo e funcionando. Todas as 20 issues 
   └─────────────────────────────────────────────────────────┘
 ```
 
-**Comando:** `./compilador --txt exemplos/<nome>.cms`
+**Comando do alvo padrão:** `./compilador --txt exemplos/<nome>.cms`
+
+Esse comando regenera a ROM solta. `exemplos/` não é a imagem que o SO executa. Os binários da folha estão nos setores 20–29 de `processador/hd_image.txt`. `reset_tests.sh` sem flag regenera `exemplos/`. Com `--target=os-user` grava só esses setores e não mexe na pasta.
+
+**Alvos.** O padrão emite `addi $sp,$zero,1015` e depois `j main`; os saltos saem a partir de 0. O alvo `--target=os-user` emite `addi $gp,$zero,1536` e `addi $sp,$zero,1791`, depois `j main`. `J` e `JAL` somam 3072. `BEQ` e `BNE` continuam relativos. Imagem acima de 256 palavras é recusada. HD, LCD e `runat` são recusados. `loadHD`, `storeHD` e `loadROM` usam 4092–4095 e devolvem 0 quando `hd_status` é done e 1 quando é erro. 1020–1023 não é o disco. `void runat(int)` não é `jal`: grava `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp` e `$ra` em 1043–1057, faz `SW` do endereço em 4088 e restaura com `LW` a partir de `lw $v0,1043`. `$hi` e `$lo` ficam de fora. O alvo `os-kernel` não existe na linha de comando.
 
 **Saídas por programa:**
 
@@ -60,7 +64,7 @@ Este documento descreve o compilador completo e funcionando. Todas as 20 issues 
 
 - **Tipos:** `int`, `void`. Variáveis escalares e vetores `int id[N]`.
 - **Funções:** retorno `int` ou `void`; parâmetros `int id` ou `int id[]`.
-- **Built-ins:** `input()` (retorna int) e `output(int)`.
+- **Built-ins do alvo padrão:** `input()` (retorna int), `output(int)`, `lcdshow`, `lcdack`, `lcdsel`, `loadHD`, `storeHD`, `loadROM` e `void runat(int)`. O alvo `os-user` aceita `input` e `output` e recusa HD, LCD e `runat`.
 - **Obrigatório:** função `main(void)`.
 
 ---
@@ -196,6 +200,7 @@ Cada quádrupla tem formato `(op, arg1, arg2, result)`. Temporários: `t0`, `t1`
 # Assembly gerado automaticamente
 .text
 .globl main
+    addi $sp,$zero,1015
     j    main
 main:
     addi $sp,$sp,-1
@@ -228,6 +233,8 @@ L1:
     # END main
     hlt
 ```
+
+O trecho acima é o alvo padrão. No alvo `os-user`, as duas primeiras instruções são `addi $gp,$zero,1536` e `addi $sp,$zero,1791`, e o encoder soma 3072 a cada `J` e `JAL`. `BEQ` e `BNE` não recebem essa base.
 
 ---
 
@@ -312,7 +319,7 @@ Duas passagens sobre o `.s`:
 
 ## 8. Memória de dados — layout via $gp
 
-O `$gp` aponta para o início da memória de dados. Cada variável global ou local (exceto parâmetros) recebe um offset fixo (`memloc`) da tabela de símbolos.
+O `$gp` é a base dos dados. No alvo padrão ele permanece 0, o valor do reset. No alvo `os-user` o prólogo o coloca em 1536, início da janela 1536–1791. Cada variável global ou local (exceto parâmetros) recebe um offset fixo (`memloc`) da tabela de símbolos, somado a essa base.
 
 **Exemplo — sort.cms:**
 ```

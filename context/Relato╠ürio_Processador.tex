@@ -864,6 +864,8 @@ O projeto em questão proporciona uma oportunidade de compreender melhor a const
 Após a implementação dos módulos em Verilog, foi possível entender de fato o funcionamento de cada parte para a efetividade do processador como um todo, assim melhorando a compreensão do processador e a função individual de cada componente.
 Para os próximos passos, o projeto será testado e implementado na placa FPGA da Intel, para experimentação e conclusão do trabalho ao executar um conjunto de instruções com sucesso.
 
+Este capítulo registra a primeira versão do processador, com memórias de 1024 palavras e \texttt{HLT} liberado pelo botão enter. O processador atual não é essa versão: IMEM e RAM têm 4096 palavras, o Quartus lê \texttt{so.txt} e \texttt{hd\_image.txt} do diretório do processador, e o \texttt{HLT} sem retorno armado congela o PC e acende LEDR[16]. O retorno armado pela escrita em 4088, usado pela opção 1 do menu, está descrito nos contextos do processador, não neste relatório.
+
 % ---
 % Finaliza a parte no bookmark do PDF
 % para que se inicie o bookmark na raiz

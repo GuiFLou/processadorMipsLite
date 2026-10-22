@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-// Roda so/src/so.txt: boas-vindas, menu e as tres opcoes.
+// Roda so/src/so.txt: boas-vindas, menu, a area na opcao 1 e a troca da folha.
 // Compilar antes, a partir de so/src:
 //   ../../compilador/compilador --txt so.cms
 module tb_menu;
@@ -81,6 +81,28 @@ module tb_menu;
         end
     endtask
 
+    task wait_io;
+        input integer is_out;
+        begin
+            for (n = 0; n < 400000; n = n + 1) begin
+                if (is_out) begin
+                    if (uut.is_out)
+                        n = 400000;
+                end else if (uut.is_in)
+                    n = 400000;
+                @(posedge uut.clk_cpu);
+            end
+            if (is_out && !uut.is_out) begin
+                $display("FAIL esperava OUT, modo %0d", uut.disp_mode);
+                fails = fails + 1;
+            end
+            if (!is_out && !uut.is_in) begin
+                $display("FAIL esperava IN, modo %0d", uut.disp_mode);
+                fails = fails + 1;
+            end
+        end
+    endtask
+
     /* O software viu o Enter e reescreveu a tela, zerando o ack. */
     task wait_rearm;
         begin
@@ -134,28 +156,61 @@ module tb_menu;
         pulse_key(1);
         wait_mode(8'd1);
 
+        if (saw_stall) begin
+            $display("FAIL menu entrou em IN/OUT");
+            fails = fails + 1;
+        end else
+            $display("PASS menu sem IN/OUT");
+
         pulse_key(1);
         wait_mode(8'd6);
         wait_id(10'd1);
         $display("PASS lista no primeiro programa");
-        pulse_key(3);
-        wait_id(10'd2);
-        pulse_key(3);
-        wait_id(10'd3);
-        if (uut.disp_sel !== 5'd2) begin
-            $display("FAIL lista sel=%0d", uut.disp_sel);
-            fails = fails + 1;
-        end else
-            $display("PASS lista acompanhou o indice");
         pulse_key(1);
         wait_mode(8'd3);
-        if (uut.disp_id !== 10'd3 || uut.disp_pid !== 4'd15) begin
+        if (uut.disp_id !== 10'd1 || uut.disp_pid !== 4'd0) begin
             $display("FAIL run: id=%0d pid=%0d", uut.disp_id, uut.disp_pid);
             fails = fails + 1;
         end else
-            $display("PASS run do id 3, sem executar");
+            $display("PASS run da area, pid 0");
+        if (uut.IMEM.mem[3072] !== uut.HD.storage[20 * 256]) begin
+            $display("FAIL folha da area");
+            fails = fails + 1;
+        end else
+            $display("PASS folha da area");
+
+        wait_io(0);
+        if (uut.disp_mode !== 8'd3 || uut.RF.rf[28] !== 32'd1536) begin
+            $display("FAIL IN da base: modo %0d gp %0d", uut.disp_mode, uut.RF.rf[28]);
+            fails = fails + 1;
+        end
+        SW = 18'd4;
+        pulse_key(1);
+        if (uut.disp_mode === 8'd1 || uut.disp_ack !== 1'b0) begin
+            $display("FAIL Enter do IN confirmou o menu");
+            fails = fails + 1;
+        end else
+            $display("PASS Enter do IN nao confirma o menu");
+
+        wait_io(0);
+        SW = 18'd6;
+        pulse_key(1);
+        wait_io(1);
+        if (uut.out_reg !== 32'd12 ||
+            uut.HEX0 !== 7'b0100100 ||
+            uut.HEX1 !== 7'b1111001 ||
+            uut.HEX2 !== 7'b1000000) begin
+            $display("FAIL area: out=%0d HEX0=%b HEX1=%b", uut.out_reg, uut.HEX0, uut.HEX1);
+            fails = fails + 1;
+        end else
+            $display("PASS area 4x6/2 = 12");
         pulse_key(1);
         wait_mode(8'd1);
+        if (uut.RF.rf[28] !== 32'd0) begin
+            $display("FAIL gp do kernel %0d", uut.RF.rf[28]);
+            fails = fails + 1;
+        end else
+            $display("PASS voltou ao menu com gp 0");
 
         pulse_key(3);
         @(posedge uut.clk_cpu);
@@ -185,11 +240,26 @@ module tb_menu;
         pulse_key(1);
         wait_mode(8'd1);
 
-        if (saw_stall) begin
-            $display("FAIL CPU parou em IN/OUT");
+        pulse_key(1);
+        wait_mode(8'd6);
+        pulse_key(3);
+        wait_id(10'd2);
+        pulse_key(1);
+        wait_mode(8'd3);
+        if (uut.IMEM.mem[3072] !== uut.HD.storage[21 * 256]) begin
+            $display("FAIL folha da busca");
             fails = fails + 1;
         end else
-            $display("PASS sem IN/OUT");
+            $display("PASS segunda folha");
+        wait_io(0);
+        SW = 18'd1;
+        pulse_key(1);
+        repeat (30) @(posedge uut.clk_cpu);
+        if (uut.disp_mode !== 8'd3) begin
+            $display("FAIL IN da busca voltou ao modo %0d", uut.disp_mode);
+            fails = fails + 1;
+        end else
+            $display("PASS IN da busca segue no programa");
 
         if (fails == 0)
             $display("PASS tb_menu");

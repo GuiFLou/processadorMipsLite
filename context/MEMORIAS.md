@@ -91,7 +91,7 @@ Não fazem parte do banco de 64, mas armazenam estado:
 
 Decisão de 2026-10-13: IMEM e RAM têm **4096 × 32 bits**. Kernel, folha da vez e supervisor co-residem na IMEM. O código do kernel não é descarregado para um programa executar.
 
-O Verilog do topo usa `ADDR_W = 12`. `display_ctx` está em 4091 e o HD em 4092–4095. `pc_load` (4088) e `cause` (4089) fazem a volta da opção 1: a escrita em 4088 só arma quando o destino está na folha 3072–3839. `ctrl` (4090) continua sem efeito. Faltam timer, modo privilegiado e o Assembly do supervisor.
+O Verilog do topo usa `ADDR_W = 12`. `display_ctx` está em 4091 e o HD em 4092–4095. `pc_load` (4088) e `cause` (4089) fazem a volta da opção 1. A escrita em 4088 só arma quando o destino está em 3072–3839 e o HD não está congelado: grava PC+1 em `kret` e na RAM 1042 e desvia. Fora da folha a escrita é ignorada, e o sentinela 99 do `tb_lcd` continua. O `HLT` armado volta a esse PC, grava a causa 2 em 4089 e desarma. O `HLT` sem arma congela o PC e acende LEDR[16]. A leitura de 4088 devolve `epc`. `ctrl` (4090) continua sem efeito. Faltam timer, modo privilegiado e o Assembly do supervisor.
 
 ### 3.1 Memória de instrução — co-residência
 
@@ -135,11 +135,13 @@ Na troca, a janela 1536–1791 volta ao HD. Os dados do kernel e o código em 0�
 | 1068 | saldo do quantum |
 | 1069–1279 | reservados |
 
-Ordem de cada contexto: PC, `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp`, `$ra`, `$hi`, `$lo`.
+Ordem prevista de cada contexto: PC, `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp`, `$ra`, `$hi`, `$lo`. A troca dessas 18 palavras não está pronta. Na opção 1 o hardware grava PC+1 em 1042 e `runat` grava `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp` e `$ra` em 1043–1057. `$hi` e `$lo` ficam de fora.
 
 ### 3.3 HD simulado — `hd_sim`
 
-Armazenamento persistente fora da RAM/ROM, já instanciado no top-level. Acesso via MMIO, não via `LW`/`SW` direto no array. Durante as 256 palavras o PC e as escritas da CPU ficam parados; o PC avança uma vez junto com a última palavra. `clk_cpu` é aproximadamente 5 kHz. A imagem em `hd_image.txt` segue o layout abaixo. Os dez programas estão nos setores 20–29. Os setores 1–12 estão em NOP, com o salto de guarda na palavra 3071. A IMEM de reset é `so.txt`, com esses mesmos bytes no kernel e o restante em zero.
+Armazenamento persistente fora da RAM/ROM, já instanciado no top-level. Acesso via MMIO, não via `LW`/`SW` direto no array. Durante as 256 palavras o PC e as escritas da CPU ficam parados; o PC avança uma vez junto com a última palavra. Na síntese, `CPU_DIV` é 5000, cerca de 5 kHz, `BTN_STABLE` é 1000000 e o LCD usa os tempos reais. O `tb_menu` encurta isso só na simulação. O Quartus lê `so.txt` e `hd_image.txt` do diretório do processador (`MISC_FILE` no `.qsf`).
+
+A imagem em `hd_image.txt` segue o layout abaixo. Os dez programas estão nos setores 20–29 e não vêm de `compilador/exemplos/`. Os setores 1–12 estão em NOP, com o salto de guarda na palavra 3071. A IMEM de reset é `so.txt`, com 4096 palavras: o kernel compilado nas palavras 0–1334, NOP em 1335–3070, `J 3071` na palavra 3071 e zero em 3072–4095. O supervisor ainda não existe. `so.txt` não repete os setores 1–12.
 
 | | |
 |--|--|
@@ -164,7 +166,7 @@ Armazenamento persistente fora da RAM/ROM, já instanciado no top-level. Acesso 
 
 | Endereço | Nome | Propósito |
 |----------|------|-----------|
-| 4088 | `pc_load` | Escrita com destino 3072–3839 carrega o PC, arma o retorno e espelha PC+1 na RAM 1042. Fora da folha a escrita é ignorada. Leitura devolve `epc`. |
+| 4088 | `pc_load` | Escrita com destino 3072–3839 e HD descongelado carrega o PC, grava PC+1 em `kret` e na RAM 1042 e desvia. Fora da folha a escrita é ignorada. Leitura devolve `epc`. |
 | 4089 | `cause` | HLT armado grava 2. Escrita ignorada. Leitura devolve a causa. |
 | 4090 | `ctrl` | modo, timer, DISPATCH; quantum em bits deste registrador. Ainda sem efeito. |
 | 4091 | `display_ctx` | Modo do LCD, ID, PID. Leitura inclui índice e ack. O catálogo já existe no Verilog. |
@@ -192,7 +194,7 @@ IMEM          4096 × 32       0–3071 kernel | 3072–3839 folha | 3840–4095
 RAM           4096 × 32       0–1023 kernel | 1024–1279 mailbox | 1280–1535 buffer
                               1536–1791 janela do programa | 4088–4095 MMIO
 HD sim         16384 × 32     setores 0–63; programas nos setores 20–29
-IMEM de reset   so.txt         kernel igual aos setores 1–12; folha e supervisor em zero
-Verilog       4096 × 32       MMIO em 4088–4095; display_ctx em 4091; clk_cpu ~5 kHz
+IMEM de reset   so.txt         4096 palavras; kernel em 0–1334; NOP até 3070; J 3071; resto zero
+Verilog       4096 × 32       MMIO em 4088–4095; display_ctx em 4091; CPU_DIV 5000
 PC / hi / lo / out            fora do banco
 ```

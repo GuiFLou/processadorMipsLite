@@ -225,6 +225,7 @@ set_global_assignment -name VERILOG_FILE data_ram.v
 set_global_assignment -name VERILOG_FILE hd_sim.v
 set_global_assignment -name VERILOG_FILE inst_mem_rw.v
 set_global_assignment -name MISC_FILE hd_image.txt
+set_global_assignment -name MISC_FILE so.txt
 set_global_assignment -name VERILOG_FILE sign_extend.v
 set_global_assignment -name VERILOG_FILE bin32_to_bcd7.v
 set_global_assignment -name VERILOG_FILE alu.v

@@ -83,7 +83,7 @@ O PC avança como `PC ← PC + 1` (não `PC + 4`). Cada posição da memória de
 
 **Para J:** `PC ← Endereço`
 **Para JAL:** `$ra ← PC + 1`, depois `PC ← Endereço`
-**Para HLT:** para a execução (PC não avança mais)
+**Para HLT:** sem retorno armado, o PC congela e LEDR[16] acende. Com o retorno armado por `SW` em 4088, volta ao PC salvo, grava a causa 2 em 4089 e desarma. O detalhe está no item 9 da seção 15.
 
 ### FI — I/O (entrada/saída)
 
@@ -130,7 +130,7 @@ O PC avança como `PC ← PC + 1` (não `PC + 4`). Cada posição da memória de
 | 21 | BNE | 010101 | 21 | F2 | se RD != RS: PC ← PC+1+signext(Imm) |
 | 22 | MOVE | 010110 | 22 | F2 | RD ← RS |
 | 23 | NOP | 010111 | 23 | F3 | nenhuma operação |
-| 24 | HLT | 011000 | 24 | F3 | para execução |
+| 24 | HLT | 011000 | 24 | F3 | congela o PC, ou volta se 4088 armou |
 | 25 | SLT | 011001 | 25 | F1 | RD ← (RS < RT) ? 1 : 0 |
 | 26 | IN | 011010 | 26 | FI | Reg ← input |
 | 27 | OUT | 011011 | 27 | FI | output ← Reg |
@@ -254,7 +254,12 @@ Layout inicial dos programas:
 | 29 | `sort` |
 
 Na imagem, os programas ocupam os setores 20–29, cada um no início do seu
-setor. Os setores 1–12 guardam NOP e o salto de guarda na palavra 3071.
+setor. Esses binários são os do alvo `os-user` e não saem de
+`compilador/exemplos/`. Os setores 1–12 guardam NOP e o salto de guarda na
+palavra 3071. A IMEM de reset é `processador/so.txt`: 4096 palavras, kernel
+compilado em 0–1334, NOP em 1335–3070, `J 3071` na palavra 3071 e zero em
+3072–4095. O supervisor ainda não existe. O Quartus lê `so.txt` e
+`hd_image.txt` do diretório do processador (`MISC_FILE` no `.qsf`).
 
 O HD é controlado por quatro endereços MMIO (4092–4095). O LCD usa **4091**
 (`display_ctx`, §10.3) e não participa do DMA.
@@ -282,7 +287,9 @@ endereço ou comando inválido produz `error` sem iniciar a transferência.
 
 Durante a transferência o PC e as escritas da CPU ficam parados. A 256ª
 palavra e o avanço do PC acontecem no mesmo ciclo. O comando inválido não
-trava o PC. `clk_cpu` no topo é aproximadamente 5 kHz (`CPU_DIV = 5000`).
+trava o PC. Na síntese, `CPU_DIV` é 5000 (cerca de 5 kHz), `BTN_STABLE` é
+1000000 e o LCD usa os tempos reais. O `tb_menu` encurta esses parâmetros só
+na simulação.
 O programa não deve acessar a faixa da RAM que está sendo transferida. Se a
 porta A e o DMA escreverem no mesmo endereço na mesma borda, a porta do DMA
 tem prioridade.
@@ -567,7 +574,7 @@ Formato F3. Todos os 26 bits de endereço são zero.
 │ HLT  │         zeros            │
 ```
 
-O processador deve parar de avançar o PC. Tipicamente implementado como um flag que desabilita a escrita no PC.
+O processador, sem retorno armado, para de avançar o PC e acende LEDR[16]. Se um `SW` em 4088 armou o retorno, o `HLT` volta ao PC salvo, grava a causa 2 em 4089 e desarma. A codificação acima é a da instrução; o endereço de 26 bits continua zero.
 
 ---
 
@@ -656,7 +663,7 @@ Addr 38: main:            → início de main
 - [ ] JR: PC ← Reg[RS]
 - [ ] BEQ: se Reg[RD] == Reg[RS], PC ← PC + 1 + signext(Imm)
 - [ ] BNE: se Reg[RD] != Reg[RS], PC ← PC + 1 + signext(Imm)
-- [ ] HLT: PC congela
+- [ ] HLT: sem arma, PC congela e LEDR[16] acende; com arma, volta ao PC salvo, grava a causa 2 e desarma
 
 ### 13.4 Registradores especiais (obrigatório)
 
@@ -689,8 +696,10 @@ Addr 38: main:            → início de main
 ## 14. Binários armazenados no HD
 
 Os dez programas foram recompilados com `--target=os-user` e incluídos em
-`hd_image.txt`. O prólogo arma `$gp` em 1536 e `$sp` em 1791, e cada `J`/`JAL`
-já soma 3072. A primeira palavra de cada programa é um NOP de metadados:
+`hd_image.txt`. O prólogo é `addi $gp,$zero,1536` e `addi $sp,$zero,1791`,
+depois `j main`. Cada `J`/`JAL` soma 3072. `BEQ` e `BNE` continuam relativos.
+Imagem acima de 256 palavras é recusada, e o alvo recusa HD, LCD e `runat`.
+A primeira palavra de cada programa é um NOP de metadados:
 o opcode é `010111` e os 26 bits restantes contêm o tamanho total, incluindo
 o próprio cabeçalho e o HLT final.
 
@@ -709,7 +718,7 @@ o próprio cabeçalho e o HLT final.
 
 Na montagem de `hd_image.txt`, cada `.txt` desse alvo é copiado para o início
 do setor correspondente. O restante do setor é preenchido com palavras zero.
-O alvo padrão de `exemplos/` continua nascendo no endereço 0 e não entra nesses setores.
+O alvo padrão de `exemplos/` continua com `addi $sp,$zero,1015` e saltos a partir de 0. Essa pasta não é a imagem que o SO executa. `reset_tests.sh` sem flag regenera a ROM solta. Com `--target=os-user` grava só os setores 20–29 de `hd_image.txt` e não mexe em `exemplos/`.
 
 ---
 
@@ -723,5 +732,5 @@ O alvo padrão de `exemplos/` continua nascendo no endereço 0 e não entra ness
 6. **JAL salva PC+1** em $ra (registrador 31), não PC+4.
 7. **$zero** (reg 0) deve ser hardwired a 0. Muitas instruções dependem de ler 0 deste registrador.
 8. **Extensão de sinal** do imediato de 14 bits é essencial — offsets negativos (ex: `addi $sp,$sp,-1`) usam complemento de 2.
-9. **HLT** sem retorno armado para o PC e acende LEDR[16]. `SW` em 4088 com destino entre 3072 e 3839 arma o retorno: grava PC+1 e desvia. O HLT seguinte volta para esse PC, grava causa 2 e desarma.
+9. **HLT** sem retorno armado congela o PC e acende LEDR[16]. `SW` em 4088 só arma quando o destino está entre 3072 e 3839 e o HD não está congelado: grava PC+1 em `kret` e na RAM 1042 e desvia. Fora da folha a escrita é ignorada. O `HLT` seguinte volta para esse PC, grava a causa 2 em 4089 e desarma. A leitura de 4088 devolve `epc`. `ctrl` (4090) continua sem efeito.
 10. **Endereçamento de memória** de dados é em palavras (não bytes). `lw $t0,1($gp)` lê a palavra no endereço `$gp + 1`, não `$gp + 4`.
