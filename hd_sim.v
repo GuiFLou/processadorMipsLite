@@ -74,10 +74,7 @@ module hd_sim #(
 
     (* ramstyle = "M9K" *) reg [DATA_W-1:0] storage [0:TOTAL_WORDS-1];
 
-    integer i;
     initial begin
-        for (i = 0; i < TOTAL_WORDS; i = i + 1)
-            storage[i] = {DATA_W{1'b0}};
         if (HD_FILE != "")
             $readmemb(HD_FILE, storage);
     end
