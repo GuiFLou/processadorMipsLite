@@ -37,43 +37,46 @@ Os demais números do banco (1, 3–7, 18–27, 32–60, 63) existem no hardware
 |--|--|
 | Tamanho | 64 × 32 bits |
 | Endereços | 0–63 |
-| Portas | 2 leituras + 1 escrita, sincrônico |
-| Reset | zera todos; `$sp` ← 1023 |
+| Portas | 2 leituras combinacionais + 1 escrita síncrona (borda do `clk_cpu`) |
+| Reset | síncrono; zera todos; `$sp` ← 1023 |
 
 `$hi` e `$lo` são endereçáveis neste mapa (61 e 62), mas o datapath atual guarda o valor real em registradores separados (`hi_reg` / `lo_reg`) e faz bypass na leitura.
 
-### 2.2 ROM de instruções — `single_port_rom.v`
-
-Módulo antigo, fora do topo. O fetch do processador é a `inst_mem_rw`, de 4096 palavras.
+### 2.2 Memória de instrução — `inst_mem_rw.v`
 
 | | |
 |--|--|
-| Tamanho | 1024 × 32 bits |
-| Endereços | 0–1023 (word address = PC) |
-| Acesso | somente leitura; fetch pelo PC |
-| Init | `$readmemb` do `.txt` do programa |
+| Tamanho | 4096 × 32 bits (`ADDR_W = 12`) |
+| Endereços | 0–4095 (word address = `pc[11:0]`) |
+| Porta A | fetch pelo PC, leitura assíncrona (`assign rdata_a = mem[addr_a]`) |
+| Porta B | escrita síncrona do DMA do HD (`hd_cmd` 2) |
+| Init | zeros e depois `$readmemb` de `so.txt` |
 
-Cada posição contém uma instrução completa de 32 bits. O PC avança de 1 em 1.
+Cada posição contém uma instrução completa de 32 bits. O PC avança de 1 em 1. O reset (KEY[0]) não recarrega a IMEM: o conteúdo de `so.txt` só entra na configuração da FPGA.
+
+`single_port_rom.v` é o módulo antigo (1024 × 32, somente leitura, `gcd.txt` por padrão). Ficou fora do top-level e do `.qsf`.
 
 ### 2.3 RAM de dados — `data_ram.v`
 
 | | |
 |--|--|
-| Tamanho | 4096 × 32 bits |
+| Tamanho | 4096 × 32 bits (`ADDR_W = 12`) |
 | Endereços | 0–4095; a porta A da CPU só usa 0–4087 |
 | Acesso | `LW` / `SW` com endereço efetivo `RS + signext(Imm)` |
-| Portas | A = CPU; B = DMA do HD |
-| Init | zeros |
+| Portas | A = CPU; B = DMA do HD. Leitura assíncrona nas duas; as duas escritas ficam no mesmo `always`, e na colisão a porta B vence |
+| Init | zeros; o reset não limpa a RAM |
 
-Layout usado pelos programas C‑ (sem SO):
+Layout dos programas C‑ gerados pelo compilador:
 
 ```
-0 … N-1     globais / locais alocados em $gp   ($gp = 0)
-…           (meio livre)
-topo        pilha, cresce para baixo           ($sp inicia no topo)
+alvo padrão   $gp = 0 (valor do reset)      globais em $gp + memloc
+              $sp = 1015 (prólogo)          pilha e frames com $fp, crescendo para baixo
+os-user       $gp = 1536, $sp = 1791        mesma organização dentro da janela 1536–1791
 ```
 
-O reset do hardware põe `$sp` em **1023**, topo dos dados do kernel. O MMIO fica em 4088–4095, então `LW`/`SW` da CPU não passam de 4087.
+Os locais e os parâmetros ficam no frame da função, em offsets de `$fp`; só as globais usam `$gp`. O reset do hardware põe `$sp` em **1023**, topo dos dados do kernel, e o prólogo do alvo padrão o troca por 1015. O MMIO fica em 4088–4095, então `LW`/`SW` da CPU não passam de 4087.
+
+**Risco de síntese.** Com leitura assíncrona e as duas portas de escrita da RAM no mesmo `always`, o Quartus não infere M9K para a IMEM nem para a RAM. São cerca de 262 mil bits em flip-flops, contra 114.480 elementos lógicos do EP4CE115. O `hd_sim` já usa `(* ramstyle = "M9K" *)` com leitura síncrona. O último fit em `output_files/` (junho de 2026) é anterior ao mapa de 4096 palavras.
 
 ### 2.4 Outros registradores do datapath (fora do banco)
 
@@ -81,9 +84,17 @@ Não fazem parte do banco de 64, mas armazenam estado:
 
 | Nome | Tamanho | Propósito |
 |------|---------|-----------|
-| `pc` | 32 bits | Program counter. Reset: 0. Endereça a ROM/IMEM. |
+| `pc` | 32 bits | Program counter. Reset: 0. Endereça a IMEM com `pc[11:0]`. |
 | `hi_reg` / `lo_reg` | 32 bits cada | Resultado de `MULT`/`DIV`. Lidos quando RS/RT é 61 ou 62. |
 | `out_reg` | 32 bits | Último valor de `OUT`, mantido no display. |
+| `kret` | 32 bits | PC de retorno (PC+1 do `SW` em 4088) usado pelo `HLT` armado. |
+| `armed` | 1 bit | Retorno armado por `SW` em 4088; o `HLT` armado o desliga. |
+| `epc` | 32 bits | PC do `HLT` armado. Lido em 4088. |
+| `cause_reg` | 32 bits | Causa lida em 4089. |
+| `disp_mode`, `disp_id`, `disp_pid`, `disp_sel`, `disp_ack` | 8, 10, 4, 5 e 1 bits | Campos de `display_ctx` (4091). |
+| `disp_seen` | 1 bit | Um `LW` de 4091 já leu o ack em 1; só então o `SW` no mesmo modo zera o ack. |
+
+Todos voltam ao valor inicial no reset (KEY[0]); `disp_pid` volta para 15.
 
 ---
 
@@ -91,7 +102,7 @@ Não fazem parte do banco de 64, mas armazenam estado:
 
 Decisão de 2026-10-13: IMEM e RAM têm **4096 × 32 bits**. Kernel, folha da vez e supervisor co-residem na IMEM. O código do kernel não é descarregado para um programa executar.
 
-O Verilog do topo usa `ADDR_W = 12`. `display_ctx` está em 4091 e o HD em 4092–4095. `pc_load` (4088) e `cause` (4089) fazem a volta da opção 1. A escrita em 4088 só arma quando o destino está em 3072–3839 e o HD não está congelado: grava PC+1 em `kret` e na RAM 1042 e desvia. Fora da folha a escrita é ignorada, e o sentinela 99 do `tb_lcd` continua. O `HLT` armado volta a esse PC, grava a causa 2 em 4089 e desarma. O `HLT` sem arma congela o PC e acende LEDR[16]. A leitura de 4088 devolve `epc`. `ctrl` (4090) continua sem efeito. Faltam timer, modo privilegiado e o Assembly do supervisor.
+O Verilog do topo usa `ADDR_W = 12`. `display_ctx` está em 4091 e o HD em 4092–4095. `pc_load` (4088) e `cause` (4089) fazem a volta da opção 1. A escrita em 4088 só arma quando o destino está em 3072–3839 e o HD não está congelado: grava PC+1 em `kret` e na RAM 1042 e desvia. Fora da folha a escrita é ignorada, e o sentinela 99 do `tb_lcd` continua. O `HLT` armado volta a esse PC, grava a causa 2 em 4089 e desarma. Nada escreve em 4089 depois disso, então a causa fica em 2 até o reset. O `HLT` sem arma congela o PC e acende LEDR[16]. A leitura de 4088 devolve `epc`. `ctrl` (4090) não tem decode: a leitura devolve 0 e a escrita é descartada. Faltam timer, modo privilegiado e o Assembly do supervisor. A Fase 1 passa em simulação (`tb_retorno`, `tb_menu`) e ainda não foi validada na placa.
 
 ### 3.1 Memória de instrução — co-residência
 
@@ -160,18 +171,18 @@ A imagem em `hd_image.txt` segue o layout abaixo. Os dez programas estão nos se
 
 ### 3.4 MMIO — endereços 4088–4095 da RAM
 
-`LW`/`SW` nesses endereços não acessam a RAM de dados. `display_ctx` está em **4091**. `pc_load` e `cause` estão em 4088 e 4089. `ctrl` (4090) ainda não tem efeito.
+`LW`/`SW` nesses endereços não acessam a RAM de dados. O decode compara o endereço completo, então 8187 não é alias de 4091. `display_ctx` está em **4091**. `pc_load` e `cause` estão em 4088 e 4089. `ctrl` (4090) ainda não tem efeito.
 
 **CSRs (4088–4091)**
 
 | Endereço | Nome | Propósito |
 |----------|------|-----------|
 | 4088 | `pc_load` | Escrita com destino 3072–3839 e HD descongelado carrega o PC, grava PC+1 em `kret` e na RAM 1042 e desvia. Fora da folha a escrita é ignorada. Leitura devolve `epc`. |
-| 4089 | `cause` | HLT armado grava 2. Escrita ignorada. Leitura devolve a causa. |
-| 4090 | `ctrl` | modo, timer, DISPATCH; quantum em bits deste registrador. Ainda sem efeito. |
+| 4089 | `cause` | HLT armado grava 2. Escrita ignorada. Leitura devolve a causa, que fica em 2 até o reset. |
+| 4090 | `ctrl` | Previsto: modo, timer, DISPATCH e quantum. Hoje não tem decode: leitura devolve 0 e escrita é descartada. |
 | 4091 | `display_ctx` | Modo do LCD, ID, PID. Leitura inclui índice e ack. O catálogo já existe no Verilog. |
 
-Campos de `display_ctx`: escrita `[7:0]` modo, `[17:8]` ID, `[21:18]` PID. Toda escrita zera o ack. Leitura: `[27]` ack, `[26:22]` índice, e os mesmos campos da escrita. KEY[1] liga o ack quando a CPU não está em IN/OUT. KEY[2]/KEY[3] andam o índice só em modo com mais de um item. Modos: 1 MENU (3), 2 BEM-VINDO, 3 RUN, 4 OK, 5 ERR, 6 PROG (10), 7 QUANTOS (10), 8 ARQUIVOS.
+Campos de `display_ctx`: escrita `[7:0]` modo, `[17:8]` ID, `[21:18]` PID. A escrita zera o ack, exceto no mesmo modo quando nenhum `LW` o leu em 1. Leitura: `[27]` ack, `[26:22]` índice, e os mesmos campos da escrita. KEY[1] liga o ack quando a CPU não está em IN/OUT. KEY[2]/KEY[3] andam o índice só em modo com mais de um item. Modos: 1 MENU (3), 2 BEM-VINDO, 3 RUN, 4 OK, 5 ERR, 6 PROG (10), 7 QUANTOS (10), 8 ARQUIVOS.
 
 **HD (4092–4095)**
 

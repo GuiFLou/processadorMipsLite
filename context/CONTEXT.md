@@ -1,6 +1,12 @@
 # Contexto do Compilador C‑ → MIPS‑Lite (para IA)
 
-Este documento descreve o compilador completo e funcionando. Todas as 20 issues foram corrigidas e validadas. Os 5 programas de teste (teste2, teste, fatorial, gcd, sort) passam em todas as 4 etapas (análise, intermediário, assembly, binário).
+> **Aviso.** Versões anteriores deste arquivo descreviam o compilador legado:
+> sem `$fp`, com locais em `$gp`, parâmetros lidos por offsets de `$sp`, um
+> `GOTO main` no código intermediário e cinco testes (`teste2`, `teste`,
+> `fatorial`, `gcd`, `sort`). Nada disso vale mais. As seções abaixo foram
+> conferidas no código atual de `compilador/`. A referência do projeto (mapa
+> de memória, MMIO, estado do SO) é [`../../so/docs/CONTEXT.md`](../../so/docs/CONTEXT.md);
+> o uso do compilador está em [`../../compilador/README.md`](../../compilador/README.md).
 
 ---
 
@@ -23,7 +29,7 @@ Este documento descreve o compilador completo e funcionando. Todas as 20 issues 
   │  BACK-END (geração)                                      │
   │  cgen.c → quádruplas (.tm)                               │
   │  asmgen.c → assembly MIPS-Lite (.s)                      │
-  │  encoder.c → binário 32 bits (.txt)                      │
+  │  encoder.c → binário 32 bits (.mem, ou .txt com --txt)   │
   └─────────────────────────────────────────────────────────┘
 ```
 
@@ -31,7 +37,14 @@ Este documento descreve o compilador completo e funcionando. Todas as 20 issues 
 
 Esse comando regenera a ROM solta. `exemplos/` não é a imagem que o SO executa. Os binários da folha estão nos setores 20–29 de `processador/hd_image.txt`. `reset_tests.sh` sem flag regenera `exemplos/`. Com `--target=os-user` grava só esses setores e não mexe na pasta.
 
-**Alvos.** O padrão emite `addi $sp,$zero,1015` e depois `j main`; os saltos saem a partir de 0. O alvo `--target=os-user` emite `addi $gp,$zero,1536` e `addi $sp,$zero,1791`, depois `j main`. `J` e `JAL` somam 3072. `BEQ` e `BNE` continuam relativos. Imagem acima de 256 palavras é recusada. HD, LCD e `runat` são recusados. `loadHD`, `storeHD` e `loadROM` usam 4092–4095 e devolvem 0 quando `hd_status` é done e 1 quando é erro. 1020–1023 não é o disco. `void runat(int)` não é `jal`: grava `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp` e `$ra` em 1043–1057, faz `SW` do endereço em 4088 e restaura com `LW` a partir de `lw $v0,1043`. `$hi` e `$lo` ficam de fora. O alvo `os-kernel` não existe na linha de comando.
+**Alvos.** A linha de comando aceita só o alvo padrão e `--target=os-user`; qualquer outro `--target=` é recusado. Não existe `os-kernel`.
+
+- Padrão: o `.s` começa com `addi $sp,$zero,1015` e `j main`; `$gp` não é inicializado (fica no 0 do reset) e os saltos saem a partir de 0. O kernel `so.cms` é compilado neste alvo.
+- `os-user`: o `.s` começa com `addi $gp,$zero,1536`, `addi $sp,$zero,1791` e `j main`. O encoder soma 3072 a cada `J` e `JAL`; `BEQ` e `BNE` continuam relativos. Binário acima de 256 palavras é recusado. Chamadas a `loadHD`, `loadROM`, `storeHD`, `lcdshow`, `lcdack`, `lcdsel` e `runat` são erro de semântica.
+
+Nos dois alvos o encoder põe na palavra 0 um NOP cujo campo de 26 bits é o tamanho total do binário e garante um `HLT` na última palavra. O kernel em `so/src/so.txt` também tem esse cabeçalho (`NOP 1335`) e termina em `HLT`.
+
+`loadHD`, `storeHD` e `loadROM` usam 4092–4095 e devolvem 0 quando `hd_status` é done e 1 quando é erro. `void runat(int)` não é `jal`: grava `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp` e `$ra` em 1043–1057, faz `SW` do endereço em 4088 e restaura com `LW` a partir de `lw $v0,1043`. `$hi` e `$lo` ficam de fora.
 
 **Saídas por programa:**
 
@@ -39,7 +52,7 @@ Esse comando regenera a ROM solta. `exemplos/` não é a imagem que o SO executa
 |---------|----------|
 | `<nome>.tm` | Quádruplas (código intermediário) |
 | `<nome>.s` | Assembly MIPS-Lite |
-| `<nome>.txt` | Binário 32 bits (texto, uma instrução/linha) |
+| `<nome>.txt` | Binário 32 bits (texto, uma instrução/linha). Sem `--txt` o nome é `<nome>.mem` |
 
 ---
 
@@ -47,13 +60,13 @@ Esse comando regenera a ROM solta. `exemplos/` não é a imagem que o SO executa
 
 | Arquivo | Papel |
 |---------|-------|
-| `main.c` | CLI (`--txt` + caminho), orquestra análise e geração |
+| `main.c` | CLI (`--txt`, `--target=os-user` e o caminho), orquestra análise e geração |
 | `Scanner.l` | Flex: análise léxica |
 | `Parser.y` | Bison: análise sintática, construção da AST |
 | `globals.h` | Tipos compartilhados (TreeNode, tokens, flags) |
 | `util.c/h` | Criação de nós, `printTree`, `aggScope` |
-| `symtab.c/h` | Tabela de símbolos (hash), inserção/consulta, built-ins |
-| `analyze.c/h` | Análise semântica: tabela + verificação de tipos |
+| `symtab.c/h` | Tabela de símbolos (hash), inserção/consulta, built-ins (`insertBuiltIns`) |
+| `analyze.c/h` | Análise semântica: tabela, verificação de tipos, restrições do `os-user` |
 | `cgen.c/h` | Geração de quádruplas a partir da AST |
 | `asmgen.c/h` | Tradução de quádruplas → assembly MIPS-Lite |
 | `encoder.c/h` | Montador: assembly → binário 32 bits |
@@ -64,7 +77,7 @@ Esse comando regenera a ROM solta. `exemplos/` não é a imagem que o SO executa
 
 - **Tipos:** `int`, `void`. Variáveis escalares e vetores `int id[N]`.
 - **Funções:** retorno `int` ou `void`; parâmetros `int id` ou `int id[]`.
-- **Built-ins do alvo padrão:** `input()` (retorna int), `output(int)`, `lcdshow`, `lcdack`, `lcdsel`, `loadHD`, `storeHD`, `loadROM` e `void runat(int)`. O alvo `os-user` aceita `input` e `output` e recusa HD, LCD e `runat`.
+- **Built-ins:** `input()` (retorna int), `output(int)`, `lcdshow(modo,id,pid)`, `lcdack()`, `lcdsel()`, `loadHD`, `storeHD`, `loadROM` (setor, endereço) e `void runat(int)`. Ficam na tabela global desde o início (`insertBuiltIns`, em `symtab.c`); declarar uma função com um desses nomes dá `Error 4: Invalid Declaration. Already declared.` O alvo `os-user` aceita `input` e `output` e recusa os demais.
 - **Obrigatório:** função `main(void)`.
 
 ---
@@ -77,7 +90,6 @@ Cada quádrupla tem formato `(op, arg1, arg2, result)`. Temporários: `t0`, `t1`
 
 | Quádrupla | Significado |
 |-----------|-------------|
-| `GOTO main - -` | Salto inicial para main |
 | `FUN tipo nome -` | Início de função |
 | `ARG tipo nome funcao` | Parâmetro formal |
 | `END nome - -` | Fim de função |
@@ -103,47 +115,54 @@ Cada quádrupla tem formato `(op, arg1, arg2, result)`. Temporários: `t0`, `t1`
 | `CALL nome nargs tN` | Chamada de função (resultado em tN) |
 | `CALL_I - - tN` | Chamada de `input()` |
 | `CALL_O val - -` | Chamada de `output()` (precedido de PARAM) |
+| `HDLOAD`, `HDROM`, `HDSTORE setor addr tN` | `loadHD`, `loadROM`, `storeHD` |
+| `LCD_MODE`, `LCD_ID`, `LCD_PID` | Os três argumentos de `lcdshow` |
+| `LCDACK - - tN`, `LCDSEL - - tN` | `lcdack()`, `lcdsel()` |
+| `RUNAT addr - -` | `runat(addr)` |
 | `RET val - -` | Retorno de função |
 | `HALT - - -` | Fim do programa |
 
 ### 4.2 Fluxo
 
-1. `codeGen` emite `GOTO main` no início
-2. Percorre toda a AST (siblings) gerando quádruplas
-3. Emite `HALT` ao final
-4. Grava `.tm`, chama `asmGen` (→ `.s`), chama `encodeAsm` (→ `.txt`)
+1. `codeGen` percorre toda a AST (siblings) gerando quádruplas
+2. Emite `HALT` ao final
+3. Grava `.tm`, chama `asmGen` (→ `.s`) e `encodeAsm` (→ `.mem`)
+4. Com `--txt`, `main.c` renomeia `.mem` para `.txt`
+
+O salto inicial para `main` não é uma quádrupla: o `asmgen` o emite no prólogo do `.s`.
 
 ### 4.3 Exemplo: fatorial.tm
 
+O `fatorial.cms` atual lê `n` com `input()`.
+
 ```
-  0: (GOTO, main, -, -)
-  1: (FUN, void, main, -)
-  2: (ALLOC, n, main, -)
-  3: (ALLOC, result, main, -)
-  4: (ASSIGN, 5, -, t0)
-  5: (STORE, t0, -, n)
-  6: (ASSIGN, 1, -, t1)
-  7: (STORE, t1, -, result)
-  8: (LAB, L0, -, -)
-  9: (LOAD, n, -, t2)
- 10: (ASSIGN, 0, -, t3)
- 11: (SLT, t3, t2, t4)         ← n > 0 implementado como 0 < n
- 12: (IFF, t4, L1, -)
- 13: (LOAD, result, -, t5)
- 14: (LOAD, n, -, t6)
- 15: (MUL, t5, t6, t7)
- 16: (STORE, t7, -, result)
- 17: (LOAD, n, -, t8)
- 18: (ASSIGN, 1, -, t9)
- 19: (SUB, t8, t9, t10)
- 20: (STORE, t10, -, n)
- 21: (GOTO, L0, -, -)
- 22: (LAB, L1, -, -)
- 23: (LOAD, result, -, t11)
- 24: (PARAM, t11, -, -)
- 25: (CALL_O, t11, -, -)
- 26: (END, main, -, -)
- 27: (HALT, -, -, -)
+  0: (FUN, void, main, -)
+  1: (ALLOC, n, main, -)
+  2: (ALLOC, result, main, -)
+  3: (CALL_I, -, -, t0)
+  4: (STORE, t0, -, n)
+  5: (ASSIGN, 1, -, t1)
+  6: (STORE, t1, -, result)
+  7: (LAB, L0, -, -)
+  8: (LOAD, n, -, t2)
+  9: (ASSIGN, 0, -, t3)
+ 10: (SLT, t3, t2, t4)         ← n > 0 implementado como 0 < n
+ 11: (IFF, t4, L1, -)
+ 12: (LOAD, result, -, t5)
+ 13: (LOAD, n, -, t6)
+ 14: (MUL, t5, t6, t7)
+ 15: (STORE, t7, -, result)
+ 16: (LOAD, n, -, t8)
+ 17: (ASSIGN, 1, -, t9)
+ 18: (SUB, t8, t9, t10)
+ 19: (STORE, t10, -, n)
+ 20: (GOTO, L0, -, -)
+ 21: (LAB, L1, -, -)
+ 22: (LOAD, result, -, t11)
+ 23: (PARAM, t11, -, -)
+ 24: (CALL_O, t11, -, -)
+ 25: (END, main, -, -)
+ 26: (HALT, -, -, -)
 ```
 
 ---
@@ -153,9 +172,10 @@ Cada quádrupla tem formato `(op, arg1, arg2, result)`. Temporários: `t0`, `t1`
 ### 5.1 Convenções implementadas
 
 **Registradores utilizados:**
-- `$t0`–`$t9`: temporários (mapeados circularmente de `tN` do intermediário)
-- `$gp`: base da memória de dados (variáveis globais e locais não-parâmetro)
-- `$sp`: ponteiro de pilha (parâmetros, $ra, argumentos de chamada)
+- `$t0`–`$t9`: temporários (`tN` vira `$t(N % 10)`)
+- `$gp`: base das variáveis globais
+- `$sp`: ponteiro de pilha (argumentos de chamada, `$ra`, `$fp` salvos e locais)
+- `$fp`: base do frame da função atual (parâmetros e locais)
 - `$ra`: endereço de retorno
 - `$v0`: valor de retorno de funções int
 - `$zero`: registrador zero
@@ -163,19 +183,20 @@ Cada quádrupla tem formato `(op, arg1, arg2, result)`. Temporários: `t0`, `t1`
 - `$hi`: resultado de mult/div (parte alta, não usado atualmente)
 
 **Acesso a memória:**
-- Variáveis globais e locais: `offset($gp)` — offset = `memloc` da tabela de símbolos
-- Parâmetros de função: `offset($sp)` — offset calculado dinamicamente com `stackDelta`
+- Variáveis globais: `memloc($gp)` — `memloc` vem da tabela de símbolos
+- Parâmetros: `(1 + N - i)($fp)` para o parâmetro de índice `i` entre `N`; o último fica em `2($fp)`
+- Locais: offsets negativos de `$fp`, na ordem das `ALLOC` da função
 - Vetores globais: `addi base,$gp,memloc` + `add addr,base,index` + `lw/sw 0(addr)`
-- Vetores parâmetro: `lw base,offset($sp)` + `add addr,base,index` + `lw/sw 0(addr)`
+- Vetores locais: `addi base,$fp,off`; vetores parâmetro: `lw base,off($fp)`
 
 **Convenção de chamada:**
-1. Prologue da função: `addi $sp,$sp,-1` + `sw $ra,0($sp)`
-2. Chamada (caller): push de argumentos com PARAM → `addi $sp,-1` + `sw arg,0($sp)`
+1. Prólogo: `addi $sp,$sp,-1` + `sw $ra,0($sp)`, `addi $sp,$sp,-1` + `sw $fp,0($sp)`, `add $fp,$sp,$zero` e `addi $sp,$sp,-L` se houver `L` palavras de locais
+2. Chamada (caller): push de argumentos com PARAM → `addi $sp,$sp,-1` + `sw arg,0($sp)`
 3. `jal funcao`
 4. Pop de argumentos: `addi $sp,$sp,N`
 5. Retorno em `$v0`: `add result,$v0,$zero`
-6. Epilogue: `lw $ra,0($sp)` + `addi $sp,$sp,1` + `jr $ra`
-7. main termina com `hlt` em vez de `jr $ra`
+6. Epílogo: `add $sp,$fp,$zero`, `lw $fp,0($sp)`, `addi $sp,$sp,1`, `lw $ra,0($sp)`, `addi $sp,$sp,1`, `jr $ra`
+7. `main` tem prólogo, mas termina com `hlt` em vez do epílogo
 
 **Operações especiais:**
 - `MUL` → `mult r1,r2` + `move rd,$lo` (2 operandos, resultado em $lo)
@@ -188,13 +209,17 @@ Cada quádrupla tem formato `(op, arg1, arg2, result)`. Temporários: `t0`, `t1`
 - `GOTO` → `j label`
 - `CALL_I` → `in rd`
 - `CALL_O` → `out r1` + pop do argumento empilhado por PARAM
+- `HDLOAD`/`HDROM`/`HDSTORE` → `sw` do setor em 4093, do endereço em 4094 e do comando (1, 2 ou 3) em 4092; laço enquanto `hd_status` (4095) == 1 (busy); resultado 0 se done, 1 se erro ou idle (bit 1 de `status + 3`)
+- `LCD_*` → monta `{pid[3:0], id[9:0], modo[7:0]}` com `andi`/`sl`/`or` e grava em 4091
+- `LCDACK`/`LCDSEL` → `lw` de 4091, `sr` de 27 ou 22 e `andi` com 1 ou 31
+- `RUNAT` → 15 `sw` em 1043–1057, `sw` do endereço em 4088 e 15 `lw` de volta
 
 **Controle de fluxo redundante:**
-- END de funções com todos os caminhos terminando em RET: não emite epilogue duplicado (análise de alcançabilidade via `functionEndIsReachable`)
-- END de funções void sem return explícito: emite epilogue implícito
+- END de funções com todos os caminhos terminando em RET: não emite epílogo duplicado (análise de alcançabilidade via `functionEndIsReachable`)
+- END de funções void sem return explícito: emite epílogo implícito
 - HALT suprimido se main já emitiu `hlt` via END/RET
 
-### 5.2 Exemplo: fatorial.s
+### 5.2 Exemplo: fatorial.s (alvo padrão)
 
 ```asm
 # Assembly gerado automaticamente
@@ -205,27 +230,31 @@ Cada quádrupla tem formato `(op, arg1, arg2, result)`. Temporários: `t0`, `t1`
 main:
     addi $sp,$sp,-1
     sw   $ra,0($sp)
-    addi $t0,$zero,5
-    sw   $t0,1($gp)
+    addi $sp,$sp,-1
+    sw   $fp,0($sp)
+    add  $fp,$sp,$zero
+    addi $sp,$sp,-2
+    in   $t0
+    sw   $t0,-1($fp)
     addi $t1,$zero,1
-    sw   $t1,2($gp)
+    sw   $t1,-2($fp)
 L0:
-    lw   $t2,1($gp)
+    lw   $t2,-1($fp)
     addi $t3,$zero,0
     slt  $t4,$t3,$t2
     beq  $t4,$zero,L1
-    lw   $t5,2($gp)
-    lw   $t6,1($gp)
+    lw   $t5,-2($fp)
+    lw   $t6,-1($fp)
     mult $t5,$t6
     move $t7,$lo
-    sw   $t7,2($gp)
-    lw   $t8,1($gp)
+    sw   $t7,-2($fp)
+    lw   $t8,-1($fp)
     addi $t9,$zero,1
     sub  $t0,$t8,$t9
-    sw   $t0,1($gp)
+    sw   $t0,-1($fp)
     j    L0
 L1:
-    lw   $t1,2($gp)
+    lw   $t1,-2($fp)
     addi $sp,$sp,-1
     sw   $t1,0($sp)
     out  $t1
@@ -234,7 +263,7 @@ L1:
     hlt
 ```
 
-O trecho acima é o alvo padrão. No alvo `os-user`, as duas primeiras instruções são `addi $gp,$zero,1536` e `addi $sp,$zero,1791`, e o encoder soma 3072 a cada `J` e `JAL`. `BEQ` e `BNE` não recebem essa base.
+No alvo `os-user`, a primeira instrução vira `addi $gp,$zero,1536` seguida de `addi $sp,$zero,1791`, e o encoder soma 3072 a cada `J` e `JAL`. `BEQ` e `BNE` não recebem essa base.
 
 ---
 
@@ -242,9 +271,11 @@ O trecho acima é o alvo padrão. No alvo `os-user`, as duas primeiras instruç�
 
 ### 6.1 Funcionamento
 
-Duas passagens sobre o `.s`:
-1. **1ª passagem:** coleta labels (incluindo dot-labels `.L_eq_*`, `.L_ne_*`) e seus endereços
-2. **2ª passagem:** monta cada instrução em 32 bits segundo o formato do ISA
+1. **Leitura:** cada linha do `.s` é interpretada uma vez. Labels (inclusive dot-labels `.L_eq_*`, `.L_ne_*`, `.L_hd_poll_*`) recebem o endereço da próxima instrução **mais 1**, porque a palavra 0 é reservada para o cabeçalho
+2. **Montagem:** cada instrução vira uma palavra de 32 bits segundo o formato do ISA
+3. **Cabeçalho e fim:** a palavra 0 é `NOP` com o tamanho total `N` no campo de 26 bits; se a última instrução do `.s` não for `hlt`, o encoder acrescenta um `HLT` na palavra `N-1`. `N` inclui o NOP e o HLT
+4. **Alvo `os-user`:** soma 3072 a cada `J`/`JAL` e recusa `N` > 256
+5. O binário é gravado num `.tmp` e renomeado no fim; se alguma instrução falhar, o binário não é escrito
 
 ### 6.2 Formatos implementados
 
@@ -252,7 +283,8 @@ Duas passagens sobre o `.s`:
 - Usado por: ADD, SUB, MULT, DIV, AND, OR, SLT, SR, SL, JR
 
 **F2** (Immediate): `[opcode:6][RD:6][RS:6][Imm:14]` = 32 bits
-- Usado por: ADDI, SUBI, LW, SW, BEQ, BNE, MOVE, NOT
+- Usado por: ADDI, SUBI, MULTI, DIVI, ANDI, ORI, LW, SW, BEQ, BNE, MOVE, NOT
+- O imediato aceita −8192 a 8191 (`makeF2` aplica a máscara `0x3FFF`)
 
 **F3** (Jump): `[opcode:6][Endereço:26]` = 32 bits
 - Usado por: J, JAL, NOP, HLT
@@ -264,10 +296,11 @@ Duas passagens sobre o `.s`:
 
 - **MULT/DIV** com 2 operandos: monta F1 com RS=op1, RT=op2, RD=0 (resultado em $hi/$lo)
 - **JR** com 1 operando: monta F1 com RS=op1, RT=0, RD=0
+- **SR/SL**: o terceiro operando é o shamt (0–31), não um registrador
 - **BEQ/BNE** com label: offset relativo = `addr(label) - PC - 1`
-- **J/JAL** com label: endereço absoluto do label (26 bits)
+- **J/JAL** com label: endereço absoluto do label (26 bits), já com o +1 do cabeçalho e, no `os-user`, +3072
+- **J/JAL** com número: tratado como endereço do corpo sem cabeçalho e somado de 1 (compatibilidade com `.s` antigos)
 - **LW/SW** com sintaxe `offset(base)`: parser separa imediato e registrador base
-- **Dot-labels** (`.L_eq_*`, `.L_ne_*`): reconhecidos e resolvidos normalmente
 - **Diretivas** (`.text`, `.globl`): ignoradas (não contam como instrução)
 - **Comentários** (`#`): ignorados
 
@@ -280,9 +313,12 @@ Duas passagens sobre o `.s`:
 | `$t0`–`$t9` | 8–17 (001000–010001) |
 | `$gp` | 28 (011100) |
 | `$sp` | 29 (011101) |
+| `$fp` | 30 (011110) |
 | `$ra` | 31 (011111) |
 | `$lo` | 61 (111101) |
 | `$hi` | 62 (111110) |
+
+O encoder também aceita `$0`–`$63` e `$s0`–`$s7` (16–23), que o `asmgen` não emite.
 
 ### 6.5 Tabela de opcodes
 
@@ -307,53 +343,60 @@ Duas passagens sobre o `.s`:
 
 ## 7. Tamanho dos programas gerados
 
-| Programa | Quádruplas | Instruções assembly | Instruções binárias |
+Alvo padrão, arquivos de `compilador/exemplos/`. As instruções assembly não contam labels, diretivas nem comentários. O binário soma o NOP de tamanho; o `HLT` já vem do `.s`. No `os-user` cada binário tem uma palavra a mais (`addi $gp`), que é o tamanho gravado no HD.
+
+| Programa | Quádruplas | Instruções assembly | Palavras do binário |
 |----------|-----------|--------------------|--------------------|
-| teste2.cms | 15 | 17 | 15 |
-| teste.cms | 15 | 17 | 15 |
-| fatorial.cms | 28 | 31 | 27 |
-| gcd.cms | 42 | 66 | 58 |
-| sort.cms | 130 | 157 | 141 |
+| area_triangulo | 19 | 26 | 27 |
+| busca_linear | 55 | 61 | 62 |
+| fatorial | 27 | 32 | 33 |
+| fibonacci | 38 | 39 | 40 |
+| gcd | 41 | 72 | 73 |
+| media | 37 | 44 | 45 |
+| numero_primo | 48 | 55 | 56 |
+| potencia | 33 | 36 | 37 |
+| soma_digitos | 36 | 42 | 43 |
+| sort | 129 | 160 | 161 |
 
 ---
 
 ## 8. Memória de dados — layout via $gp
 
-O `$gp` é a base dos dados. No alvo padrão ele permanece 0, o valor do reset. No alvo `os-user` o prólogo o coloca em 1536, início da janela 1536–1791. Cada variável global ou local (exceto parâmetros) recebe um offset fixo (`memloc`) da tabela de símbolos, somado a essa base.
+O `$gp` é a base das globais. No alvo padrão ele permanece 0, o valor do reset. No alvo `os-user` o prólogo o coloca em 1536, início da janela 1536–1791. Cada variável global recebe um offset fixo (`memloc`) da tabela de símbolos, somado a essa base.
 
 **Exemplo — sort.cms:**
 ```
 $gp + 0..9  → vet[10] (vetor global, 10 palavras)
-$gp + 10    → (início das variáveis de minloc, mas acessadas durante execução de minloc)
-...
-$gp + 25    → i de main
 ```
 
-Parâmetros de função ficam na pilha (`$sp`), não em `$gp`.
+Locais e parâmetros ficam no frame da função (seção 9), não em `$gp`. A análise semântica ainda atribui um `memloc` a locais e funções; no `os-user` ela recusa programas que ocupem mais de 256 posições (`dataUsed > 256`, em `analyze.c`), mas essa conta não inclui a pilha.
 
 ---
 
-## 9. Pilha ($sp) — layout durante chamada
+## 9. Pilha ($sp) e frame ($fp) — layout durante chamada
 
 ```
-Antes da chamada:
-    [...conteúdo anterior...]
-    $ra do chamador ← 0($sp)
-
-Após push de N argumentos:
+Caller, após push de N argumentos:
     argN                    ← 0($sp)
-    argN-1                  ← 1($sp)
     ...
     arg1                    ← (N-1)($sp)
-    $ra do chamador         ← N($sp)
 
-Dentro do callee (após prologue salvar $ra):
-    $ra do callee           ← 0($sp)
-    argN (último param)     ← 1($sp)
-    argN-1                  ← 2($sp)
+Callee, após o prólogo (L palavras de locais):
+    local L                 ← -L($fp) = 0($sp)
     ...
-    arg1 (primeiro param)   ← N($sp)
-    $ra do chamador         ← (N+1)($sp)
+    local 1                 ← -1($fp)
+    $fp do chamador         ← 0($fp)
+    $ra                     ← 1($fp)
+    argN (último param)     ← 2($fp)
+    ...
+    arg1 (primeiro param)   ← (1+N)($fp)
 ```
 
-O `stackDelta` em `asmgen.c` rastreia quantas palavras o callee empilhou desde a entrada, ajustando automaticamente os offsets de parâmetros quando argumentos de subchamadas são empilhados.
+Como os parâmetros e locais são lidos por `$fp`, pushes de argumentos de subchamadas não mudam os offsets. Cada ativação recursiva tem frame próprio.
+
+---
+
+## 10. Limitações conhecidas
+
+- **Temporários:** `tN` vira `$t(N % 10)` e nada salva `$t0`–`$t9` antes de um `jal`. Uma expressão que usa um temporário depois de uma chamada, como `n * fat(n-1)`, lê o valor sobrescrito pela chamada interna. O `so.cms` e os dez programas de `exemplos/` não são afetados.
+- **Pilha no `os-user`:** globais e pilha dividem a janela 1536–1791 e o limite `dataUsed > 256` não considera a pilha. Um programa com muitos dados e chamadas profundas pode ter a pilha sobre as globais sem aviso.

@@ -1,8 +1,7 @@
 `timescale 1ns / 1ps
 
-// Roda so/src/so.txt: boas-vindas, menu, a area na opcao 1 e a troca da folha.
-// Compilar antes, a partir de so/src:
-//   ../../compilador/compilador --txt so.cms
+// Roda a imagem de reset so.txt: boas-vindas, menu, a area na opcao 1 e a
+// troca da folha. Se so.cms mudar, so.txt precisa ser remontado antes.
 module tb_menu;
     parameter BTN_STABLE = 3;
 
@@ -17,7 +16,7 @@ module tb_menu;
     Processador_GUI_MIPS #(
         .CPU_DIV(1),
         .BTN_STABLE(BTN_STABLE),
-        .ROM_FILE("../so/src/so.txt"),
+        .ROM_FILE("so.txt"),
         .LCD_T_POWER(8),
         .LCD_T_INIT1(4),
         .LCD_T_INIT2(3),
@@ -39,6 +38,7 @@ module tb_menu;
     integer n;
     integer fails;
     integer picks;
+    integer redraw_pc;
     reg     saw_stall;
 
     task pulse_key;
@@ -118,6 +118,34 @@ module tb_menu;
         end
     endtask
 
+    /* Para no ciclo do SW em 4091 que grava o modo pedido. */
+    task wait_disp_sw;
+        input integer wanted;
+        begin
+            @(posedge uut.clk_cpu);
+            #1;
+            for (n = 0; n < 100000 && !(uut.memWrite && uut.is_disp_ctx &&
+                                        uut.rf_b[7:0] == wanted); n = n + 1) begin
+                @(posedge uut.clk_cpu);
+                #1;
+            end
+            if (n == 100000) begin
+                $display("FAIL SW do modo %0d nao chegou", wanted);
+                fails = fails + 1;
+            end
+        end
+    endtask
+
+    /* Um ciclo de enter_pulse no ciclo atual, como um KEY[1] que chega agora. */
+    task enter_now;
+        begin
+            force uut.enter_pulse = 1'b1;
+            @(posedge uut.clk_cpu);
+            #1;
+            release uut.enter_pulse;
+        end
+    endtask
+
     initial begin
         fails = 0;
         saw_stall = 1'b0;
@@ -166,8 +194,20 @@ module tb_menu;
         wait_mode(8'd6);
         wait_id(10'd1);
         $display("PASS lista no primeiro programa");
-        pulse_key(1);
+        pulse_key(3);
+        wait_id(10'd2);
+        /* Enter no mesmo ciclo do SW que redesenha a lista. */
+        fork
+            pulse_key(2);
+            begin
+                wait_disp_sw(8'd6);
+                redraw_pc = uut.pc;
+                enter_now();
+            end
+        join
         wait_mode(8'd3);
+        if (uut.disp_mode === 8'd3)
+            $display("PASS Enter no SW do redesenho vale");
         if (uut.disp_id !== 10'd1 || uut.disp_pid !== 4'd0) begin
             $display("FAIL run: id=%0d pid=%0d", uut.disp_id, uut.disp_pid);
             fails = fails + 1;
@@ -237,15 +277,43 @@ module tb_menu;
         end
         wait_mode(8'd5);
         $display("PASS tres escolhas e erro");
-        pulse_key(1);
-        wait_mode(8'd1);
+        /* Enter no SW que troca ERR por MENU não pode confirmar o MENU. */
+        fork
+            pulse_key(1);
+            begin
+                wait_disp_sw(8'd1);
+                enter_now();
+            end
+        join
+        repeat (200) @(posedge uut.clk_cpu);
+        if (uut.disp_mode !== 8'd1 || uut.disp_ack !== 1'b0) begin
+            $display("FAIL troca de modo herdou o Enter: modo %0d ack %b",
+                     uut.disp_mode, uut.disp_ack);
+            fails = fails + 1;
+        end else
+            $display("PASS troca de modo zera o Enter coincidente");
 
         pulse_key(1);
         wait_mode(8'd6);
-        pulse_key(3);
-        wait_id(10'd2);
-        pulse_key(1);
+        /* Enter depois do último LW do ack e antes do SW que redesenha.
+         * redraw_pc - 10 cai no trecho sem desvio que monta a palavra do lcdshow. */
+        fork
+            pulse_key(3);
+            begin
+                for (n = 0; n < 100000 && uut.pc !== redraw_pc - 10; n = n + 1) begin
+                    @(posedge uut.clk_cpu);
+                    #1;
+                end
+                enter_now();
+            end
+        join
         wait_mode(8'd3);
+        if (uut.disp_mode !== 8'd3 || uut.disp_id !== 10'd2) begin
+            $display("FAIL Enter antes do redesenho: modo %0d id %0d",
+                     uut.disp_mode, uut.disp_id);
+            fails = fails + 1;
+        end else
+            $display("PASS Enter antes do redesenho vale");
         if (uut.IMEM.mem[3072] !== uut.HD.storage[21 * 256]) begin
             $display("FAIL folha da busca");
             fails = fails + 1;

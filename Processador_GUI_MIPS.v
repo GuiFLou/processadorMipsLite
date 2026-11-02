@@ -367,6 +367,7 @@ module Processador_GUI_MIPS #(
     reg  [3:0] disp_pid;
     reg  [4:0] disp_sel;
     reg        disp_ack;
+    reg        disp_seen;   // um LW de 4091 já leu o ack em 1
     /* 1 MENU=3, 6 PROG=10, 7 QUANTOS=10. As outras telas têm um item. */
     wire [4:0] disp_nitems =
         (disp_mode == 8'd1) ? 5'd3  :
@@ -387,7 +388,10 @@ module Processador_GUI_MIPS #(
             disp_mode <= rf_b[7:0];
             disp_id   <= rf_b[17:8];
             disp_pid  <= rf_b[21:18];
-            disp_ack  <= 1'b0;
+            /* No mesmo modo, um Enter que nenhum LW leu ainda vale para a
+             * tela redesenhada. Troca de modo sempre zera o ack. */
+            disp_ack  <= (rf_b[7:0] == disp_mode) &&
+                         (enter_pulse || (disp_ack && !disp_seen));
             if (rf_b[7:0] != disp_mode)
                 disp_sel <= 5'd0;
         end else if (enter_pulse) begin
@@ -405,6 +409,14 @@ module Processador_GUI_MIPS #(
                                                             : (disp_sel + 5'd1);
             end
         end
+    end
+
+    always @(posedge clk_cpu) begin
+        if (rst || (memWrite && is_disp_ctx && !hd_freeze) ||
+            (enter_pulse && !is_in && !is_out))
+            disp_seen <= 1'b0;
+        else if (memToReg && is_disp_ctx && disp_ack)
+            disp_seen <= 1'b1;
     end
 
     lcd_controller #(

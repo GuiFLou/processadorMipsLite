@@ -2,7 +2,7 @@
 
 Este documento define **tudo que o processador precisa implementar** para executar corretamente os binários gerados pelo compilador C‑. Ele é a referência autoritativa para a implementação/revisão do processador em Verilog.
 
-O compilador está completo e validado. Os binários de todos os 5 programas de teste foram decodificados manualmente e estão 100% corretos.
+Os exemplos de codificação vêm de arquivos que existem no repositório: os dez programas do alvo `os-user` gravados em `hd_image.txt` (setores 20–29) e o binário legado `processador/gcd.txt`, anterior ao `$fp` e ao NOP de tamanho. Os binários legados `teste`, `teste2`, `fatorial` e `sort` citados em versões anteriores deste arquivo não estão mais no repositório. O mapa de memória e o MMIO completos estão em `../../so/docs/CONTEXT.md`; a simulação está descrita em `../README.md`.
 
 ---
 
@@ -119,8 +119,8 @@ O PC avança como `PC ← PC + 1` (não `PC + 4`). Cada posição da memória de
 | 10 | OR | 001010 | 10 | F1 | RD ← RS \| RT |
 | 11 | ORI | 001011 | 11 | F2 | RD ← RS \| zeroext(Imm) |
 | 12 | NOT | 001100 | 12 | F2 | RD ← ~RS |
-| 13 | SR | 001101 | 13 | F1 | RD ← RS >> Shamt |
-| 14 | SL | 001110 | 14 | F1 | RD ← RS << Shamt |
+| 13 | SR | 001101 | 13 | F1 | RD ← RS >>> Shamt (aritmético, usa Shamt[4:0]) |
+| 14 | SL | 001110 | 14 | F1 | RD ← RS << Shamt (usa Shamt[4:0]) |
 | 15 | LW | 001111 | 15 | F2 | RD ← MEM[RS + signext(Imm)] |
 | 16 | SW | 010000 | 16 | F2 | MEM[RS + signext(Imm)] ← RD |
 | 17 | J | 010001 | 17 | F3 | PC ← Addr |
@@ -135,30 +135,26 @@ O PC avança como `PC ← PC + 1` (não `PC + 4`). Cada posição da memória de
 | 26 | IN | 011010 | 26 | FI | Reg ← input |
 | 27 | OUT | 011011 | 27 | FI | output ← Reg |
 
-### 3.2 Instruções usadas pelos programas de teste
+Opcodes 28–63 não têm decode e se comportam como NOP.
+
+### 3.2 Instruções usadas pelos dez programas do HD
+
+Contagem feita nos binários `os-user` dos setores 20–29 de `hd_image.txt`.
 
 | Instrução | Usada por |
 |-----------|-----------|
-| ADD | todos |
-| ADDI | todos |
-| SUB | fatorial, gcd, sort |
-| MULT | fatorial, gcd |
-| DIV | gcd |
-| LW | todos |
-| SW | todos |
-| J | todos |
-| JR | gcd, sort |
-| JAL | gcd, sort |
-| BEQ | fatorial, gcd, sort |
-| MOVE | fatorial, gcd |
-| SLT | fatorial, sort |
-| HLT | todos |
-| IN | teste, gcd, sort |
-| OUT | todos |
+| ADD, ADDI, LW, SW, J, NOP, HLT, IN, OUT | todos |
+| BEQ | todos, exceto `area_triangulo` |
+| SLT | `busca_linear`, `fatorial`, `fibonacci`, `media`, `numero_primo`, `potencia`, `soma_digitos`, `sort` |
+| MOVE | `area_triangulo`, `fatorial`, `gcd`, `media`, `numero_primo`, `potencia`, `soma_digitos` |
+| SUB | `busca_linear`, `fatorial`, `gcd`, `numero_primo`, `soma_digitos`, `sort` |
+| MULT | `area_triangulo`, `fatorial`, `gcd`, `numero_primo`, `potencia`, `soma_digitos` |
+| DIV | `area_triangulo`, `gcd`, `media`, `numero_primo`, `soma_digitos` |
+| JR, JAL | `gcd`, `sort` |
 
-Instruções **não usadas** pelos testes legados da ROM: SUBI, MULTI, DIVI,
-AND, ANDI, OR, ORI, NOT, SR, SL e BNE. NOP é usado como cabeçalho de
-metadados por todos os dez programas recompilados e armazenados no HD.
+Nenhum dos dez usa SUBI, MULTI, DIVI, AND, ANDI, OR, ORI, NOT, SR, SL ou
+BNE. O kernel usa ANDI, OR, SL, SR e BNE nos intrínsecos do LCD e do HD.
+NOP é a primeira palavra de todo binário do compilador e guarda o tamanho.
 
 ---
 
@@ -184,6 +180,7 @@ O banco tem **64 registradores** de 32 bits. O compilador utiliza os seguintes:
 | `$t9` | 17 | 010001 | Temporário |
 | `$gp` | 28 | 011100 | Ponteiro global (base da memória de dados) |
 | `$sp` | 29 | 011101 | Ponteiro de pilha |
+| `$fp` | 30 | 011110 | Ponteiro de frame (parâmetros e locais) |
 | `$ra` | 31 | 011111 | Endereço de retorno (escrito por JAL) |
 | `$lo` | 61 | 111101 | Resultado baixo de MULT/DIV |
 | `$hi` | 62 | 111110 | Resultado alto de MULT/DIV |
@@ -194,8 +191,10 @@ O banco tem **64 registradores** de 32 bits. O compilador utiliza os seguintes:
 2. **$lo e $hi** devem ser escritos por MULT e DIV automaticamente
 3. **$lo e $hi** devem ser lidos por MOVE (`move $tN,$lo` → `MOVE RD=$tN, RS=$lo`)
 4. **$ra** deve ser escrito por JAL com `PC + 1`
-5. **$gp** deve ser inicializado com o endereço base da memória de dados (tipicamente 0)
-6. **$sp** deve ser inicializado com o topo da pilha (ex: 1023 para pilha crescendo para baixo)
+5. **$gp** começa em 0: o reset (síncrono) zera o banco inteiro
+6. **$sp** começa em 1023: o reset grava esse valor no registrador 29. O prólogo do alvo padrão troca por 1015 e o do `os-user` por 1791
+
+O banco (`regfile64.v`) tem leitura combinacional e escrita síncrona na borda do `clk_cpu`.
 
 ---
 
@@ -205,36 +204,38 @@ O banco tem **64 registradores** de 32 bits. O compilador utiliza os seguintes:
 
 - 4096 palavras × 32 bits
 - Endereçada pelo PC (word address, 0 a 4095)
-- Carregada com o conteúdo do `.txt` (uma linha = uma instrução); o restante fica em zero
-- Fetch combinacional pelo PC; a porta B aceita escrita do HD (comando 2)
+- Carregada com o conteúdo de `so.txt` (uma linha = uma instrução); o restante fica em zero
+- Fetch combinacional pelo PC (`assign rdata_a = mem[addr_a]`); a porta B aceita escrita síncrona do HD (comando 2)
+- O reset (KEY[0]) não recarrega a IMEM
 
 ### 5.2 Memória de dados (RAM)
 
 - 4096 palavras × 32 bits
 - Endereçada por `RS + signext(Imm)` nas instruções LW/SW
-- A porta A da CPU usa 0–4087. Os endereços 4088–4095 são MMIO
-- A região baixa (a partir do endereço 0, apontada por `$gp`) contém variáveis globais
-- A região alta (a partir do endereço apontado por `$sp`) contém a pilha (cresce para baixo)
+- A porta A da CPU usa 0–4087. Os endereços 4088–4095 são MMIO; acima de 4095 a escrita é descartada e a leitura devolve 0
+- Leitura assíncrona nas duas portas; as duas escritas ficam no mesmo `always`
+- O reset não limpa a RAM
+- As globais ficam em `$gp + memloc`; a pilha começa no valor do prólogo e cresce para baixo
+
+**Risco de síntese.** Nesse estilo (leitura assíncrona, duas escritas no mesmo `always`), o Quartus não infere M9K para a IMEM nem para a RAM: são cerca de 262 mil bits em flip-flops, contra 114.480 elementos lógicos do EP4CE115. O `hd_sim` usa `(* ramstyle = "M9K" *)` com leitura síncrona. O último fit em `output_files/` é de junho de 2026, anterior ao mapa de 4096 palavras, e a Fase 1 ainda não foi validada na placa.
 
 ### 5.3 Layout da memória de dados (exemplo: sort.cms)
 
 ```
-Endereço 0..9:   vet[10] (vetor global)
-Endereço 10..13: variáveis de minloc (i, x, k, etc.)
-Endereço 14..17: ...
-...
-Endereço 25:     variável i de main
+$gp + 0..9:   vet[10] (vetor global; endereços 1536..1545 no os-user)
+frame:        parâmetros em offsets positivos de $fp, locais em offsets negativos
 ```
 
-A pilha começa no topo (ex: $sp = 1023) e cresce para baixo com `addi $sp,$sp,-1`.
+No alvo padrão `$gp` é 0 e a pilha começa em 1015; no `os-user`, `$gp` é 1536 e a pilha começa em 1791. A pilha cresce para baixo com `addi $sp,$sp,-1`.
 
 ### 5.4 HD simulado e DMA para RAM
 
 O módulo `hd_sim` representa um HD com 64 setores de 256 palavras de 32 bits.
 Internamente, as 16.384 palavras são armazenadas de forma linear. O conteúdo
 inicial é zerado e pode ser substituído por um arquivo definido no parâmetro
-`HD_FILE`. O valor padrão é `hd_image.txt`, que concatena os binários
-recompilados e o preenchimento de cada setor com palavras zero. Durante a
+`HD_FILE`. O valor padrão é `hd_image.txt`, com 16.384 linhas: catálogo no
+setor 0, NOP nos setores 1–12, os binários recompilados nos setores 20–29 e
+zero no restante de cada setor e nos demais. Durante a
 compilação do Quartus, o `$readmemb` de `hd_sim.v` usa esse arquivo para
 inicializar o armazenamento do HD.
 
@@ -288,8 +289,9 @@ endereço ou comando inválido produz `error` sem iniciar a transferência.
 Durante a transferência o PC e as escritas da CPU ficam parados. A 256ª
 palavra e o avanço do PC acontecem no mesmo ciclo. O comando inválido não
 trava o PC. Na síntese, `CPU_DIV` é 5000 (cerca de 5 kHz), `BTN_STABLE` é
-1000000 e o LCD usa os tempos reais. O `tb_menu` encurta esses parâmetros só
-na simulação.
+1000000 e o LCD usa os tempos reais. No `.sdc`, o `-divide_by` correto do
+`clk_cpu` é 10000 (2 · `CPU_DIV`). Os testbenches que instanciam o top-level
+usam `CPU_DIV` 1, `BTN_STABLE` 3 e tempos curtos de LCD.
 O programa não deve acessar a faixa da RAM que está sendo transferida. Se a
 porta A e o DMA escreverem no mesmo endereço na mesma borda, a porta do DMA
 tem prioridade.
@@ -301,10 +303,11 @@ Ainda não há proteção por modo kernel, trap ou interrupção.
 
 ## 6. Cálculo de endereços de salto e branch
 
-Salvo quando o texto indicar explicitamente um binário recompilado do HD, os
-exemplos das seções 6–12 são registros dos binários legados anteriores ao NOP
-de metadados. As palavras continuam úteis para ilustrar a codificação, mas
-seus endereços não devem ser usados para localizar instruções na imagem atual.
+Os exemplos das seções 6–11 indicam a origem de cada palavra. "Setor N,
+addr A" é a palavra A do binário gravado no setor N de `hd_image.txt` (linha
+`N·256 + A + 1` do arquivo); esses binários são do alvo `os-user`. "`gcd.txt`
+legado" é `processador/gcd.txt`, sem NOP de tamanho, sem `$fp` e com saltos a
+partir de 0; ele serve só para ilustrar a codificação.
 
 ### 6.1 Jump (J) e JAL
 
@@ -314,24 +317,31 @@ Formato F3. O campo Endereço (26 bits) contém o **endereço absoluto** (word a
 PC ← Endereço[25:0]
 ```
 
-**Exemplo do `gcd` recompilado, gravado no setor 24 do HD (addr 0 do binário):**
+No alvo `os-user` o encoder soma 3072 a cada `J`/`JAL`, porque o binário roda
+na folha da vez. O endereço da palavra A do binário na IMEM é `3072 + A`.
+
+**`gcd`, setor 24, addr 0:**
 ```
-01011100000000000000000001001001
+01011100000000000000000001001010
 │opcode│        metadado        │
-│010111│00000000000000000001001001│ = NOP; tamanho total 73 palavras
+│010111│00000000000000000001001010│ = NOP; tamanho total 74 palavras
 ```
 
-**Exemplo do mesmo binário (addr 2):**
+As palavras 1 e 2 são o prólogo `addi $gp,$zero,1536` e `addi $sp,$zero,1791`.
+
+**Mesmo binário, addr 3:**
 ```
-01000100000000000000000000110001
-│010001│00000000000000000000110001│ = J para endereço 49 (main)
+01000100000000000000110000110010
+│010001│00000000000000110000110010│ = J 3122 = 3072 + 50 (main)
 ```
 
-**Exemplo do mesmo binário (addr 39):**
+**Mesmo binário, addr 40 (chamada recursiva) e addr 66 (chamada em main):**
 ```
-01001100000000000000000000000011
-│010011│00000000000000000000000011│ = JAL para endereço 3 (gcd)
+01001100000000000000110000000100
+│010011│00000000000000110000000100│ = JAL 3076 = 3072 + 4 (gcd)
 ```
+
+A palavra 73 é o `HLT` final. As palavras 74–255 do setor são zero.
 
 ### 6.2 Branch (BEQ/BNE)
 
@@ -346,29 +356,23 @@ senão:
 
 **ATENÇÃO:** O offset é calculado como `addr_destino - addr_branch - 1`. O processador soma `signext(Imm)` a `PC + 1` (que é o endereço da próxima instrução sequencial).
 
-**Exemplo real (fatorial.txt, addr 10):**
+Como o offset é relativo, o mesmo `BEQ` vale em 0 ou em 3072; o `os-user` não o altera.
+
+**`fatorial`, setor 22, addr 17:**
 ```
 01010000110000000000000000001010
 │010100│001100│000000│00000000001010│
 │ BEQ  │$t4   │$zero │ Imm = 10    │
 ```
-Destino: `PC + 1 + 10 = 10 + 1 + 10 = 21` (label L1) ✅
+Destino: `17 + 1 + 10 = 28` (label L1, saída do `while`) ✅
 
-**Exemplo real (gcd.txt, addr 6):**
+**`gcd.txt` legado, addr 6:**
 ```
 01010000101000000000000000000010
 │010100│001010│000000│00000000000010│
 │ BEQ  │$t2   │$zero │ Imm = 2     │
 ```
 Destino: `6 + 1 + 2 = 9` (label .L_eq_0) ✅
-
-**Exemplo real (sort.txt, addr 52):**
-```
-01010000110100000000000000100100
-│010100│001101│000000│00000000100100│
-│ BEQ  │$t5   │$zero │ Imm = 36    │
-```
-Destino: `52 + 1 + 36 = 89` (label L5) ✅
 
 ### 6.3 JR (Jump Register)
 
@@ -378,7 +382,7 @@ Formato F1. O campo RS contém o registrador com o endereço de destino.
 PC ← Reg[RS]
 ```
 
-**Exemplo real (gcd.txt, addr 15):**
+**`gcd.txt` legado, addr 15 (a mesma palavra está no setor 24, addr 24 e 49):**
 ```
 01001001111100000000000000000000
 │010010│011111│000000│000000│00000000│
@@ -399,13 +403,13 @@ Formato F1. Multiplica RS × RT e armazena o resultado de 64 bits em {$hi, $lo}.
 
 O campo RD é **0** (ignorado pelo hardware). O compilador obtém o resultado com `move $tN,$lo` logo após.
 
-**Exemplo real (fatorial.txt, addr 13):**
+**`fatorial`, setor 22, addr 20:**
 ```
 00010000110100111000000000000000
 │000100│001101│001110│000000│00000000│
 │ MULT │$t5=13│$t6=14│ RD=0 │ sh=0   │
 ```
-Seguido por (addr 14): `move $t7,$lo`
+Seguido por (addr 21): `move $t7,$lo`
 ```
 01011000111111110100000000000000
 │010110│001111│111101│00000000000000│
@@ -426,7 +430,7 @@ Divisão por zero segue uma convenção definida pelo hardware: se `RT == 0`,
 
 O campo RD é **0** (ignorado pelo hardware). O compilador obtém o quociente com `move $tN,$lo`.
 
-**Exemplo real (gcd.txt, addr 23):**
+**`gcd.txt` legado, addr 23 (a mesma palavra está no setor 24, addr 32):**
 ```
 00011000111000111100000000000000
 │000110│001110│001111│000000│00000000│
@@ -455,21 +459,21 @@ Endereço efetivo = Reg[RS] + signext(Imm)
 RD ← MEM[endereço efetivo]
 ```
 
-**Exemplo real (teste2.txt, addr 7):**
+**`fatorial`, setor 22, addr 14:**
 ```
-00111100101001110000000000000001
-│001111│001010│011100│00000000000001│
-│  LW  │$t2=10│$gp=28│   Imm=1     │
+00111100101001111011111111111111
+│001111│001010│011110│11111111111111│
+│  LW  │$t2=10│$fp=30│   Imm=-1    │
 ```
-→ `lw $t2,1($gp)` — carrega variável `x` da posição `$gp + 1`
+→ `lw $t2,-1($fp)` — carrega o local `n` do frame de `main`
 
-**Exemplo real (gcd.txt, addr 3):**
+**`gcd.txt` legado, addr 3:**
 ```
 00111100100001110100000000000001
 │001111│001000│011101│00000000000001│
 │  LW  │$t0=8 │$sp=29│   Imm=1     │
 ```
-→ `lw $t0,1($sp)` — carrega parâmetro `v` da pilha
+→ `lw $t0,1($sp)` — o compilador legado lia o parâmetro `v` pela pilha. O atual usa `lw $t0,2($fp)` (setor 24, addr 9)
 
 ### 8.2 SW (Store Word)
 
@@ -482,13 +486,13 @@ MEM[endereço efetivo] ← Reg[RD]
 
 **NOTA sobre SW:** No formato F2, o campo chamado "RD" (bits 25-20) contém o registrador **fonte** (cujo valor será escrito na memória). O campo "RS" (bits 19-14) contém o registrador **base** para cálculo do endereço. A nomenclatura "RD" vem do formato, não da semântica — em SW, RD é a fonte e RS é a base.
 
-**Exemplo real (teste2.txt, addr 4):**
+**`fatorial`, setor 22, addr 11:**
 ```
-01000000100001110000000000000001
-│010000│001000│011100│00000000000001│
-│  SW  │$t0=8 │$gp=28│   Imm=1     │
+01000000100001111011111111111111
+│010000│001000│011110│11111111111111│
+│  SW  │$t0=8 │$fp=30│   Imm=-1    │
 ```
-→ `sw $t0,1($gp)` — armazena `$t0` na posição `$gp + 1`
+→ `sw $t0,-1($fp)` — guarda em `n` o valor lido pelo `IN`
 
 ---
 
@@ -502,18 +506,18 @@ RD ← (RS < RT) ? 1 : 0
 
 A comparação é com sinal (signed).
 
-**Exemplo real (sort.txt, addr 16):**
+**`fatorial`, setor 22, addr 16:**
 ```
-01100100111000111101000000000000
-│011001│001110│001111│010000│00000000│
-│ SLT  │$t6=14│$t7=15│$t8=16│ sh=0   │
+01100100101100101000110000000000
+│011001│001011│001010│001100│00000000│
+│ SLT  │$t3=11│$t2=10│$t4=12│ sh=0   │
 ```
-→ `slt $t8,$t6,$t7` — `$t8 = ($t6 < $t7) ? 1 : 0`
+→ `slt $t4,$t3,$t2` — `$t4 = ($t3 < $t2) ? 1 : 0`
 
-O compilador usa SLT seguido de BEQ com $zero para implementar condições de loop:
+O compilador usa SLT seguido de BEQ com $zero para implementar condições de loop. `n > 0` vira `0 < n`:
 ```
-slt  $t8,$t6,$t7      # $t8 = (i < high) ? 1 : 0
-beq  $t8,$zero,L1     # se $t8 == 0, sai do loop
+slt  $t4,$t3,$t2      # $t4 = (0 < n) ? 1 : 0
+beq  $t4,$zero,L1     # se $t4 == 0, sai do loop
 ```
 
 ---
@@ -525,10 +529,12 @@ beq  $t8,$zero,L1     # se $t8 == 0, sai do loop
 Formato FI. Lê valor de entrada (switches da FPGA) e grava no registrador.
 
 ```
-Reg ← valor_de_entrada
+Reg ← {22'b0, SW[9:0]}
 ```
 
-**Exemplo real (teste.txt, addr 3):**
+O PC fica parado no `IN` (LEDR[17] aceso) até um pulso de KEY[1]. O registrador só é escrito no ciclo desse pulso.
+
+**`fatorial`, setor 22, addr 10:**
 ```
 01101000100000000000000000000000
 │011010│001000│00000000000000000000│
@@ -543,11 +549,13 @@ Formato FI. Envia valor do registrador para a saída (display).
 saída ← Reg
 ```
 
-**Exemplo real (teste2.txt, addr 12):**
+O valor vai para `out_reg` e aparece em decimal nos HEX0–HEX6. O PC fica parado no `OUT` (LEDR[17] aceso) até um pulso de KEY[1]; o último valor continua no display.
+
+**`fatorial`, setor 22, addr 31:**
 ```
-01101100110000000000000000000000
-│011011│001100│00000000000000000000│
-│ OUT  │$t4=12│      zeros         │
+01101100100100000000000000000000
+│011011│001001│00000000000000000000│
+│ OUT  │$t1=9 │      zeros         │
 ```
 
 ### 10.3 LCD (MMIO, sem opcode)
@@ -558,9 +566,10 @@ mensagem fixa: 1 MENU, 2 BEM-VINDO, 3 RUN, 4 OK, 5 ERR, 6 PROG, 7 QUANTOS,
 8 ARQUIVOS. MENU tem 3 itens; PROG e QUANTOS têm 10; as outras telas têm 1.
 KEY[2]/KEY[3] andam o índice quando há mais de um item. KEY[1] liga o ack
 (bit 27) sem mudar o índice, desde que a CPU não esteja parada em IN ou OUT.
-O Enter que solta um IN/OUT não confirma o menu. Toda escrita em 4091 zera
-o ack. Um `SW` só zera o índice quando o modo muda; o mesmo modo preserva
-a seleção. Leitura devolve `{4'b0, ack, sel[4:0], pid[3:0], id[9:0], mode[7:0]}`.
+O Enter que solta um IN/OUT não confirma o menu. Um `SW` que muda o modo
+zera o índice e o ack. No mesmo modo, o `SW` preserva a seleção e só zera o
+ack que um `LW` de 4091 já leu em 1 (`disp_seen`); um Enter ainda não lido,
+ou que chega no ciclo do `SW`, continua valendo. Leitura devolve `{4'b0, ack, sel[4:0], pid[3:0], id[9:0], mode[7:0]}`.
 
 ---
 
@@ -578,48 +587,37 @@ O processador, sem retorno armado, para de avançar o PC e acende LEDR[16]. Se u
 
 ---
 
-## 12. Fluxo de execução típico dos binários legados
+## 12. Fluxo de execução dos binários atuais
 
-Os fluxos desta seção documentam o layout anterior ao cabeçalho NOP. O layout
-atual dos programas no HD está na seção 14.
+### 12.1 Programa com chamada de função (`gcd`, setor 24)
 
-### 12.1 Programa simples (teste2.cms: 5+3=8)
-
-```
-Addr 0:  j main          → PC = 1 (main)
-Addr 1:  addi $sp,$sp,-1 → $sp = $sp - 1
-Addr 2:  sw $ra,0($sp)   → MEM[$sp] = $ra
-Addr 3:  addi $t0,$zero,5 → $t0 = 5
-Addr 4:  sw $t0,1($gp)   → MEM[$gp+1] = 5 (x)
-Addr 5:  addi $t1,$zero,3 → $t1 = 3
-Addr 6:  sw $t1,2($gp)   → MEM[$gp+2] = 3 (y)
-Addr 7:  lw $t2,1($gp)   → $t2 = MEM[$gp+1] = 5
-Addr 8:  lw $t3,2($gp)   → $t3 = MEM[$gp+2] = 3
-Addr 9:  add $t4,$t2,$t3  → $t4 = 5 + 3 = 8
-Addr 10: addi $sp,$sp,-1
-Addr 11: sw $t4,0($sp)
-Addr 12: out $t4          → output = 8
-Addr 13: addi $sp,$sp,1
-Addr 14: hlt              → FIM
-```
-
-### 12.2 Programa com chamada de função (gcd.cms)
+Endereços relativos ao início do binário; na folha, some 3072.
 
 ```
-Addr 0:  j main           → salta para main (addr 38)
-Addr 1:  gcd:             → início de gcd
-         ...               (corpo de gcd, incluindo chamada recursiva)
-Addr 38: main:            → início de main
-         in $t3            → lê x
-         in $t4            → lê y
-         push x, push y
-         jal gcd           → chama gcd, $ra = PC+1
+Addr 0:  nop 74            → tamanho total (o processador executa como NOP)
+Addr 1:  addi $gp,$zero,1536
+Addr 2:  addi $sp,$zero,1791
+Addr 3:  j 3122            → main (addr 50)
+Addr 4:  gcd:              → prólogo com $ra e $fp
+         ...                (corpo, com jr $ra em addr 24 e 49)
+Addr 40: jal 3076          → chamada recursiva gcd(v, u-u/v*v)
          ...
-         out $t7           → imprime resultado
-         hlt               → FIM
+Addr 50: main:             → prólogo e dois locais (x em -1($fp), y em -2($fp))
+Addr 56: in $t3            → lê x
+Addr 58: in $t4            → lê y
+         push x, push y
+Addr 66: jal 3076          → gcd(x, y), $ra = PC+1
+         ...
+Addr 71: out $t7           → imprime o resultado
+Addr 73: hlt               → fim
 ```
 
-### 12.3 Convenção de chamada de função
+No alvo padrão o prólogo tem uma palavra só (`addi $sp,$zero,1015`), `$gp`
+fica no 0 do reset e os saltos não recebem 3072. Quando o kernel chama a
+folha por `runat(3072)`, o `HLT` final é o `HLT` armado e o PC volta ao
+kernel; sem arma, o PC congela nele.
+
+### 12.2 Convenção de chamada de função (`asmgen.c`)
 
 **Caller (chamador):**
 1. Empilha argumentos: `addi $sp,$sp,-1` + `sw arg,0($sp)` para cada argumento
@@ -628,10 +626,14 @@ Addr 38: main:            → início de main
 4. Resultado em `$v0`: `add $tN,$v0,$zero`
 
 **Callee (chamado):**
-1. Prologue: `addi $sp,$sp,-1` + `sw $ra,0($sp)` (salva $ra)
-2. Acessa parâmetros via offsets em `$sp`
-3. Para retornar: `add $v0,resultado,$zero` + `lw $ra,0($sp)` + `addi $sp,$sp,1` + `jr $ra`
-4. Se é `main`: termina com `hlt` em vez de `jr $ra`
+1. Prólogo: `addi $sp,$sp,-1` + `sw $ra,0($sp)`, `addi $sp,$sp,-1` + `sw $fp,0($sp)`, `add $fp,$sp,$zero` e, se houver locais, `addi $sp,$sp,-L`
+2. Frame: `0($fp)` é o `$fp` antigo, `1($fp)` é o `$ra`, `2($fp)` é o último parâmetro e `(1+N)($fp)` o primeiro; os locais ficam em `-1($fp)` até `-L($fp)`
+3. Para retornar: `add $v0,resultado,$zero` + `add $sp,$fp,$zero` + `lw $fp,0($sp)` + `addi $sp,$sp,1` + `lw $ra,0($sp)` + `addi $sp,$sp,1` + `jr $ra`
+4. `main` também tem prólogo, mas termina com `hlt` em vez do epílogo
+
+Nada salva `$t0`–`$t9` antes de um `jal`. Uma expressão que usa um temporário
+depois de uma chamada recursiva, como `n * fat(n-1)`, lê o valor sobrescrito
+pela chamada interna.
 
 ---
 
@@ -699,6 +701,9 @@ Os dez programas foram recompilados com `--target=os-user` e incluídos em
 `hd_image.txt`. O prólogo é `addi $gp,$zero,1536` e `addi $sp,$zero,1791`,
 depois `j main`. Cada `J`/`JAL` soma 3072. `BEQ` e `BNE` continuam relativos.
 Imagem acima de 256 palavras é recusada, e o alvo recusa HD, LCD e `runat`.
+A análise semântica também recusa mais de 256 posições de símbolos
+(`analyze.c`), mas essa conta não inclui a pilha, que divide a janela
+1536–1791 com as globais.
 A primeira palavra de cada programa é um NOP de metadados:
 o opcode é `010111` e os 26 bits restantes contêm o tamanho total, incluindo
 o próprio cabeçalho e o HLT final.
@@ -732,5 +737,20 @@ O alvo padrão de `exemplos/` continua com `addi $sp,$zero,1015` e saltos a part
 6. **JAL salva PC+1** em $ra (registrador 31), não PC+4.
 7. **$zero** (reg 0) deve ser hardwired a 0. Muitas instruções dependem de ler 0 deste registrador.
 8. **Extensão de sinal** do imediato de 14 bits é essencial — offsets negativos (ex: `addi $sp,$sp,-1`) usam complemento de 2.
-9. **HLT** sem retorno armado congela o PC e acende LEDR[16]. `SW` em 4088 só arma quando o destino está entre 3072 e 3839 e o HD não está congelado: grava PC+1 em `kret` e na RAM 1042 e desvia. Fora da folha a escrita é ignorada. O `HLT` seguinte volta para esse PC, grava a causa 2 em 4089 e desarma. A leitura de 4088 devolve `epc`. `ctrl` (4090) continua sem efeito.
+9. **HLT** sem retorno armado congela o PC e acende LEDR[16]. `SW` em 4088 só arma quando o destino está entre 3072 e 3839 e o HD não está congelado: grava PC+1 em `kret` e na RAM 1042 e desvia. Fora da folha a escrita é ignorada. O `HLT` seguinte volta para esse PC, grava `epc` com o PC do próprio `HLT`, grava a causa 2 em 4089 e desarma. A leitura de 4088 devolve `epc`. Nada escreve em 4089 depois disso: a causa fica em 2 até o reset. `ctrl` (4090) não tem decode: a leitura devolve 0 e a escrita é descartada.
 10. **Endereçamento de memória** de dados é em palavras (não bytes). `lw $t0,1($gp)` lê a palavra no endereço `$gp + 1`, não `$gp + 4`.
+11. **Reset (KEY[0])** zera o PC, o banco (com `$sp` = 1023), `hi`/`lo`, `out_reg`, `display_ctx`, `kret`, `epc`, `cause` e os registradores do HD. Não recarrega a IMEM, a RAM nem o armazenamento do HD.
+
+---
+
+## 16. Testbenches
+
+Todos passam no Icarus Verilog. Os comandos estão em `../README.md`.
+
+| Teste | O que confere |
+|-------|---------------|
+| `tb_hd_map` | Assinatura do catálogo e `J 3071` em `hd_image.txt`; base 3833 recusada para RAM; setor 20 copiado para a IMEM em 3072. |
+| `tb_hd_stall` | `SW` em `hd_cmd` segura o PC durante a transferência; o PC avança uma vez e a instrução seguinte executa. |
+| `tb_lcd` | `display_ctx` (4091), KEY[1]–KEY[3], o Enter de `IN` sem ack, as telas; sentinela 99 em 4088 fora da folha não desvia e a leitura dá 0; 8187 não é alias. |
+| `tb_retorno` | Folha em 3072 executa; o `HLT` armado volta para PC+1; `kret` e RAM[1042] guardam PC+1; `cause` = 2, `epc` = 3072, arma desligada; o `HLT` seguinte, sem arma, congela o PC. |
+| `tb_menu` | Imagem de reset real (`so.txt`, 4096 palavras, a mesma do Quartus): menu, área na opção 1, volta com `$gp` 0, segundo programa na folha; Enter durante o redesenho da lista vale e Enter no `SW` que troca ERR por MENU não confirma. |
