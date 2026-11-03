@@ -125,6 +125,69 @@ module tb_hd_map;
         end else
             $display("PASS setor 20 na folha 3072");
 
+        // RAM -> HD usa leitura sincrona na porta B: confere PRIME,
+        // pipeline e drenagem, principalmente as extremidades do setor.
+        for (n = 0; n < 256; n = n + 1)
+            ram.mem[512 + n] = 32'hA5000000 + n;
+
+        sector_in = 32'd31;
+        sector_w = 1'b1;
+        step();
+        sector_w = 1'b0;
+        addr_in = 32'd512;
+        addr_w = 1'b1;
+        step();
+        addr_w = 1'b0;
+        cmd_in = 32'd3;
+        cmd_w = 1'b1;
+        step();
+        cmd_w = 1'b0;
+        for (n = 0; n < 400 && status_out !== 32'd2; n = n + 1)
+            step();
+        if (status_out !== 32'd2) begin
+            $display("FAIL RAM->HD status %0d apos %0d", status_out, n);
+            fails = fails + 1;
+        end else if (hd.storage[31 * 256] !== 32'hA5000000 ||
+                     hd.storage[31 * 256 + 1] !== 32'hA5000001 ||
+                     hd.storage[31 * 256 + 254] !== 32'hA50000FE ||
+                     hd.storage[31 * 256 + 255] !== 32'hA50000FF) begin
+            $display("FAIL RAM->HD extremos %h %h %h %h",
+                     hd.storage[31 * 256],
+                     hd.storage[31 * 256 + 1],
+                     hd.storage[31 * 256 + 254],
+                     hd.storage[31 * 256 + 255]);
+            fails = fails + 1;
+        end else
+            $display("PASS RAM->HD 256 palavras");
+
+        // Le o mesmo setor de volta em outra faixa da RAM.
+        for (n = 0; n < 256; n = n + 1)
+            ram.mem[1024 + n] = 32'd0;
+
+        addr_in = 32'd1024;
+        addr_w = 1'b1;
+        step();
+        addr_w = 1'b0;
+        cmd_in = 32'd1;
+        cmd_w = 1'b1;
+        step();
+        cmd_w = 1'b0;
+        for (n = 0; n < 400 && status_out !== 32'd2; n = n + 1)
+            step();
+        if (status_out !== 32'd2) begin
+            $display("FAIL HD->RAM status %0d apos %0d", status_out, n);
+            fails = fails + 1;
+        end else if (ram.mem[1024] !== 32'hA5000000 ||
+                     ram.mem[1025] !== 32'hA5000001 ||
+                     ram.mem[1278] !== 32'hA50000FE ||
+                     ram.mem[1279] !== 32'hA50000FF) begin
+            $display("FAIL HD->RAM extremos %h %h %h %h",
+                     ram.mem[1024], ram.mem[1025],
+                     ram.mem[1278], ram.mem[1279]);
+            fails = fails + 1;
+        end else
+            $display("PASS HD->RAM 256 palavras");
+
         if (fails == 0)
             $display("PASS tb_hd_map");
         else

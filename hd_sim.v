@@ -67,10 +67,12 @@ module hd_sim #(
     localparam [1:0] STATUS_DONE  = 2'd2;
     localparam [1:0] STATUS_ERROR = 2'd3;
 
-    localparam [1:0] STATE_IDLE       = 2'd0;
-    localparam [1:0] STATE_HD_TO_RAM  = 2'd1;
-    localparam [1:0] STATE_HD_DRAIN   = 2'd2;
-    localparam [1:0] STATE_RAM_TO_HD  = 2'd3;
+    localparam [2:0] STATE_IDLE          = 3'd0;
+    localparam [2:0] STATE_HD_TO_RAM     = 3'd1;
+    localparam [2:0] STATE_HD_DRAIN      = 3'd2;
+    localparam [2:0] STATE_RAM_TO_HD_PRIME  = 3'd3;
+    localparam [2:0] STATE_RAM_TO_HD_STREAM = 3'd4;
+    localparam [2:0] STATE_RAM_TO_HD_DRAIN  = 3'd5;
 
     (* ramstyle = "M9K" *) reg [DATA_W-1:0] storage [0:TOTAL_WORDS-1];
 
@@ -90,7 +92,8 @@ module hd_sim #(
     reg [RAM_ADDR_W-1:0]  active_ram_base;
     reg                    active_dest_imem;
     reg [WORD_COUNT_W-1:0] word_count;
-    reg [1:0]              state;
+    reg [WORD_COUNT_W-1:0] ram_write_count;
+    reg [2:0]              state;
 
     // A leitura do HD e sincrona para permitir inferencia de block RAM.
     // O estado DRAIN mantem a ultima palavra valida ate a escrita na RAM.
@@ -106,8 +109,10 @@ module hd_sim #(
                        ? (r_addr <= MAX_IMEM_BASE)
                        : (r_addr <= MAX_RAM_BASE);
 
-    wire [HD_ADDR_W-1:0] hd_word_addr =
+    wire [HD_ADDR_W-1:0] hd_read_word_addr =
         (active_sector * SECTOR_SZ) + word_count;
+    wire [HD_ADDR_W-1:0] hd_ram_write_addr =
+        (active_sector * SECTOR_SZ) + ram_write_count;
     wire [RAM_ADDR_W-1:0] ram_word_addr =
         active_ram_base + word_count;
 
@@ -117,8 +122,9 @@ module hd_sim #(
     assign reg_status_out = {{(DATA_W-2){1'b0}}, r_status};
 
     assign ram_addr_b  = active_dest_imem ? {RAM_ADDR_W{1'b0}} :
-                         (state == STATE_RAM_TO_HD) ? ram_word_addr
-                                                    : hd_read_ram_addr;
+                         ((state == STATE_RAM_TO_HD_PRIME) ||
+                          (state == STATE_RAM_TO_HD_STREAM)) ? ram_word_addr
+                                                            : hd_read_ram_addr;
     assign ram_wdata_b = active_dest_imem ? {DATA_W{1'b0}} : hd_read_data;
     assign ram_we_b    = hd_read_valid && !active_dest_imem;
 
@@ -129,7 +135,7 @@ module hd_sim #(
     wire accept = (state == STATE_IDLE) && cmd_write &&
                   command_valid && sector_valid && address_valid;
     wire retire = (state == STATE_HD_DRAIN) ||
-                  ((state == STATE_RAM_TO_HD) && (word_count == SECTOR_SZ - 1));
+                  (state == STATE_RAM_TO_HD_DRAIN);
     assign cpu_freeze = (state != STATE_IDLE);
     assign cpu_stall  = (cpu_freeze && !retire) || accept;
 
@@ -143,6 +149,7 @@ module hd_sim #(
             active_ram_base <= {RAM_ADDR_W{1'b0}};
             active_dest_imem <= 1'b0;
             word_count     <= {WORD_COUNT_W{1'b0}};
+            ram_write_count <= {WORD_COUNT_W{1'b0}};
             state           <= STATE_IDLE;
             hd_read_data    <= {DATA_W{1'b0}};
             hd_read_ram_addr <= {RAM_ADDR_W{1'b0}};
@@ -164,17 +171,18 @@ module hd_sim #(
                             active_ram_base  <= r_addr[RAM_ADDR_W-1:0];
                             active_dest_imem <= (reg_cmd_in == CMD_HD_TO_IMEM);
                             word_count       <= {WORD_COUNT_W{1'b0}};
+                            ram_write_count  <= {WORD_COUNT_W{1'b0}};
                             hd_read_valid    <= 1'b0;
                             r_status         <= STATUS_BUSY;
                             state            <= (reg_cmd_in == CMD_RAM_TO_HD)
-                                              ? STATE_RAM_TO_HD
+                                              ? STATE_RAM_TO_HD_PRIME
                                               : STATE_HD_TO_RAM;
                         end
                     end
                 end
 
                 STATE_HD_TO_RAM: begin
-                    hd_read_data     <= storage[hd_word_addr];
+                    hd_read_data     <= storage[hd_read_word_addr];
                     hd_read_ram_addr <= ram_word_addr;
                     hd_read_valid    <= 1'b1;
 
@@ -194,19 +202,34 @@ module hd_sim #(
                     r_status      <= STATUS_DONE;
                 end
 
-                STATE_RAM_TO_HD: begin
-                    // A leitura da porta B da RAM e combinacional; cada
-                    // palavra, inclusive a ultima, e gravada nesta borda.
+                STATE_RAM_TO_HD_PRIME: begin
+                    // A porta B da RAM e sincrona. Nesta borda ela captura
+                    // o endereco da palavra 0; o dado so vale no ciclo seguinte.
                     hd_read_valid <= 1'b0;
-                    storage[hd_word_addr] <= ram_rdata_b;
+                    ram_write_count <= word_count;
+                    word_count <= word_count + 1'b1;
+                    state <= STATE_RAM_TO_HD_STREAM;
+                end
 
+                STATE_RAM_TO_HD_STREAM: begin
+                    // Grava a resposta anterior enquanto solicita a proxima.
+                    storage[hd_ram_write_addr] <= ram_rdata_b;
                     if (word_count == SECTOR_SZ - 1) begin
-                        word_count <= {WORD_COUNT_W{1'b0}};
-                        state      <= STATE_IDLE;
-                        r_status   <= STATUS_DONE;
+                        ram_write_count <= word_count;
+                        state <= STATE_RAM_TO_HD_DRAIN;
                     end else begin
+                        ram_write_count <= word_count;
                         word_count <= word_count + 1'b1;
                     end
+                end
+
+                STATE_RAM_TO_HD_DRAIN: begin
+                    // A palavra 255 ficou no registrador de saida da RAM.
+                    storage[hd_ram_write_addr] <= ram_rdata_b;
+                    word_count <= {WORD_COUNT_W{1'b0}};
+                    ram_write_count <= {WORD_COUNT_W{1'b0}};
+                    state <= STATE_IDLE;
+                    r_status <= STATUS_DONE;
                 end
 
                 default: begin

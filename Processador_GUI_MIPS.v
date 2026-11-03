@@ -201,7 +201,6 @@ module Processador_GUI_MIPS #(
     wire        hd_stall;
     wire        hd_freeze;
     wire [31:0] in_data    = {22'b0, SW[9:0]};
-    wire        in_writeEn = is_in & enter_pulse;
 
     /* ========================= REGFILE E SIGN-EXT ======================== */
     localparam [5:0] LO_REG = 6'd61;
@@ -221,13 +220,23 @@ module Processador_GUI_MIPS #(
     wire [31:0] rf_a_raw, rf_b_raw;
     wire [31:0] rf_a, rf_b;
     wire [31:0] rf_wd;
+    wire [31:0] data_rd;
+
+    // A DRAM usa leitura sincrona. Um LW da RAM segura o PC por um ciclo
+    // e conserva o contexto necessario para o write-back seguinte.
+    reg         load_pending;
+    reg  [5:0]  load_dst;
+    reg  [31:0] load_pc_next;
+    wire        load_from_ram;
+    wire        in_writeEn = is_in & enter_pulse & !load_pending;
 
     regfile64 RF (
         .clk (clk_cpu), .rst(rst),
-        .we  ((regWrite | in_writeEn) && !hd_freeze),
+        .we  (!hd_freeze &&
+              (load_pending || (regWrite && !load_from_ram) || in_writeEn)),
         .rs1 (rf_rs1),
         .rs2 (rf_rs2),
-        .rd  (writeReg),
+        .rd  (load_pending ? load_dst : writeReg),
         .wd  (rf_wd),
         .rd1 (rf_a_raw),
         .rd2 (rf_b_raw)
@@ -255,7 +264,7 @@ module Processador_GUI_MIPS #(
         if (rst) begin
             hi_reg <= 32'd0;
             lo_reg <= 32'd0;
-        end else if (isMultDiv && !hd_freeze) begin
+        end else if (isMultDiv && !hd_freeze && !load_pending) begin
             hi_reg <= alu_hi;
             lo_reg <= alu_lo;
         end
@@ -265,15 +274,33 @@ module Processador_GUI_MIPS #(
     // Endereço completo: 8188 não pode aliasar 4092.
     wire is_hd_mmio = (alu_y >= 32'd4092) && (alu_y <= 32'd4095);
     wire is_ram     = (alu_y <= 32'd4087);
+    assign load_from_ram = memToReg && is_ram;
+
+    always @(posedge clk_cpu) begin
+        if (rst) begin
+            load_pending <= 1'b0;
+            load_dst     <= 6'd0;
+            load_pc_next <= 32'd0;
+        end else if (load_pending) begin
+            // data_rd ja contem a palavra solicitada no ciclo anterior.
+            load_pending <= 1'b0;
+        end else if (load_from_ram && !hd_freeze) begin
+            load_pending <= 1'b1;
+            load_dst     <= writeReg;
+            load_pc_next <= pc_plus4;
+        end
+    end
+
     /* 4088 só desvia quando o destino está na folha. O tb_lcd grava um
      * sentinela nesse endereço e precisa continuar na instrução seguinte. */
     wire pc_load_leaf = (rf_b >= 32'd3072) && (rf_b <= 32'd3839);
-    wire pc_load_we = memWrite && (alu_y == 32'd4088) && !hd_freeze && pc_load_leaf;
+    wire pc_load_we = memWrite && (alu_y == 32'd4088) && !hd_freeze &&
+                      !load_pending && pc_load_leaf;
     wire is_cause   = (alu_y == 32'd4089);
 
-    wire hd_cmd_write    = memWrite && (alu_y == 32'd4092);
-    wire hd_sector_write = memWrite && (alu_y == 32'd4093);
-    wire hd_addr_write   = memWrite && (alu_y == 32'd4094);
+    wire hd_cmd_write    = memWrite && (alu_y == 32'd4092) && !load_pending;
+    wire hd_sector_write = memWrite && (alu_y == 32'd4093) && !load_pending;
+    wire hd_addr_write   = memWrite && (alu_y == 32'd4094) && !load_pending;
 
     wire [31:0] hd_cmd_out;
     wire [31:0] hd_sector_out;
@@ -330,7 +357,8 @@ module Processador_GUI_MIPS #(
     reg        armed;
     reg [31:0] epc;
     reg [31:0] cause_reg;
-    wire       armed_return = halt && armed && !stall_io && !hd_stall;
+    wire       armed_return = halt && armed && !stall_io && !hd_stall &&
+                              !load_pending;
 
     always @(posedge clk_cpu) begin
         if (rst) begin
@@ -349,13 +377,13 @@ module Processador_GUI_MIPS #(
     end
 
     /* ========================= DATA MEMORY =============================== */
-    wire [31:0] data_rd;
     data_ram #(.ADDR_W(12)) DRAM (
         .clk     (clk_cpu),
         .addr_a  (pc_load_we ? 12'd1042 : alu_y[11:0]),
         .wdata_a (pc_load_we ? pc_plus4 : rf_b),
         .rdata_a (data_rd),
-        .we_a    ((memWrite && is_ram && !hd_freeze) || pc_load_we),
+        .we_a    (((memWrite && is_ram && !hd_freeze) || pc_load_we) &&
+                  !load_pending),
         .addr_b  (dma_ram_addr),
         .wdata_b (dma_ram_wdata),
         .rdata_b (dma_ram_rdata),
@@ -384,7 +412,7 @@ module Processador_GUI_MIPS #(
             disp_pid  <= 4'd15;
             disp_sel  <= 5'd0;
             disp_ack  <= 1'b0;
-        end else if (memWrite && is_disp_ctx && !hd_freeze) begin
+        end else if (memWrite && is_disp_ctx && !hd_freeze && !load_pending) begin
             disp_mode <= rf_b[7:0];
             disp_id   <= rf_b[17:8];
             disp_pid  <= rf_b[21:18];
@@ -412,10 +440,10 @@ module Processador_GUI_MIPS #(
     end
 
     always @(posedge clk_cpu) begin
-        if (rst || (memWrite && is_disp_ctx && !hd_freeze) ||
+        if (rst || (memWrite && is_disp_ctx && !hd_freeze && !load_pending) ||
             (enter_pulse && !is_in && !is_out))
             disp_seen <= 1'b0;
-        else if (memToReg && is_disp_ctx && disp_ack)
+        else if (memToReg && is_disp_ctx && disp_ack && !load_pending)
             disp_seen <= 1'b1;
     end
 
@@ -450,9 +478,10 @@ module Processador_GUI_MIPS #(
                                  is_ram      ? data_rd :
                                                32'd0;
     wire [31:0] wb_core = memToReg ? mem_read_value : alu_y;
-    assign rf_wd = is_in ? in_data    :
-                   jal   ? pc_plus4   :
-                                       wb_core;
+    assign rf_wd = load_pending ? data_rd :
+                   is_in        ? in_data :
+                   jal          ? pc_plus4 :
+                                  wb_core;
 
     /* ========================= LÓGICA DE DESVIO ========================== */
     wire        branch_taken  = (branchEq &&  alu_zero) ||
@@ -471,8 +500,14 @@ module Processador_GUI_MIPS #(
 
     /* ========================= PC REGISTER ============================== */
     always @(posedge clk_cpu) begin
-        if (rst) pc <= 32'd0;
-        else     pc <= pc_next;
+        if (rst)
+            pc <= 32'd0;
+        else if (load_pending)
+            pc <= load_pc_next;
+        else if (load_from_ram && !hd_freeze)
+            pc <= pc;
+        else
+            pc <= pc_next;
     end
 
     /* ========================= REGISTRADOR DE OUT ======================= */
@@ -482,7 +517,7 @@ module Processador_GUI_MIPS #(
     reg [31:0] out_reg;
     always @(posedge clk_cpu) begin
         if (rst)         out_reg <= 32'd0;
-        else if (is_out && !hd_freeze) out_reg <= rf_a;
+        else if (is_out && !hd_freeze && !load_pending) out_reg <= rf_a;
     end
 
     /* ========================= I/O VISUAL =============================== */
