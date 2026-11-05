@@ -260,6 +260,12 @@ module Processador_GUI_MIPS #(
         .y(alu_y), .hi_out(alu_hi), .lo_out(alu_lo), .zero(alu_zero)
     );
 
+    /* O banco grava 61/62 no ciclo de load_pending (destino load_dst).
+     * A leitura de $lo/$hi continua saindo de lo_reg/hi_reg. */
+    wire        gpr_commit = !hd_freeze &&
+                             (load_pending || (regWrite && !load_from_ram) || in_writeEn);
+    wire [5:0]  gpr_dst = load_pending ? load_dst : writeReg;
+
     always @(posedge clk_cpu) begin
         if (rst) begin
             hi_reg <= 32'd0;
@@ -267,6 +273,10 @@ module Processador_GUI_MIPS #(
         end else if (isMultDiv && !hd_freeze && !load_pending) begin
             hi_reg <= alu_hi;
             lo_reg <= alu_lo;
+        end else if (gpr_commit && gpr_dst == LO_REG) begin
+            lo_reg <= rf_wd;
+        end else if (gpr_commit && gpr_dst == HI_REG) begin
+            hi_reg <= rf_wd;
         end
     end
 

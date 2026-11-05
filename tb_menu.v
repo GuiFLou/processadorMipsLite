@@ -213,15 +213,17 @@ module tb_menu;
             fails = fails + 1;
         end else
             $display("PASS run da area, pid 0");
-        if (uut.IMEM.mem[3072] !== uut.HD.storage[20 * 256]) begin
+        if (uut.IMEM.mem[3072] !== uut.HD.storage[1 * 256]) begin
             $display("FAIL folha da area");
             fails = fails + 1;
         end else
             $display("PASS folha da area");
 
         wait_io(0);
-        if (uut.disp_mode !== 8'd3 || uut.RF.rf[28] !== 32'd1536) begin
-            $display("FAIL IN da base: modo %0d gp %0d", uut.disp_mode, uut.RF.rf[28]);
+        if (uut.disp_mode !== 8'd3 || uut.RF.rf[28] !== 32'd1536 ||
+            uut.RF.rf[29] !== 32'd2298) begin
+            $display("FAIL IN da base: modo %0d gp %0d sp %0d",
+                     uut.disp_mode, uut.RF.rf[28], uut.RF.rf[29]);
             fails = fails + 1;
         end
         SW = 18'd4;
@@ -314,7 +316,7 @@ module tb_menu;
             fails = fails + 1;
         end else
             $display("PASS Enter antes do redesenho vale");
-        if (uut.IMEM.mem[3072] !== uut.HD.storage[21 * 256]) begin
+        if (uut.IMEM.mem[3072] !== uut.HD.storage[4 * 256]) begin
             $display("FAIL folha da busca");
             fails = fails + 1;
         end else

@@ -46,7 +46,7 @@ module tb_retorno;
         repeat (40) @(posedge CLOCK_50);
         KEY[0] = 1'b1;
 
-        for (n = 0; n < 4000 && !(uut.pc === 32'd3 && LEDR[16]); n = n + 1) begin
+        for (n = 0; n < 4000 && !(uut.pc === 32'd10 && LEDR[16]); n = n + 1) begin
             @(posedge uut.clk_cpu);
             if (uut.pc === 32'd3072)
                 saw_leaf = 1'b1;
@@ -58,25 +58,37 @@ module tb_retorno;
         end else
             $display("PASS HLT armado na folha");
 
-        if (uut.pc !== 32'd3 || !LEDR[16]) begin
+        if (uut.pc !== 32'd10 || !LEDR[16]) begin
             $display("FAIL HLT sem arma nao congelou, pc=%0d halt=%b", uut.pc, LEDR[16]);
             fails = fails + 1;
         end else
-            $display("PASS HLT sem arma congelou em 3");
+            $display("PASS HLT sem arma congelou em 10");
 
-        if (uut.RF.rf[9] !== 32'd1) begin
-            $display("FAIL retorno nao executou o ADDI, t1=%0d", uut.RF.rf[9]);
+        if (uut.RF.rf[11] !== 32'd1) begin
+            $display("FAIL retorno nao executou o ADDI, t3=%0d", uut.RF.rf[11]);
             fails = fails + 1;
         end else
             $display("PASS voltou e executou a instrucao seguinte");
 
-        if (uut.kret !== 32'd2 || uut.DRAM.mem[1042] !== 32'd2) begin
+        if (uut.kret !== 32'd7 || uut.DRAM.mem[1042] !== 32'd7) begin
             $display("FAIL kret=%0d ram1042=%0d", uut.kret, uut.DRAM.mem[1042]);
             fails = fails + 1;
         end else
             $display("PASS kret e RAM 1042 guardam PC+1");
 
-        if (uut.armed !== 1'b0 || uut.cause_reg !== 32'd2 || uut.epc !== 32'd3072) begin
+        if (uut.DRAM.mem[1058] !== 32'd2 || uut.DRAM.mem[1059] !== 32'd3) begin
+            $display("FAIL mailbox hi=%0d lo=%0d", uut.DRAM.mem[1058], uut.DRAM.mem[1059]);
+            fails = fails + 1;
+        end else
+            $display("PASS mailbox guarda hi e lo do kernel");
+
+        if (uut.hi_reg !== 32'd2 || uut.lo_reg !== 32'd3) begin
+            $display("FAIL hi=%0d lo=%0d", uut.hi_reg, uut.lo_reg);
+            fails = fails + 1;
+        end else
+            $display("PASS hi e lo do kernel voltaram");
+
+        if (uut.armed !== 1'b0 || uut.cause_reg !== 32'd2 || uut.epc !== 32'd3075) begin
             $display("FAIL armed=%b cause=%0d epc=%0d", uut.armed, uut.cause_reg, uut.epc);
             fails = fails + 1;
         end else

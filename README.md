@@ -31,18 +31,19 @@ resumo das memórias em [`context/MEMORIAS.md`](context/MEMORIAS.md).
 ## Imagens de memória
 
 - `so.txt`: imagem de reset da IMEM, com 4096 linhas, lida também pelo
-  `tb_menu`. As palavras 0–1334 são
-  o kernel compilado (iguais a `../so/src/so.txt`), 1335–3070 são NOP, a 3071
+  `tb_menu`. As palavras 0–902 são
+  o kernel compilado (iguais a `../so/src/so.txt`), 903–3070 são NOP, a 3071
   é `J 3071` e 3072–4095 ficam em zero. Nenhum script do repositório monta
   esse arquivo. A receita de shell que gera o arquivo atual, byte a byte, está
   em `../so/docs/CONTEXT.md`, na seção "Construção das imagens iniciais".
 - `hd_image.txt`: imagem inicial do HD, com 16.384 linhas (64 setores × 256).
-  Setor 0: catálogo (assinatura `20261013`). Setores 1–12: NOP, com `J 3071`
-  na última palavra do setor 12. Setores 20–29: os dez programas do alvo
-  `os-user`. O resto fica em zero. `../compilador/reset_tests.sh
-  --target=os-user` regrava só os setores 20–29.
-- `../so/src/so.txt`: o kernel sozinho, 1335 palavras, origem das palavras
-  0–1334 de `so.txt`. É gerado pelo compilador e ignorado pelo git do
+  Setor 0: catálogo (assinatura `20261013`). Setores 1–30: os dez programas
+  do alvo `os-user`, três setores cada, primeiro LBA `1 + 3×posição`.
+  Setores 31–60: janelas dos PIDs 0–9, zeradas. O resto fica em zero.
+  `../compilador/reset_tests.sh --target=os-user` regrava esses trios e zera
+  as janelas.
+- `../so/src/so.txt`: o kernel sozinho, 903 palavras, origem das palavras
+  0–902 de `so.txt`. É gerado pelo compilador e ignorado pelo git do
   repositório `so/`:
 
   ```bash
@@ -107,10 +108,10 @@ Cada teste imprime uma linha `PASS` ou `FAIL` por verificação e termina com
 
 | Teste | Programa | O que confere |
 |-------|----------|---------------|
-| `tb_hd_map` | `gcd.txt` na IMEM | Assinatura do catálogo e `J 3071` no `hd_image.txt`; base 3833 recusada para RAM; setor 20 copiado para a IMEM em 3072. |
+| `tb_hd_map` | `gcd.txt` na IMEM | Assinatura do catálogo no `hd_image.txt`; base 3833 recusada para RAM; setor 20 copiado para a IMEM em 3072, conferido com a palavra 5120. |
 | `tb_hd_stall` | `tb_hd_stall.txt` | O `SW` em `hd_cmd` segura o PC durante a transferência, o PC avança uma vez e o setor 20 chega à folha. |
 | `tb_lcd` | `tb_lcd_mmio.txt` | `display_ctx` em 4091: escrita e leitura, KEY[2]/KEY[3], ack do KEY[1], o Enter de um `IN` sem ack, telas do catálogo; `SW` de um sentinela em 4088 fora da folha não desvia e lê 0; 8187 não é alias de 4091. |
-| `tb_retorno` | `tb_retorno.txt` | `SW` em 4088 com destino 3072 executa a folha; o `HLT` armado volta para PC+1; `kret` e RAM[1042] guardam PC+1; `cause` = 2, `epc` = 3072 e a arma desligada; o `HLT` seguinte, sem arma, congela o PC. |
+| `tb_retorno` | `tb_retorno.txt` | `SW` em 4088 com destino 3072 executa a folha; o `HLT` armado volta para PC+1; `kret` e RAM[1042] guardam PC+1; `cause` = 2, `epc` = 3075 e a arma desligada; `$hi` e `$lo` do kernel voltam a 2 e 3; o `HLT` seguinte, sem arma, congela o PC. |
 | `tb_menu` | `so.txt` | Imagem de reset real: boas-vindas, menu, opção 1 com a área (dois `IN` e `OUT` 12), volta ao menu com `$gp` 0, opção 2 com ERR e um segundo programa na folha. Um Enter no ciclo do `SW` que redesenha a lista, ou entre o último `LW` do ack e esse `SW`, vale; um Enter no `SW` que troca ERR por MENU não confirma o MENU. |
 
 ## Estado e riscos

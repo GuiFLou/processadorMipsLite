@@ -13,7 +13,7 @@ Registradores de propósito especial. O compilador e o hardware dependem destes 
 | `$zero` | 0 | `000000` | Sempre zero. Leituras retornam 0; escritas são ignoradas. |
 | `$v0` | 2 | `000010` | Valor de retorno de funções. |
 | `$gp` | 28 | `011100` | Ponteiro global. Base das variáveis em `$gp + offset`. Reset: `0`. |
-| `$sp` | 29 | `011101` | Ponteiro de pilha. Cresce para baixo. Reset do hardware atual: `1023`. No mapa de 4096, o kernel usa `$sp = 1023` e o programa usa `$sp = 1791`. |
+| `$sp` | 29 | `011101` | Ponteiro de pilha. Cresce para baixo. Reset do hardware: `1023`. O prólogo do kernel põe `$sp = 1015`. O programa despachado usa `$sp = 2303`. |
 | `$fp` | 30 | `011110` | Ponteiro de frame. Locais em offsets negativos; parâmetros em offsets positivos. |
 | `$ra` | 31 | `011111` | Endereço de retorno. Escrito automaticamente por `JAL` com `PC + 1`. |
 | `$lo` | 61 | `111101` | Parte baixa de `MULT` / quociente de `DIV`. |
@@ -71,7 +71,7 @@ Layout dos programas C‑ gerados pelo compilador:
 ```
 alvo padrão   $gp = 0 (valor do reset)      globais em $gp + memloc
               $sp = 1015 (prólogo)          pilha e frames com $fp, crescendo para baixo
-os-user       $gp = 1536, $sp = 1791        mesma organização dentro da janela 1536–1791
+os-user       $gp = 1536, $sp = 2303        mesma organização dentro da janela 1536–2303
 ```
 
 Os locais e os parâmetros ficam no frame da função, em offsets de `$fp`; só as globais usam `$gp`. O reset do hardware põe `$sp` em **1023**, topo dos dados do kernel, e o prólogo do alvo padrão o troca por 1015. O MMIO fica em 4088–4095, então `LW`/`SW` da CPU não passam de 4087.
@@ -114,20 +114,20 @@ O Verilog do topo usa `ADDR_W = 12`. `display_ctx` está em 4091 e o HD em 4092�
 | 3072–3839 | 768 palavras, 3 setores | folha da vez: um programa |
 | 3840–4095 | 256 palavras | supervisor Assembly residente |
 
-O maior binário atual tem 162 palavras (`sort` no alvo os-user) e ocupa um setor, gravado a partir de 3072. O endereço 3071 é o salto de guarda do kernel.
+O maior binário atual é o `sort` e cabe nas 768 palavras da folha, gravado a partir de 3072. O endereço 3071 é o salto de guarda do kernel.
 
 ### 3.2 RAM de dados — kernel residente e janela do programa
 
 | Endereços | Uso |
 |-----------|-----|
-| 0–1023 | dados e pilha do kernel (`$gp = 0`, `$sp = 1023`) |
+| 0–1023 | dados e pilha do kernel (`$gp = 0`, prólogo `$sp = 1015`) |
 | 1024–1279 | mailbox e estado protegido do supervisor |
 | 1280–1535 | buffer de um setor |
-| 1536–1791 | janela de dados do programa (`$gp = 1536`, `$sp = 1791`) |
-| 1792–4087 | reservado |
+| 1536–2303 | janela de dados do programa (`$gp = 1536`, `$sp = 2303`) |
+| 2304–4087 | reservado |
 | 4088–4095 | MMIO |
 
-Na troca, a janela 1536–1791 volta ao HD. Os dados do kernel e o código em 0–3071 permanecem.
+Na troca, a janela 1536–2303 volta ao HD. Os dados do kernel e o código em 0–3071 permanecem.
 
 **Mailbox (1024–1279)**
 
@@ -146,13 +146,13 @@ Na troca, a janela 1536–1791 volta ao HD. Os dados do kernel e o código em 0�
 | 1068 | saldo do quantum |
 | 1069–1279 | reservados |
 
-Ordem prevista de cada contexto: PC, `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp`, `$ra`, `$hi`, `$lo`. A troca dessas 18 palavras não está pronta. Na opção 1 o hardware grava PC+1 em 1042 e `runat` grava `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp` e `$ra` em 1043–1057. `$hi` e `$lo` ficam de fora.
+Ordem prevista de cada contexto: PC, `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp`, `$ra`, `$hi`, `$lo`. A troca dessas 18 palavras pelo supervisor não está pronta. Na opção 1 o hardware grava PC+1 em 1042 e `runat` grava `$v0`, `$t0`–`$t9`, `$gp`, `$sp`, `$fp`, `$ra`, `$hi` e `$lo` em 1043–1059. O `LW` de volta escreve `hi_reg` e `lo_reg`.
 
 ### 3.3 HD simulado — `hd_sim`
 
 Armazenamento persistente fora da RAM/ROM, já instanciado no top-level. Acesso via MMIO, não via `LW`/`SW` direto no array. Durante as 256 palavras o PC e as escritas da CPU ficam parados; o PC avança uma vez junto com a última palavra. Na síntese, `CPU_DIV` é 5000, cerca de 5 kHz, `BTN_STABLE` é 1000000 e o LCD usa os tempos reais. O `tb_menu` encurta isso só na simulação. O Quartus lê `so.txt` e `hd_image.txt` do diretório do processador (`MISC_FILE` no `.qsf`).
 
-A imagem em `hd_image.txt` segue o layout abaixo. Os dez programas estão nos setores 20–29 e não vêm de `compilador/exemplos/`. Os setores 1–12 estão em NOP, com o salto de guarda na palavra 3071. A IMEM de reset é `so.txt`, com 4096 palavras: o kernel compilado nas palavras 0–1334, NOP em 1335–3070, `J 3071` na palavra 3071 e zero em 3072–4095. O supervisor ainda não existe. `so.txt` não repete os setores 1–12.
+A imagem em `hd_image.txt` segue o layout abaixo. Os dez programas ocupam trios a partir do LBA `1 + 3×posição` e não vêm de `compilador/exemplos/`. As janelas dos PIDs 0–9 começam em `31 + 3×PID` e estão zeradas. A IMEM de reset é `so.txt`, com 4096 palavras: o kernel compilado nas palavras 0–902, NOP em 903–3070, `J 3071` na palavra 3071 e zero em 3072–4095. O supervisor ainda não existe.
 
 | | |
 |--|--|
@@ -162,12 +162,9 @@ A imagem em `hd_image.txt` segue o layout abaixo. Os dez programas estão nos se
 | Setores | Conteúdo |
 |---------|----------|
 | 0 | diretório |
-| 1–12 | código do kernel (3072 palavras) |
-| 13–16 | dados do kernel (1024 palavras) |
-| 17–19 | reservados |
-| 20–35 | até 16 executáveis, um setor cada |
-| 36–45 | janela de RAM dos PIDs 0–9 |
-| 46–63 | reservados |
+| 1–30 | dez executáveis, três setores cada, primeiro LBA `1 + 3×posição` |
+| 31–60 | janelas dos PIDs 0–9, três setores cada, primeiro LBA `31 + 3×PID` |
+| 61–63 | reservados |
 
 ### 3.4 MMIO — endereços 4088–4095 da RAM
 
@@ -203,8 +200,8 @@ Não há comando IMEM→HD. O código da folha da vez é descartado; a cópia pe
 Banco de regs   64 × 32       0–63
 IMEM          4096 × 32       0–3071 kernel | 3072–3839 folha | 3840–4095 supervisor
 RAM           4096 × 32       0–1023 kernel | 1024–1279 mailbox | 1280–1535 buffer
-                              1536–1791 janela do programa | 4088–4095 MMIO
-HD sim         16384 × 32     setores 0–63; programas nos setores 20–29
+                              1536–2303 janela do programa | 4088–4095 MMIO
+HD sim         16384 × 32     setores 0–63; programas nos setores 1–30
 IMEM de reset   so.txt         4096 palavras; kernel em 0–1334; NOP até 3070; J 3071; resto zero
 Verilog       4096 × 32       MMIO em 4088–4095; display_ctx em 4091; CPU_DIV 5000
 PC / hi / lo / out            fora do banco

@@ -78,12 +78,6 @@ module tb_hd_map;
         end else
             $display("PASS assinatura");
 
-        if (hd.storage[3327] !== 32'b01000100000000000000101111111111) begin
-            $display("FAIL guarda %b", hd.storage[3327]);
-            fails = fails + 1;
-        end else
-            $display("PASS salto de guarda");
-
         sector_in = 32'd0;
         sector_w = 1'b1;
         step();
